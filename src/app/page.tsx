@@ -1,10 +1,20 @@
 "use client";
 import { useState } from "react";
 
-export default function Home() {
-  const [lang, setLang] = useState("am");
+type Lang = "am" | "en";
 
-  const content = {
+export default function Home() {
+  const [lang, setLang] = useState<Lang>("am");
+
+  const content: Record<Lang, {
+    title: string;
+    subtitle: string;
+    tagline: string;
+    rent: string;
+    buy: string;
+    hire: string;
+    service: string;
+  }> = {
     am: {
       title: "ኢትዮ ማሽነሪ አገናኝ",
       subtitle: "Ethio Machinery Link (EML)",
