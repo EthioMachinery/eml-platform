@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
-import { DealEngine } from "@/lib/dealEngine";
+import { DealEngine } from "@/lib/dealengine";
 import { useLanguage } from "@/lib/LanguageContext";
 
 export default function DashboardPage() {
