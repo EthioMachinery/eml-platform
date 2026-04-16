@@ -1,127 +1,83 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
 import Link from "next/link";
-import { AIEngine } from "@/lib/aiEngine";
 import { useLanguage } from "@/lib/LanguageContext";
 
 export default function HomePage() {
-  const { t } = useLanguage();
+  const { lang } = useLanguage();
 
-  const [machines, setMachines] = useState<any[]>([]);
-  const [deals, setDeals] = useState<any[]>([]);
-  const [user, setUser] = useState<any>(null);
-
-  const [recommended, setRecommended] = useState<any[]>([]);
-  const [trending, setTrending] = useState<any[]>([]);
-  const [best, setBest] = useState<any[]>([]);
-
-  // =========================
-  // INIT
-  // =========================
-  useEffect(() => {
-    init();
-  }, []);
-
-  const init = async () => {
-    const { data: auth } = await supabase.auth.getUser();
-    setUser(auth.user);
-
-    const { data: machinesData } = await supabase
-      .from("machines")
-      .select("*");
-
-    const { data: dealsData } = await supabase
-      .from("deals")
-      .select("*");
-
-    setMachines(machinesData || []);
-    setDeals(dealsData || []);
-
-    applyAI(machinesData || [], dealsData || []);
-  };
-
-  // =========================
-  // AI LOGIC
-  // =========================
-  const applyAI = (machines: any[], deals: any[]) => {
-    const preference = {
-      category: "",
-      location: "Addis Ababa",
-      budget: 100000000,
-    };
-
-    setRecommended(
-      AIEngine.matchMachines(machines, preference).slice(0, 6)
-    );
-
-    setTrending(
-      AIEngine.trendingMachines(machines, deals).slice(0, 6)
-    );
-
-    setBest(
-      AIEngine.bestDeals(machines).slice(0, 6)
-    );
-  };
-
-  // =========================
-  // UI COMPONENT
-  // =========================
-  const Section = ({ title, data }: any) => (
-    <div className="mb-10">
-      <h2 className="text-xl font-bold mb-4">{title}</h2>
-
-      <div className="grid md:grid-cols-3 gap-6">
-        {data.map((m: any) => (
-          <Link key={m.id} href={`/machinery/${m.id}`}>
-            <div className="bg-white p-4 rounded shadow hover:shadow-lg cursor-pointer">
-
-              <img
-                src={m.image_url || "/placeholder.jpg"}
-                className="w-full h-40 object-cover rounded mb-3"
-              />
-
-              <h3 className="font-bold">{m.name}</h3>
-
-              <p className="text-sm text-gray-600">{m.location}</p>
-
-              <p className="text-yellow-600 font-bold">
-                {m.price} ETB
-              </p>
-
-            </div>
-          </Link>
-        ))}
-      </div>
-    </div>
-  );
-
-  // =========================
-  // MAIN UI
-  // =========================
   return (
-    <div className="bg-gray-100 min-h-screen p-4 md:p-8">
+    <main className="min-h-screen bg-black text-white flex flex-col items-center justify-center px-6 text-center">
 
-      <div className="max-w-7xl mx-auto">
+      {/* LANGUAGE SWITCH (TOP RIGHT) */}
+      <div className="absolute top-4 right-6 flex gap-2">
+        <Link href="#">
+          <button className="bg-yellow-500 text-black px-3 py-1 rounded text-sm font-bold">
+            አማ
+          </button>
+        </Link>
+        <Link href="#">
+          <button className="bg-gray-700 text-white px-3 py-1 rounded text-sm">
+            EN
+          </button>
+        </Link>
+      </div>
 
-        {/* HERO */}
-        <div className="mb-10 text-center">
-          <h1 className="text-3xl font-bold mb-2">
-            ኢትዮ ማሽነሪ አገናኝ
-          </h1>
-          <p className="text-gray-600">
-            Smart Machinery Marketplace for Ethiopia
-          </p>
-        </div>
+      {/* TITLE */}
+      <h1 className="text-3xl md:text-5xl font-bold text-yellow-400 mb-3">
+        {lang === "am" ? "ኢትዮ ማሽነሪ አገናኝ" : "Ethio Machinery Link"}
+      </h1>
 
-        {/* AI SECTIONS */}
-        <Section title="🤖 Recommended for You" data={recommended} />
-        <Section title="🔥 Trending Machines" data={trending} />
-        <Section title="💰 Best Deals" data={best} />
+      {/* SUBTITLE */}
+      <h2 className="text-lg md:text-xl mb-4">
+        {lang === "am"
+          ? "(EML)"
+          : "(EML)"}
+      </h2>
+
+      {/* DESCRIPTION */}
+      <p className="text-gray-400 max-w-xl mb-10">
+        {lang === "am"
+          ? "ከማሽነሪ ባለቤቶች፣ ተከራዮች፣ ኦፕሬተሮች እና የአገልግሎት አቅራቢዎች ጋር ይገናኙ።"
+          : "Connect with machinery owners, renters, operators, and service providers across Ethiopia."}
+      </p>
+
+      {/* ACTION BUTTONS */}
+      <div className="grid grid-cols-2 gap-4 w-full max-w-md">
+
+        <Link href="/browse">
+          <button className="bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-3 rounded transition">
+            {lang === "am" ? "ማሽነሪ ኪራይ" : "Rent Machinery"}
+          </button>
+        </Link>
+
+        <Link href="/browse">
+          <button className="bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-3 rounded transition">
+            {lang === "am" ? "ማሽነሪ ግዢ" : "Buy Machinery"}
+          </button>
+        </Link>
+
+        <Link href="/browse-requests">
+          <button className="bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-3 rounded transition">
+            {lang === "am" ? "ኦፕሬተሮች ቅጥር" : "Hire Operators"}
+          </button>
+        </Link>
+
+        <Link href="/services">
+          <button className="bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-3 rounded transition">
+            {lang === "am" ? "አገልግሎቶች" : "Get Services"}
+          </button>
+        </Link>
 
       </div>
 
-    </div>
+      {/* FOOTER */}
+      <p className="text-gray-500 text-sm mt-10">
+        {lang === "am"
+          ? "በኢትዮጵያ የተገነባ | በEML የተደገፈ"
+          : "Built for Ethiopia | Powered by EML"}
+      </p>
+
+    </main>
   );
 }
