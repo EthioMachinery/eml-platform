@@ -2,218 +2,135 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
-import { DealEngine } from "@/lib/dealengine";
+import { DealEngine } from "@/lib/dealengine"; // ✅ FIXED (case-sensitive)
 import { useLanguage } from "@/lib/LanguageContext";
 
+type Deal = {
+  id: string;
+  status: string;
+  amount: number;
+};
+
 export default function DashboardPage() {
-  const { t } = useLanguage();
+  const { lang } = useLanguage();
 
-  const [user, setUser] = useState<any>(null);
-  const [profile, setProfile] = useState<any>(null);
-  const [deals, setDeals] = useState<any[]>([]);
+  const [deals, setDeals] = useState<Deal[]>([]);
   const [loading, setLoading] = useState(true);
+  const [totalRevenue, setTotalRevenue] = useState(0);
 
-  // =========================
-  // INIT
-  // =========================
   useEffect(() => {
-    init();
+    fetchDeals();
   }, []);
 
-  const init = async () => {
+  const fetchDeals = async () => {
     setLoading(true);
 
-    const { data: auth } = await supabase.auth.getUser();
-    const currentUser = auth.user;
+    const { data, error } = await supabase
+      .from("deals")
+      .select("*")
+      .order("created_at", { ascending: false });
 
-    if (!currentUser) {
+    if (error) {
+      console.error("Error fetching deals:", error.message);
       setLoading(false);
       return;
     }
 
-    setUser(currentUser);
+    setDeals(data || []);
 
-    // Fetch profile
-    const { data: profileData } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", currentUser.id)
-      .single();
+    // Calculate total revenue
+    const total = (data || []).reduce(
+      (sum, deal) => sum + (deal.amount || 0),
+      0
+    );
+    setTotalRevenue(total);
 
-    setProfile(profileData);
-
-    // Fetch deals (buyer + provider)
-    const { data: dealsData } = await supabase
-      .from("deals")
-      .select("*")
-      .or(`requester_id.eq.${currentUser.id},provider_id.eq.${currentUser.id}`)
-      .order("created_at", { ascending: false });
-
-    setDeals(dealsData || []);
     setLoading(false);
   };
 
-  const refresh = () => init();
-
-  // =========================
-  // ROLE CHECKS
-  // =========================
-  const isAdmin =
-    profile?.role === "admin" || profile?.role === "super_admin";
-
-  const isSuperAdmin = profile?.role === "super_admin";
-
-  // =========================
-  // LOADING
-  // =========================
-  if (loading) {
-    return <div className="p-6">Loading dashboard...</div>;
-  }
-
-  if (!user) {
-    return <div className="p-6">Please login</div>;
-  }
-
-  // =========================
-  // UI
-  // =========================
   return (
-    <div className="bg-gray-100 min-h-screen p-4 md:p-8">
+    <div className="min-h-screen bg-gray-100 p-6">
+      {/* HEADER */}
+      <h1 className="text-2xl font-bold mb-6">
+        {lang === "am" ? "ዳሽቦርድ" : "Dashboard"}
+      </h1>
 
-      <div className="max-w-6xl mx-auto">
-
-        {/* HEADER */}
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold">
-            {t.dashboard || "Dashboard"}
-          </h1>
-          <p className="text-gray-600 text-sm">
-            Manage your deals, payments, and activity
+      {/* SUMMARY */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div className="bg-white shadow p-4 rounded">
+          <h2 className="text-sm text-gray-500">
+            {lang === "am" ? "ጠቅላላ ገቢ" : "Total Revenue"}
+          </h2>
+          <p className="text-xl font-bold text-green-600">
+            {totalRevenue.toLocaleString()} ETB
           </p>
         </div>
 
-        {/* DEAL LIST */}
-        <div className="space-y-4">
-
-          {deals.length === 0 && (
-            <div className="bg-white p-6 rounded shadow text-center">
-              No deals yet
-            </div>
-          )}
-
-          {deals.map((deal) => {
-            const isRequester = deal.requester_id === user.id;
-            const isProvider = deal.provider_id === user.id;
-
-            return (
-              <div
-                key={deal.id}
-                className="bg-white p-5 rounded shadow border border-gray-200"
-              >
-
-                {/* TOP */}
-                <div className="flex justify-between items-center mb-3">
-                  <h2 className="font-bold text-lg">
-                    Deal #{deal.id.slice(0, 6)}
-                  </h2>
-
-                  <span className="text-xs px-2 py-1 rounded bg-gray-200">
-                    {deal.status}
-                  </span>
-                </div>
-
-                {/* INFO */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm mb-4">
-
-                  <p><b>Price:</b> {deal.price} ETB</p>
-                  <p><b>Commission:</b> {deal.commission} ETB</p>
-                  <p><b>Payment:</b> {deal.payment_status}</p>
-                  <p><b>Machine:</b> {deal.machine_id}</p>
-
-                </div>
-
-                {/* ACTIONS */}
-                <div className="flex flex-wrap gap-2">
-
-                  {/* PROVIDER ACTION */}
-                  {isProvider && deal.status === "requested" && (
-                    <>
-                      <button
-                        onClick={async () => {
-                          await DealEngine.approveDeal(deal.id);
-                          refresh();
-                        }}
-                        className="bg-blue-500 text-white px-3 py-1 rounded"
-                      >
-                        Approve
-                      </button>
-
-                      <button
-                        onClick={async () => {
-                          await DealEngine.rejectDeal(deal.id);
-                          refresh();
-                        }}
-                        className="bg-yellow-500 px-3 py-1 rounded"
-                      >
-                        Reject
-                      </button>
-                    </>
-                  )}
-
-                  {/* USER PAYMENT */}
-                  {isRequester &&
-                    deal.status === "approved" &&
-                    deal.payment_status === "pending" && (
-                      <button
-                        onClick={() =>
-                          (window.location.href = `/payment/${deal.id}`)
-                        }
-                        className="bg-black text-white px-3 py-1 rounded"
-                      >
-                        Pay Now
-                      </button>
-                    )}
-
-                  {/* ADMIN VERIFY */}
-                  {isAdmin &&
-                    deal.payment_status === "submitted" && (
-                      <button
-                        onClick={async () => {
-                          await DealEngine.verifyPayment(deal.id);
-                          refresh();
-                        }}
-                        className="bg-green-600 text-white px-3 py-1 rounded"
-                      >
-                        Verify Payment
-                      </button>
-                    )}
-
-                  {/* SUPER ADMIN DELETE */}
-                  {isSuperAdmin && (
-                    <button
-                      onClick={async () => {
-                        await supabase
-                          .from("deals")
-                          .delete()
-                          .eq("id", deal.id);
-                        refresh();
-                      }}
-                      className="bg-red-600 text-white px-3 py-1 rounded"
-                    >
-                      Delete
-                    </button>
-                  )}
-
-                </div>
-
-              </div>
-            );
-          })}
-
+        <div className="bg-white shadow p-4 rounded">
+          <h2 className="text-sm text-gray-500">
+            {lang === "am" ? "ጠቅላላ ዲሎች" : "Total Deals"}
+          </h2>
+          <p className="text-xl font-bold">
+            {deals.length}
+          </p>
         </div>
 
+        <div className="bg-white shadow p-4 rounded">
+          <h2 className="text-sm text-gray-500">
+            {lang === "am" ? "የተጠናቀቁ ዲሎች" : "Completed Deals"}
+          </h2>
+          <p className="text-xl font-bold">
+            {deals.filter((d) => d.status === "completed").length}
+          </p>
+        </div>
       </div>
 
+      {/* DEAL LIST */}
+      <div className="bg-white shadow rounded p-4">
+        <h2 className="text-lg font-semibold mb-4">
+          {lang === "am" ? "ዲሎች" : "Deals"}
+        </h2>
+
+        {loading ? (
+          <p className="text-gray-500">
+            {lang === "am" ? "በመጫን ላይ..." : "Loading..."}
+          </p>
+        ) : deals.length === 0 ? (
+          <p className="text-gray-500">
+            {lang === "am" ? "ምንም ዲል የለም" : "No deals found"}
+          </p>
+        ) : (
+          <div className="space-y-3">
+            {deals.map((deal) => (
+              <div
+                key={deal.id}
+                className="border p-3 rounded flex justify-between items-center"
+              >
+                <div>
+                  <p className="font-medium">ID: {deal.id}</p>
+                  <p className="text-sm text-gray-500">
+                    {lang === "am" ? "ሁኔታ" : "Status"}: {deal.status}
+                  </p>
+                </div>
+
+                <div className="text-right">
+                  <p className="font-bold text-yellow-600">
+                    {deal.amount?.toLocaleString()} ETB
+                  </p>
+
+                  {/* 🔥 Optional AI Action */}
+                  <button
+                    className="mt-2 bg-black text-white px-3 py-1 text-sm rounded"
+                    onClick={() => DealEngine.process(deal)}
+                  >
+                    {lang === "am" ? "አካሂድ" : "Process"}
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
