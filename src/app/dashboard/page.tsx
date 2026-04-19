@@ -2,27 +2,28 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
-import { DealEngine } from "@/lib/dealengine"; // ✅ FIXED (case-sensitive)
+import { DealEngine } from "@/lib/dealengine";
 import { useLanguage } from "@/lib/LanguageContext";
 
-type Deal = {
+interface Deal {
   id: string;
-  status: string;
-  amount: number;
-};
+  machinery_name?: string | null;
+  price?: number | null;
+  status?: string | null;
+  payment_status?: string | null;
+  created_at?: string;
+}
 
 export default function DashboardPage() {
-  const { lang } = useLanguage();
-
   const [deals, setDeals] = useState<Deal[]>([]);
   const [loading, setLoading] = useState(true);
-  const [totalRevenue, setTotalRevenue] = useState(0);
+  const { lang } = useLanguage();
 
   useEffect(() => {
     fetchDeals();
   }, []);
 
-  const fetchDeals = async () => {
+  async function fetchDeals() {
     setLoading(true);
 
     const { data, error } = await supabase
@@ -31,106 +32,84 @@ export default function DashboardPage() {
       .order("created_at", { ascending: false });
 
     if (error) {
-      console.error("Error fetching deals:", error.message);
-      setLoading(false);
-      return;
+      console.error(error);
+    } else {
+      setDeals(data || []);
     }
 
-    setDeals(data || []);
-
-    // Calculate total revenue
-    const total = (data || []).reduce(
-      (sum, deal) => sum + (deal.amount || 0),
-      0
-    );
-    setTotalRevenue(total);
-
     setLoading(false);
-  };
+  }
+
+  if (loading) {
+    return (
+      <div className="p-6 text-white">
+        {lang === "am" ? "በመጫን ላይ..." : "Loading..."}
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      {/* HEADER */}
+    <div className="p-6 text-white">
       <h1 className="text-2xl font-bold mb-6">
         {lang === "am" ? "ዳሽቦርድ" : "Dashboard"}
       </h1>
 
-      {/* SUMMARY */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div className="bg-white shadow p-4 rounded">
-          <h2 className="text-sm text-gray-500">
-            {lang === "am" ? "ጠቅላላ ገቢ" : "Total Revenue"}
-          </h2>
-          <p className="text-xl font-bold text-green-600">
-            {totalRevenue.toLocaleString()} ETB
-          </p>
-        </div>
+      {deals.length === 0 ? (
+        <p>{lang === "am" ? "ምንም ግብይቶች የሉም" : "No deals found."}</p>
+      ) : (
+        <div className="space-y-4">
+          {deals.map((deal) => (
+            <div
+              key={deal.id}
+              className="bg-gray-900 border border-gray-700 p-4 rounded-lg"
+            >
+              <h2 className="text-lg font-semibold">
+                {deal.machinery_name ?? "Machinery"}
+              </h2>
 
-        <div className="bg-white shadow p-4 rounded">
-          <h2 className="text-sm text-gray-500">
-            {lang === "am" ? "ጠቅላላ ዲሎች" : "Total Deals"}
-          </h2>
-          <p className="text-xl font-bold">
-            {deals.length}
-          </p>
-        </div>
+              <p className="text-sm text-gray-400">
+                {lang === "am" ? "ዋጋ" : "Price"}: {deal.price ?? 0} ETB
+              </p>
 
-        <div className="bg-white shadow p-4 rounded">
-          <h2 className="text-sm text-gray-500">
-            {lang === "am" ? "የተጠናቀቁ ዲሎች" : "Completed Deals"}
-          </h2>
-          <p className="text-xl font-bold">
-            {deals.filter((d) => d.status === "completed").length}
-          </p>
-        </div>
-      </div>
+              <p className="text-sm">
+                {lang === "am" ? "ሁኔታ" : "Status"}:{" "}
+                {deal.status ?? "pending"}
+              </p>
 
-      {/* DEAL LIST */}
-      <div className="bg-white shadow rounded p-4">
-        <h2 className="text-lg font-semibold mb-4">
-          {lang === "am" ? "ዲሎች" : "Deals"}
-        </h2>
+              <p className="text-sm">
+                {lang === "am" ? "ክፍያ" : "Payment"}:{" "}
+                {deal.payment_status ?? "pending"}
+              </p>
 
-        {loading ? (
-          <p className="text-gray-500">
-            {lang === "am" ? "በመጫን ላይ..." : "Loading..."}
-          </p>
-        ) : deals.length === 0 ? (
-          <p className="text-gray-500">
-            {lang === "am" ? "ምንም ዲል የለም" : "No deals found"}
-          </p>
-        ) : (
-          <div className="space-y-3">
-            {deals.map((deal) => (
-              <div
-                key={deal.id}
-                className="border p-3 rounded flex justify-between items-center"
-              >
-                <div>
-                  <p className="font-medium">ID: {deal.id}</p>
-                  <p className="text-sm text-gray-500">
-                    {lang === "am" ? "ሁኔታ" : "Status"}: {deal.status}
-                  </p>
-                </div>
+              {/* ACTION BUTTONS (FIXED) */}
+              <div className="mt-4 flex gap-2">
+                <button
+                  className="bg-green-600 px-3 py-1 rounded text-sm"
+                  onClick={() => DealEngine.approveDeal(deal)}
+                >
+                  {lang === "am" ? "አፅድቅ" : "Approve"}
+                </button>
 
-                <div className="text-right">
-                  <p className="font-bold text-yellow-600">
-                    {deal.amount?.toLocaleString()} ETB
-                  </p>
-
-                  {/* 🔥 Optional AI Action */}
-                  <button
-                    className="mt-2 bg-black text-white px-3 py-1 text-sm rounded"
-                    onClick={() => DealEngine.process(deal)}
-                  >
-                    {lang === "am" ? "አካሂድ" : "Process"}
-                  </button>
-                </div>
+                <button
+                  className="bg-red-600 px-3 py-1 rounded text-sm"
+                  onClick={() => DealEngine.rejectDeal(deal)}
+                >
+                  {lang === "am" ? "አስቀር" : "Reject"}
+                </button>
               </div>
-            ))}
-          </div>
-        )}
-      </div>
+
+              {/* PAYMENT STATUS */}
+              {deal.payment_status !== "paid" && (
+                <div className="mt-3 text-yellow-400 text-sm">
+                  {lang === "am"
+                    ? "ክፍያ በመጠበቅ ላይ"
+                    : "Payment pending"}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
