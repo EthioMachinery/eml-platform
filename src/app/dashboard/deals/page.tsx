@@ -2,22 +2,22 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
-import UploadPayment from "@/components/payments/UploadPayment";
+import { DealEngine } from "@/lib/dealengine";
+import { useLanguage } from "@/lib/LanguageContext";
 
 interface Deal {
   id: string;
-  machinery_name: string;
-  buyer_id: string;
-  seller_id: string;
-  price: number;
-  status: string;
-  payment_status: string;
+  machinery_name: string | null;
+  price: number | null;
+  status: string | null;
+  payment_status: string | null;
   created_at: string;
 }
 
-export default function DealsPage() {
+export default function DashboardPage() {
   const [deals, setDeals] = useState<Deal[]>([]);
   const [loading, setLoading] = useState(true);
+  const { lang } = useLanguage();
 
   useEffect(() => {
     fetchDeals();
@@ -43,48 +43,71 @@ export default function DealsPage() {
   if (loading) {
     return (
       <div className="p-6 text-white">
-        <p>Loading deals...</p>
+        {lang === "am" ? "በመጫን ላይ..." : "Loading..."}
       </div>
     );
   }
 
   return (
     <div className="p-6 text-white">
-      <h1 className="text-2xl font-bold mb-6">My Deals</h1>
+      <h1 className="text-2xl font-bold mb-6">
+        {lang === "am" ? "ዳሽቦርድ" : "Dashboard"}
+      </h1>
 
       {deals.length === 0 ? (
-        <p>No deals found.</p>
+        <p>{lang === "am" ? "ምንም ግብይቶች የሉም" : "No deals found."}</p>
       ) : (
         <div className="space-y-4">
-          {deals.map((d) => (
+          {deals.map((deal) => (
             <div
-              key={d.id}
+              key={deal.id}
               className="bg-gray-900 border border-gray-700 p-4 rounded-lg"
             >
               <h2 className="text-lg font-semibold">
-                {d.machinery_name || "Machinery"}
+                {deal.machinery_name || "Machinery"}
               </h2>
 
               <p className="text-sm text-gray-400">
-                Price: {d.price} ETB
+                {lang === "am" ? "ዋጋ" : "Price"}: {deal.price ?? 0} ETB
               </p>
 
               <p className="text-sm">
-                Status:{" "}
-                <span className="font-medium">{d.status}</span>
-              </p>
-
-              <p className="text-sm">
-                Payment:{" "}
+                {lang === "am" ? "ሁኔታ" : "Status"}:{" "}
                 <span className="font-medium">
-                  {d.payment_status || "pending"}
+                  {deal.status || "pending"}
                 </span>
               </p>
 
-              {/* Upload Payment Section */}
-              {d.payment_status !== "paid" && (
-                <div className="mt-4">
-                  <UploadPayment deal={d} />
+              <p className="text-sm">
+                {lang === "am" ? "ክፍያ" : "Payment"}:{" "}
+                <span className="font-medium">
+                  {deal.payment_status || "pending"}
+                </span>
+              </p>
+
+              {/* ACTION BUTTONS */}
+              <div className="mt-4 flex gap-2">
+                <button
+                  className="bg-green-600 px-3 py-1 rounded text-sm"
+                  onClick={() => DealEngine.approveDeal(deal)}
+                >
+                  {lang === "am" ? "አፅድቅ" : "Approve"}
+                </button>
+
+                <button
+                  className="bg-red-600 px-3 py-1 rounded text-sm"
+                  onClick={() => DealEngine.rejectDeal(deal)}
+                >
+                  {lang === "am" ? "አስቀር" : "Reject"}
+                </button>
+              </div>
+
+              {/* PAYMENT STATUS */}
+              {deal.payment_status !== "paid" && (
+                <div className="mt-3 text-yellow-400 text-sm">
+                  {lang === "am"
+                    ? "ክፍያ በመጠበቅ ላይ"
+                    : "Payment pending"}
                 </div>
               )}
             </div>
