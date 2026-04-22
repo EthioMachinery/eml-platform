@@ -2,8 +2,7 @@ import "./globals.css";
 
 export const metadata = {
   title: "Ethio Machinery Link (EML)",
-  description:
-    "Ethiopia’s digital marketplace for machinery rental, sales, and services.",
+  description: "Machinery marketplace platform",
 };
 
 export default function RootLayout({
