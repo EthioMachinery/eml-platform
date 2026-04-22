@@ -1,6 +1,10 @@
 import "./globals.css";
-import { LanguageProvider } from "@/lib/LanguageContext";
-import Navbar from "@/components/Navbar";
+
+export const metadata = {
+  title: "Ethio Machinery Link (EML)",
+  description:
+    "Ethiopia’s digital marketplace for machinery rental, sales, and services.",
+};
 
 export default function RootLayout({
   children,
@@ -9,11 +13,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="bg-black text-white">
-        <LanguageProvider>
-          <Navbar />
-          {children}
-        </LanguageProvider>
+      <body className="bg-gray-950 text-white">
+        {children}
       </body>
     </html>
   );
