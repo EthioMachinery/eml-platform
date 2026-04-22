@@ -2,37 +2,53 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
-import { DealEngine } from "@/lib/dealengine";
 import { useLanguage } from "@/lib/LanguageContext";
 
 interface Deal {
   id: string;
-  machinery_name: string | null;
-  price: number | null;
-  status: string | null;
-  payment_status: string | null;
+  requester_id: string;
+  owner_id: string;
+  agreed_price: number;
+  deal_status: string;
+  payment_status: string;
+  payment_proof_url: string | null;
   created_at: string;
 }
 
-export default function DashboardPage() {
-  const [deals, setDeals] = useState<Deal[]>([]);
-  const [loading, setLoading] = useState(true);
+export default function DealsDashboard() {
   const { lang } = useLanguage();
 
+  const [deals, setDeals] = useState<Deal[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [userId, setUserId] = useState<string | null>(null);
+
   useEffect(() => {
-    fetchDeals();
+    init();
   }, []);
 
-  async function fetchDeals() {
+  async function init() {
+    const { data } = await supabase.auth.getUser();
+
+    if (!data.user) {
+      setLoading(false);
+      return;
+    }
+
+    setUserId(data.user.id);
+    fetchDeals(data.user.id);
+  }
+
+  async function fetchDeals(uid: string) {
     setLoading(true);
 
     const { data, error } = await supabase
       .from("deals")
       .select("*")
+      .or(`requester_id.eq.${uid},owner_id.eq.${uid}`)
       .order("created_at", { ascending: false });
 
     if (error) {
-      console.error("Error fetching deals:", error);
+      console.error("Fetch error:", error);
     } else {
       setDeals(data || []);
     }
@@ -40,10 +56,83 @@ export default function DashboardPage() {
     setLoading(false);
   }
 
+  // ✅ APPROVE DEAL
+  async function approveDeal(id: string) {
+    await supabase
+      .from("deals")
+      .update({
+        deal_status: "approved",
+        approved_at: new Date().toISOString(),
+      })
+      .eq("id", id);
+
+    fetchDeals(userId!);
+  }
+
+  // ❌ REJECT DEAL
+  async function rejectDeal(id: string) {
+    await supabase
+      .from("deals")
+      .update({
+        deal_status: "rejected",
+      })
+      .eq("id", id);
+
+    fetchDeals(userId!);
+  }
+
+  // 💰 MANUAL PAID (optional fallback)
+  async function markPaid(id: string) {
+    await supabase
+      .from("deals")
+      .update({
+        payment_status: "paid",
+        paid_at: new Date().toISOString(),
+      })
+      .eq("id", id);
+
+    fetchDeals(userId!);
+  }
+
+  // 📤 UPLOAD PAYMENT PROOF
+  async function uploadPayment(dealId: string, file: File) {
+    if (!file) return;
+
+    const fileName = `${dealId}-${Date.now()}`;
+
+    // Upload to Supabase storage
+    const { error: uploadError } = await supabase.storage
+      .from("payment-proofs")
+      .upload(fileName, file);
+
+    if (uploadError) {
+      console.error("Upload error:", uploadError);
+      return;
+    }
+
+    // Get public URL
+    const { data } = supabase.storage
+      .from("payment-proofs")
+      .getPublicUrl(fileName);
+
+    const publicUrl = data.publicUrl;
+
+    // Update deal
+    await supabase
+      .from("deals")
+      .update({
+        payment_proof_url: publicUrl,
+        payment_status: "pending_verification",
+      })
+      .eq("id", dealId);
+
+    fetchDeals(userId!);
+  }
+
   if (loading) {
     return (
       <div className="p-6 text-white">
-        {lang === "am" ? "በመጫን ላይ..." : "Loading..."}
+        {lang === "am" ? "በመጫን ላይ..." : "Loading deals..."}
       </div>
     );
   }
@@ -51,11 +140,11 @@ export default function DashboardPage() {
   return (
     <div className="p-6 text-white">
       <h1 className="text-2xl font-bold mb-6">
-        {lang === "am" ? "ዳሽቦርድ" : "Dashboard"}
+        {lang === "am" ? "ግብይቶች" : "Deals Dashboard"}
       </h1>
 
       {deals.length === 0 ? (
-        <p>{lang === "am" ? "ምንም ግብይቶች የሉም" : "No deals found."}</p>
+        <p>{lang === "am" ? "ምንም ግብይት የለም" : "No deals yet"}</p>
       ) : (
         <div className="space-y-4">
           {deals.map((deal) => (
@@ -63,53 +152,94 @@ export default function DashboardPage() {
               key={deal.id}
               className="bg-gray-900 border border-gray-700 p-4 rounded-lg"
             >
-              <h2 className="text-lg font-semibold">
-                {deal.machinery_name || "Machinery"}
-              </h2>
+              <p className="text-xs text-gray-500">ID: {deal.id}</p>
 
-              <p className="text-sm text-gray-400">
-                {lang === "am" ? "ዋጋ" : "Price"}: {deal.price ?? 0} ETB
-              </p>
-
-              <p className="text-sm">
-                {lang === "am" ? "ሁኔታ" : "Status"}:{" "}
-                <span className="font-medium">
-                  {deal.status || "pending"}
+              <p>
+                {lang === "am" ? "ዋጋ" : "Price"}:{" "}
+                <span className="text-yellow-400 font-bold">
+                  {deal.agreed_price} ETB
                 </span>
               </p>
 
-              <p className="text-sm">
+              <p>
+                {lang === "am" ? "ሁኔታ" : "Deal Status"}:{" "}
+                <span className="font-semibold">
+                  {deal.deal_status}
+                </span>
+              </p>
+
+              <p>
                 {lang === "am" ? "ክፍያ" : "Payment"}:{" "}
-                <span className="font-medium">
-                  {deal.payment_status || "pending"}
+                <span className="font-semibold">
+                  {deal.payment_status}
                 </span>
               </p>
 
-              {/* ACTION BUTTONS */}
-              <div className="mt-4 flex gap-2">
-                <button
-                  className="bg-green-600 px-3 py-1 rounded text-sm"
-                  onClick={() => DealEngine.approveDeal(deal)}
+              {/* PAYMENT PROOF */}
+              {deal.payment_proof_url && (
+                <a
+                  href={deal.payment_proof_url}
+                  target="_blank"
+                  className="text-blue-400 text-sm block mt-2"
                 >
-                  {lang === "am" ? "አፅድቅ" : "Approve"}
-                </button>
-
-                <button
-                  className="bg-red-600 px-3 py-1 rounded text-sm"
-                  onClick={() => DealEngine.rejectDeal(deal)}
-                >
-                  {lang === "am" ? "አስቀር" : "Reject"}
-                </button>
-              </div>
-
-              {/* PAYMENT STATUS */}
-              {deal.payment_status !== "paid" && (
-                <div className="mt-3 text-yellow-400 text-sm">
                   {lang === "am"
-                    ? "ክፍያ በመጠበቅ ላይ"
-                    : "Payment pending"}
-                </div>
+                    ? "ክፍያ ማረጋገጫ ይመልከቱ"
+                    : "View Payment Proof"}
+                </a>
               )}
+
+              {/* ACTIONS */}
+              <div className="mt-4 flex gap-2 flex-wrap">
+                {/* APPROVAL */}
+                {deal.deal_status === "pending" && (
+                  <>
+                    <button
+                      onClick={() => approveDeal(deal.id)}
+                      className="bg-green-600 px-3 py-1 rounded text-sm"
+                    >
+                      {lang === "am" ? "አፅድቅ" : "Approve"}
+                    </button>
+
+                    <button
+                      onClick={() => rejectDeal(deal.id)}
+                      className="bg-red-600 px-3 py-1 rounded text-sm"
+                    >
+                      {lang === "am" ? "አስቀር" : "Reject"}
+                    </button>
+                  </>
+                )}
+
+                {/* PAYMENT UPLOAD */}
+                {deal.deal_status === "approved" &&
+                  deal.payment_status === "unpaid" && (
+                    <div className="mt-2">
+                      <input
+                        type="file"
+                        onChange={(e) =>
+                          e.target.files &&
+                          uploadPayment(deal.id, e.target.files[0])
+                        }
+                        className="text-sm"
+                      />
+                    </div>
+                  )}
+
+                {/* WAITING */}
+                {deal.payment_status === "pending_verification" && (
+                  <span className="text-yellow-400 text-sm">
+                    {lang === "am"
+                      ? "እየተረጋገጠ ነው"
+                      : "Waiting for verification"}
+                  </span>
+                )}
+
+                {/* PAID */}
+                {deal.payment_status === "paid" && (
+                  <span className="text-green-400 text-sm">
+                    {lang === "am" ? "ተከፍሏል" : "Paid"}
+                  </span>
+                )}
+              </div>
             </div>
           ))}
         </div>

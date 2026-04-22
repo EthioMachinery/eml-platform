@@ -1,41 +1,27 @@
 "use client";
+import { createContext, useContext, useState } from "react";
 
-import { createContext, useContext, useState, ReactNode } from "react";
-import { translations } from "@/lib/translations";
-
-type Language = "en" | "am";
-
-type LanguageContextType = {
-  lang: Language;
-  setLang: (lang: Language) => void;
-  t: typeof translations.en;
+const translations: any = {
+  en: {
+    browse: "Browse Machines",
+  },
+  am: {
+    browse: "ማሽኖችን ይመልከቱ",
+  },
 };
 
-const LanguageContext = createContext<LanguageContextType | null>(null);
+const LanguageContext = createContext<any>(null);
 
-export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [lang, setLang] = useState<Language>("en");
+export const LanguageProvider = ({ children }: any) => {
+  const [lang, setLang] = useState("en");
+
+  const t = (key: string) => translations[lang][key] || key;
 
   return (
-    <LanguageContext.Provider
-      value={{
-        lang,
-        setLang,
-        t: translations[lang],
-      }}
-    >
+    <LanguageContext.Provider value={{ lang, setLang, t }}>
       {children}
     </LanguageContext.Provider>
   );
-}
+};
 
-// ✅ THIS MUST EXIST
-export function useLanguage() {
-  const context = useContext(LanguageContext);
-
-  if (!context) {
-    throw new Error("useLanguage must be used inside LanguageProvider");
-  }
-
-  return context;
-}
+export const useLanguage = () => useContext(LanguageContext);

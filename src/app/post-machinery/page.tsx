@@ -1,145 +1,146 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
-import { useLanguage } from "@/lib/LanguageContext";
+import { useState } from "react";
+import { supabase } from "../../lib/supabaseClient";
+import { useLanguage } from "../../lib/LanguageContext";
 
-export default function PostMachinery() {
+export default function PostMachineryPage() {
+  const { lang } = useLanguage();
 
-  const { t } = useLanguage();
-
-  const [title, setTitle] = useState("");
-  const [type, setType] = useState("");
-  const [location, setLocation] = useState("");
-  const [price, setPrice] = useState("");
-
-  const [suggestedPrice, setSuggestedPrice] = useState(0);
-  const [demandScore, setDemandScore] = useState(0);
+  const [form, setForm] = useState({
+    title: "",
+    type: "",
+    location: "",
+    price: "",
+    contact: "",
+    image_url: "",
+  });
 
   const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
 
-  // 🤖 SMART PRICING
-  const fetchSmartPrice = async () => {
-    if (!type || !location) return;
+  function handleChange(e: any) {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  }
 
-    const res = await fetch("/api/smart-pricing", {
-      method: "POST",
-      body: JSON.stringify({ type, location }),
-    });
-
-    const data = await res.json();
-
-    setSuggestedPrice(data.suggestedPrice);
-    setDemandScore(data.demandScore);
-  };
-
-  useEffect(() => {
-    fetchSmartPrice();
-  }, [type, location]);
-
-  const handleSubmit = async () => {
-
-    if (!title || !type || !location || !price) {
-      alert(t.fillRequired);
-      return;
-    }
-
+  async function handleSubmit(e: any) {
+    e.preventDefault();
     setLoading(true);
+    setMessage("");
 
-    const { data: userData } = await supabase.auth.getUser();
-    const user = userData.user;
-
-    if (!user) {
-      alert(t.loginRequired);
-      setLoading(false);
-      return;
-    }
-
-    const { error } = await supabase
-      .from("machinery")
-      .insert([
-        {
-          user_id: user.id,
-          title,
-          type,
-          location,
-          price,
-          smart_price: suggestedPrice,
-          demand_score: demandScore,
-          availability: "available",
-        },
-      ]);
+    const { error } = await supabase.from("machinery").insert([
+      {
+        title: form.title,
+        type: form.type,
+        location: form.location,
+        price: form.price,
+        price_value: parseFloat(form.price),
+        contact: form.contact,
+        image_url: form.image_url,
+      },
+    ]);
 
     if (error) {
       console.error(error);
-      alert(t.errorPosting);
+      setMessage(lang === "am" ? "ስህተት ተፈጥሯል" : "Error occurred");
     } else {
-      alert(t.successPost);
-      setTitle("");
-      setType("");
-      setLocation("");
-      setPrice("");
+      setMessage(
+        lang === "am"
+          ? "ማሽነሪ በተሳካ ሁኔታ ተመዝግቧል"
+          : "Machinery posted successfully!"
+      );
+
+      setForm({
+        title: "",
+        type: "",
+        location: "",
+        price: "",
+        contact: "",
+        image_url: "",
+      });
     }
 
     setLoading(false);
-  };
+  }
 
   return (
-    <main className="min-h-screen bg-black text-white px-6 py-10">
-
-      <h1 className="text-3xl text-yellow-400 mb-6 text-center">
-        {t.postMachine}
+    <div className="p-6 text-white max-w-xl mx-auto">
+      <h1 className="text-2xl font-bold mb-6">
+        {lang === "am" ? "ማሽነሪ አስገባ" : "Post Machinery"}
       </h1>
 
-      <div className="max-w-md mx-auto space-y-4">
-
+      <form onSubmit={handleSubmit} className="space-y-4">
         <input
-          placeholder={t.title}
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          className="w-full p-3 text-black rounded"
+          name="title"
+          placeholder={lang === "am" ? "ርዕስ" : "Title"}
+          className="w-full p-2 bg-gray-800 rounded"
+          value={form.title}
+          onChange={handleChange}
+          required
         />
 
         <input
-          placeholder={t.type}
-          value={type}
-          onChange={(e) => setType(e.target.value)}
-          className="w-full p-3 text-black rounded"
+          name="type"
+          placeholder={lang === "am" ? "አይነት" : "Type"}
+          className="w-full p-2 bg-gray-800 rounded"
+          value={form.type}
+          onChange={handleChange}
+          required
         />
 
         <input
-          placeholder={t.location}
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
-          className="w-full p-3 text-black rounded"
+          name="location"
+          placeholder={lang === "am" ? "አካባቢ" : "Location"}
+          className="w-full p-2 bg-gray-800 rounded"
+          value={form.location}
+          onChange={handleChange}
+          required
         />
 
         <input
-          placeholder={t.price}
-          value={price}
-          onChange={(e) => setPrice(e.target.value)}
-          className="w-full p-3 text-black rounded"
+          name="price"
+          type="number"
+          placeholder={lang === "am" ? "ዋጋ" : "Price"}
+          className="w-full p-2 bg-gray-800 rounded"
+          value={form.price}
+          onChange={handleChange}
+          required
         />
 
-        {/* 🤖 AI INSIGHT */}
-        {suggestedPrice > 0 && (
-          <div className="bg-yellow-100 text-black p-3 rounded">
-            💡 Suggested Price: {suggestedPrice} ETB  
-            <br />
-            🔥 Demand Score: {demandScore}
-          </div>
-        )}
+        <input
+          name="contact"
+          placeholder={lang === "am" ? "ኮንታክት" : "Contact"}
+          className="w-full p-2 bg-gray-800 rounded"
+          value={form.contact}
+          onChange={handleChange}
+        />
+
+        <input
+          name="image_url"
+          placeholder={lang === "am" ? "የምስል URL" : "Image URL"}
+          className="w-full p-2 bg-gray-800 rounded"
+          value={form.image_url}
+          onChange={handleChange}
+        />
 
         <button
-          onClick={handleSubmit}
+          type="submit"
           disabled={loading}
-          className="w-full bg-yellow-500 text-black py-3 rounded"
+          className="w-full bg-yellow-500 text-black p-2 rounded font-bold"
         >
-          {loading ? t.submitting : t.submit}
+          {loading
+            ? lang === "am"
+              ? "በመላክ ላይ..."
+              : "Posting..."
+            : lang === "am"
+            ? "አስገባ"
+            : "Submit"}
         </button>
+      </form>
 
-      </div>
-
-    </main>
+      {message && (
+        <p className="mt-4 text-center text-green-400">{message}</p>
+      )}
+    </div>
   );
 }

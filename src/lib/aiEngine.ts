@@ -1,49 +1,23 @@
-export const AIEngine = {
-  // =========================
-  // SMART MATCHING
-  // =========================
-  matchMachines: (machines: any[], preference: any) => {
-    return machines
-      .map((m) => {
-        let score = 0;
+export class AIEngine {
+  static rankMachines(machines: any[], filters: any) {
+    return machines.sort((a, b) => {
+      let scoreA = 0;
+      let scoreB = 0;
 
-        if (preference.category && m.category === preference.category) score += 40;
-        if (preference.location && m.location === preference.location) score += 30;
-        if (preference.budget && m.price <= preference.budget) score += 30;
+      if (filters.category) {
+        if (a.category === filters.category) scoreA += 5;
+        if (b.category === filters.category) scoreB += 5;
+      }
 
-        return { ...m, score };
-      })
-      .sort((a, b) => b.score - a.score);
-  },
+      if (filters.location) {
+        if (a.location === filters.location) scoreA += 3;
+        if (b.location === filters.location) scoreB += 3;
+      }
 
-  // =========================
-  // TRENDING MACHINES
-  // =========================
-  trendingMachines: (machines: any[], deals: any[]) => {
-    return machines
-      .map((m) => {
-        const demand = deals.filter((d) => d.machine_id === m.id).length;
-        return { ...m, demand };
-      })
-      .sort((a, b) => b.demand - a.demand);
-  },
+      scoreA += 1 / (a.price || 1);
+      scoreB += 1 / (b.price || 1);
 
-  // =========================
-  // BEST PRICE DETECTION
-  // =========================
-  bestDeals: (machines: any[]) => {
-    const avgPrice =
-      machines.reduce((sum, m) => sum + m.price, 0) / machines.length;
-
-    return machines
-      .filter((m) => m.price <= avgPrice)
-      .sort((a, b) => a.price - b.price);
-  },
-
-  // =========================
-  // LOCATION RECOMMENDATION
-  // =========================
-  byLocation: (machines: any[], location: string) => {
-    return machines.filter((m) => m.location === location);
-  },
-};
+      return scoreB - scoreA;
+    });
+  }
+}

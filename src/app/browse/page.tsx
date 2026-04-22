@@ -1,165 +1,177 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
-import Link from "next/link";
-import { AIEngine } from "@/lib/aiEngine";
-import { useLanguage } from "@/lib/LanguageContext";
+import { supabase } from "../../lib/supabaseClient";
+import { AIEngine } from "../../lib/aiEngine";
+import { matchingEngine } from "../../lib/matchingEngine";
+import { useLanguage } from "../../lib/LanguageContext";
+
+interface Machinery {
+  id: string;
+  title: string | null;
+  type: string | null;
+  location: string | null;
+  price: string | null;
+  price_value: number | null;
+  image_url: string | null;
+}
 
 export default function BrowsePage() {
-  const { t } = useLanguage();
-
-  const [machines, setMachines] = useState<any[]>([]);
-  const [filteredMachines, setFilteredMachines] = useState<any[]>([]);
+  const [machines, setMachines] = useState<Machinery[]>([]);
+  const [filtered, setFiltered] = useState<Machinery[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Filters
-  const [category, setCategory] = useState("");
-  const [location, setLocation] = useState("");
-  const [maxPrice, setMaxPrice] = useState<number>(100000000);
+  const [typeFilter, setTypeFilter] = useState("");
+  const [locationFilter, setLocationFilter] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
 
-  // =========================
-  // INIT
-  // =========================
+  const { lang } = useLanguage();
+
   useEffect(() => {
     fetchMachines();
   }, []);
 
-  useEffect(() => {
-    applySmartFilter();
-  }, [machines, category, location, maxPrice]);
-
-  const fetchMachines = async () => {
+  async function fetchMachines() {
     setLoading(true);
 
-    const { data } = await supabase
-      .from("machines")
+    const { data, error } = await supabase
+      .from("machinery") // ✅ FIXED TABLE NAME
       .select("*")
       .order("created_at", { ascending: false });
 
-    setMachines(data || []);
+    if (error) {
+      console.error("Error fetching machinery:", error);
+    } else {
+      setMachines(data || []);
+      setFiltered(data || []);
+    }
+
     setLoading(false);
-  };
+  }
 
-  // =========================
-  // AI SMART FILTER
-  // =========================
-  const applySmartFilter = () => {
-    const smart = AIEngine.matchMachines(machines, {
-      category: category || "",
-      location: location || "",
-      budget: maxPrice || 0,
-    });
+  useEffect(() => {
+    applyFilters();
+  }, [typeFilter, locationFilter, maxPrice, machines]);
 
-    setFilteredMachines(smart);
-  };
+  function applyFilters() {
+    let result = [...machines];
 
-  // =========================
-  // UI
-  // =========================
+    if (typeFilter) {
+      result = result.filter((m) =>
+        m.type?.toLowerCase().includes(typeFilter.toLowerCase())
+      );
+    }
+
+    if (locationFilter) {
+      result = result.filter((m) =>
+        m.location?.toLowerCase().includes(locationFilter.toLowerCase())
+      );
+    }
+
+    if (maxPrice) {
+      result = result.filter((m) => {
+        const price = m.price_value ?? parseFloat(m.price || "0");
+        return price <= parseFloat(maxPrice);
+      });
+    }
+
+    // ✅ AI ranking (safe fallback)
+    try {
+      result = AIEngine.rankMachines(result, {
+        category: typeFilter,
+        location: locationFilter,
+      });
+    } catch (e) {
+      console.warn("AI ranking skipped:", e);
+    }
+
+    setFiltered(result);
+  }
+
+  if (loading) {
+    return (
+      <div className="p-6 text-white">
+        {lang === "am" ? "በመጫን ላይ..." : "Loading..."}
+      </div>
+    );
+  }
+
   return (
-    <div className="bg-gray-100 min-h-screen p-4 md:p-8">
+    <div className="p-6 text-white">
+      <h1 className="text-2xl font-bold mb-6">
+        {lang === "am" ? "ማሽነሪ ፈልግ" : "Browse Machinery"}
+      </h1>
 
-      <div className="max-w-7xl mx-auto">
+      {/* FILTERS */}
+      <div className="flex flex-col md:flex-row gap-3 mb-6">
+        <input
+          placeholder={lang === "am" ? "አይነት (Type)" : "Type"}
+          className="p-2 rounded bg-gray-800"
+          value={typeFilter}
+          onChange={(e) => setTypeFilter(e.target.value)}
+        />
 
-        {/* HEADER */}
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold">
-            {t.browse || "Browse Machinery"}
-          </h1>
-          <p className="text-gray-600 text-sm">
-            Find machines to buy, rent, or service
-          </p>
-        </div>
+        <input
+          placeholder={lang === "am" ? "አካባቢ" : "Location"}
+          className="p-2 rounded bg-gray-800"
+          value={locationFilter}
+          onChange={(e) => setLocationFilter(e.target.value)}
+        />
 
-        {/* FILTERS */}
-        <div className="bg-white p-4 rounded shadow mb-6 grid md:grid-cols-4 gap-4">
-
-          <input
-            type="text"
-            placeholder="Category (e.g Excavator)"
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            className="border p-2 rounded"
-          />
-
-          <input
-            type="text"
-            placeholder="Location (e.g Addis Ababa)"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            className="border p-2 rounded"
-          />
-
-          <input
-            type="number"
-            placeholder="Max Price"
-            value={maxPrice}
-            onChange={(e) => setMaxPrice(Number(e.target.value))}
-            className="border p-2 rounded"
-          />
-
-          <button
-            onClick={applySmartFilter}
-            className="bg-black text-white rounded px-4 py-2"
-          >
-            Apply Filter
-          </button>
-
-        </div>
-
-        {/* LIST */}
-        {loading ? (
-          <div>Loading machines...</div>
-        ) : (
-          <div className="grid md:grid-cols-3 gap-6">
-
-            {filteredMachines.length === 0 && (
-              <div className="col-span-3 text-center bg-white p-6 rounded shadow">
-                No machines found
-              </div>
-            )}
-
-            {filteredMachines.map((machine) => (
-              <Link key={machine.id} href={`/machinery/${machine.id}`}>
-                <div className="bg-white rounded shadow hover:shadow-lg transition p-4 cursor-pointer">
-
-                  {/* IMAGE */}
-                  <img
-                    src={machine.image_url || "/placeholder.jpg"}
-                    alt={machine.name}
-                    className="w-full h-48 object-cover rounded mb-3"
-                  />
-
-                  {/* INFO */}
-                  <h2 className="font-bold text-lg mb-1">
-                    {machine.name}
-                  </h2>
-
-                  <p className="text-sm text-gray-600 mb-2">
-                    {machine.location}
-                  </p>
-
-                  <p className="text-yellow-600 font-bold">
-                    {machine.price} ETB
-                  </p>
-
-                  {/* AI SCORE */}
-                  {machine.score !== undefined && (
-                    <p className="text-xs text-green-600 mt-1">
-                      Match Score: {machine.score}
-                    </p>
-                  )}
-
-                </div>
-              </Link>
-            ))}
-
-          </div>
-        )}
-
+        <input
+          type="number"
+          placeholder={lang === "am" ? "ከፍተኛ ዋጋ" : "Max Price"}
+          className="p-2 rounded bg-gray-800"
+          value={maxPrice}
+          onChange={(e) => setMaxPrice(e.target.value)}
+        />
       </div>
 
+      {/* RESULTS */}
+      {filtered.length === 0 ? (
+        <p>
+          {lang === "am"
+            ? "ምንም ማሽነሪ አልተገኘም"
+            : "No machines found."}
+        </p>
+      ) : (
+        <div className="grid md:grid-cols-3 gap-6">
+          {filtered.map((machine) => (
+            <div
+              key={machine.id}
+              className="bg-gray-900 border border-gray-700 p-4 rounded-lg"
+            >
+              {machine.image_url && (
+                <img
+                  src={machine.image_url}
+                  alt="machinery"
+                  className="w-full h-40 object-cover rounded mb-3"
+                />
+              )}
+
+              <h3 className="text-lg font-semibold">
+                {machine.title || "Machinery"}
+              </h3>
+
+              <p className="text-sm text-gray-400">
+                {machine.type || "Unknown type"}
+              </p>
+
+              <p className="text-sm">
+                📍 {machine.location || "Unknown location"}
+              </p>
+
+              <p className="text-sm font-bold mt-2">
+                💰{" "}
+                {machine.price_value ??
+                  machine.price ??
+                  0}{" "}
+                ETB
+              </p>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
