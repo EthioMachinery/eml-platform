@@ -1,212 +1,99 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
-import { useLanguage } from "@/lib/LanguageContext";
+import { supabase } from "../../lib/supabaseClient";
+import { useLanguage } from "../../lib/LanguageContext";
 
-export default function BrowseRequests() {
+interface Request {
+  id: string;
+  machinery_type: string | null;
+  location: string | null;
+  budget_min: number | null;
+  budget_max: number | null;
+  status: string | null;
+  created_at: string;
+}
 
-  const { t } = useLanguage();
-
-  const [requests, setRequests] = useState<any[]>([]);
+export default function BrowseRequestsPage() {
+  const [requests, setRequests] = useState<Request[]>([]);
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<any>(null);
 
-  const [search, setSearch] = useState("");
-  const [locationFilter, setLocationFilter] = useState("");
-
-  const [selectedRequest, setSelectedRequest] = useState<any>(null);
-  const [processing, setProcessing] = useState(false);
+  // ✅ SAFE LANGUAGE HANDLING (prevents build crash)
+  const langContext = useLanguage();
+  const lang = langContext?.lang || "en";
 
   useEffect(() => {
-
-    const init = async () => {
-
-      const { data: userData } = await supabase.auth.getUser();
-      setUser(userData?.user || null);
-
-      const { data } = await supabase
-        .from("machine_requests")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      setRequests(data || []);
-      setLoading(false);
-    };
-
-    init();
-
+    fetchRequests();
   }, []);
 
-  const filtered = requests.filter((r) => {
-    return (
-      (r.machine_type || "")
-        .toLowerCase()
-        .includes(search.toLowerCase()) &&
-      (r.location || "")
-        .toLowerCase()
-        .includes(locationFilter.toLowerCase())
-    );
-  });
+  async function fetchRequests() {
+    setLoading(true);
 
-  // 🔐 REQUEST CONNECTION (NO PAYMENT)
-  const requestConnection = async () => {
-
-    if (!user) {
-      alert(t.loginRequired);
-      return;
-    }
-
-    setProcessing(true);
-
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from("contact_requests")
-      .insert([
-        {
-          requester_id: user.id,
-          request_id: selectedRequest.id,
-          status: "pending",
-        },
-      ]);
+      .select("*")
+      .order("created_at", { ascending: false });
 
     if (error) {
-      console.error(error);
-      alert("❌ Error sending request");
+      console.error("Error fetching requests:", error);
     } else {
-      alert("✅ Request sent. Await admin approval.");
-      setSelectedRequest(null);
+      setRequests(data || []);
     }
 
-    setProcessing(false);
-  };
+    setLoading(false);
+  }
 
   if (loading) {
     return (
-      <main className="min-h-screen flex items-center justify-center bg-black text-white">
-        {t.loading}
-      </main>
+      <div className="p-6 text-white">
+        {lang === "am" ? "በመጫን ላይ..." : "Loading..."}
+      </div>
     );
   }
 
   return (
-
-    <main className="min-h-screen bg-black text-white px-6 py-10">
-
-      <h1 className="text-3xl text-yellow-400 mb-6 text-center">
-        {t.browseRequestsTitle}
+    <div className="p-6 text-white">
+      <h1 className="text-2xl font-bold mb-6">
+        {lang === "am" ? "የጥያቄዎች ዝርዝር" : "Browse Requests"}
       </h1>
 
-      {/* FILTER */}
-      <div className="max-w-3xl mx-auto mb-10 bg-white p-4 rounded">
-
-        <input
-          placeholder={t.machineTypePlaceholder}
-          value={search}
-          onChange={(e)=>setSearch(e.target.value)}
-          className="w-full p-3 mb-3 text-black border rounded"
-        />
-
-        <input
-          placeholder={t.location}
-          value={locationFilter}
-          onChange={(e)=>setLocationFilter(e.target.value)}
-          className="w-full p-3 text-black border rounded"
-        />
-
-      </div>
-
-      {/* LIST */}
-      {filtered.length === 0 ? (
-
-        <p className="text-center text-gray-400">
-          {t.noRequests}
+      {requests.length === 0 ? (
+        <p>
+          {lang === "am"
+            ? "ምንም ጥያቄዎች የሉም"
+            : "No requests found."}
         </p>
-
       ) : (
-
-        <div className="grid gap-6 max-w-3xl mx-auto">
-
-          {filtered.map((r) => (
-
-            <div key={r.id} className="bg-gray-900 p-5 rounded">
-
-              <h2 className="text-xl text-yellow-400 mb-2">
-                {r.machine_type}
+        <div className="space-y-4">
+          {requests.map((req) => (
+            <div
+              key={req.id}
+              className="bg-gray-900 border border-gray-700 p-4 rounded-lg"
+            >
+              <h2 className="text-lg font-semibold">
+                {req.machinery_type || "Machinery Request"}
               </h2>
 
-              <p><b>{t.location}:</b> {r.location}</p>
-
-              {r.budget && (
-                <p><b>{t.budget}:</b> {r.budget}</p>
-              )}
-
-              {r.duration && (
-                <p><b>{t.duration}:</b> {r.duration}</p>
-              )}
-
-              <p>
-                <b>{t.operator}:</b>{" "}
-                {r.operator_required ? t.yes : t.no}
+              <p className="text-sm text-gray-400">
+                {lang === "am" ? "ቦታ" : "Location"}:{" "}
+                {req.location || "-"}
               </p>
 
-              <p className="text-sm text-gray-500 mt-3">
-                {t.posted}: {new Date(r.created_at).toLocaleDateString()}
+              <p className="text-sm text-gray-400">
+                {lang === "am" ? "በጀት" : "Budget"}:{" "}
+                {req.budget_min ?? 0} - {req.budget_max ?? 0} ETB
               </p>
 
-              {/* 🔐 REQUEST CONNECTION */}
-              <button
-                onClick={() => setSelectedRequest(r)}
-                className="mt-4 w-full bg-yellow-500 text-black py-2 rounded"
-              >
-                🔒 Request Connection
-              </button>
-
+              <p className="text-sm">
+                {lang === "am" ? "ሁኔታ" : "Status"}:{" "}
+                <span className="font-medium">
+                  {req.status || "pending"}
+                </span>
+              </p>
             </div>
-
           ))}
-
-        </div>
-
-      )}
-
-      {/* CONFIRM */}
-      {selectedRequest && (
-        <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center">
-
-          <div className="bg-white text-black p-6 rounded w-full max-w-md">
-
-            <h2 className="text-xl font-bold mb-4">
-              {selectedRequest.machine_type}
-            </h2>
-
-            <p className="mb-4">
-              Admin will review and connect both parties.
-            </p>
-
-            <div className="flex gap-3">
-
-              <button
-                onClick={requestConnection}
-                disabled={processing}
-                className="flex-1 bg-yellow-500 py-2 rounded"
-              >
-                {processing ? t.loading : "Confirm"}
-              </button>
-
-              <button
-                onClick={() => setSelectedRequest(null)}
-                className="flex-1 bg-gray-300 py-2 rounded"
-              >
-                {t.cancel}
-              </button>
-
-            </div>
-
-          </div>
-
         </div>
       )}
-
-    </main>
+    </div>
   );
 }
