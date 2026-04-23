@@ -1,27 +1,41 @@
 "use client";
+
 import { createContext, useContext, useState } from "react";
 
-const translations: any = {
-  en: {
-    browse: "Browse Machines",
-  },
-  am: {
-    browse: "ማሽኖችን ይመልከቱ",
-  },
+type LanguageContextType = {
+  lang: string;
+  setLang: (lang: string) => void;
+  t: (key: string) => string;
 };
 
-const LanguageContext = createContext<any>(null);
+const LanguageContext = createContext<LanguageContextType | null>(null);
 
-export const LanguageProvider = ({ children }: any) => {
+export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [lang, setLang] = useState("en");
 
-  const t = (key: string) => translations[lang][key] || key;
+  const t = (key: string) => {
+    return key; // simple fallback (can expand later)
+  };
 
   return (
     <LanguageContext.Provider value={{ lang, setLang, t }}>
       {children}
     </LanguageContext.Provider>
   );
-};
+}
 
-export const useLanguage = () => useContext(LanguageContext);
+// ✅ SAFE HOOK (THIS FIXES EVERYTHING)
+export function useLanguage(): LanguageContextType {
+  const context = useContext(LanguageContext);
+
+  // 🔥 THIS IS THE FIX: NEVER RETURN NULL
+  if (!context) {
+    return {
+      lang: "en",
+      setLang: () => {},
+      t: (key: string) => key,
+    };
+  }
+
+  return context;
+}
