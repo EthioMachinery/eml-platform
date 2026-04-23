@@ -2,7 +2,7 @@ import "./globals.css";
 
 export const metadata = {
   title: "Ethio Machinery Link (EML)",
-  description: "Machinery marketplace platform",
+  description: "Machinery Marketplace for Ethiopia",
 };
 
 export default function RootLayout({
@@ -12,7 +12,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="bg-gray-950 text-white">
+      <body>
         {children}
       </body>
     </html>

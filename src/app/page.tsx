@@ -4,34 +4,30 @@ import Link from "next/link";
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen bg-gray-950 text-white flex flex-col items-center justify-center px-6">
-      
-      {/* Title */}
-      <h1 className="text-4xl md:text-5xl font-bold mb-4 text-center">
+    <main className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-6">
+      <h1 className="text-4xl font-bold mb-4 text-center">
         Ethio Machinery Link (EML)
       </h1>
 
-      {/* Description */}
-      <p className="text-gray-400 text-center max-w-xl mb-8">
-        Ethiopia’s digital marketplace for machinery rental, sales, and services.
-        Connect with trusted owners, operators, and contractors nationwide.
+      <p className="text-gray-400 mb-8 text-center max-w-xl">
+        Ethiopia’s smart machinery marketplace. Connect owners, renters, and contractors easily.
       </p>
 
-      {/* Actions */}
       <div className="flex gap-4">
-        <Link href="/browse">
-          <button className="bg-yellow-500 hover:bg-yellow-400 text-black px-6 py-3 rounded-lg font-semibold">
-            Browse Machines
-          </button>
+        <Link
+          href="/browse"
+          className="bg-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-blue-700"
+        >
+          Browse Machines
         </Link>
 
-        <Link href="/login">
-          <button className="border border-gray-600 px-6 py-3 rounded-lg hover:bg-gray-800">
-            Login
-          </button>
+        <Link
+          href="/post-machinery"
+          className="bg-green-600 px-6 py-3 rounded-lg font-semibold hover:bg-green-700"
+        >
+          Post Machinery
         </Link>
       </div>
-
     </main>
   );
 }
