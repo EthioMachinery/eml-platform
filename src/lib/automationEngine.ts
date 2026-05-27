@@ -1,139 +1,70 @@
 import { supabase } from "./supabaseClient";
-import { AIEngine } from "./aiEngine";
+import { EMLCore, Deal } from "@/core/emlCore";
+
+/**
+ * =========================
+ * TYPES
+ * =========================
+ */
+
+export type AutomationAction =
+  | "APPROVE"
+  | "REJECT"
+  | "REVIEW"
+  | "AUTO_LIST"
+  | "NOTIFY";
+
+/**
+ * =========================
+ * AUTOMATION ENGINE
+ * =========================
+ */
 
 export const AutomationEngine = {
-  // =========================
-  // NOTIFICATION CREATOR
-  // =========================
-  notify: async (userId: string, message: string) => {
-    return await supabase.from("notifications").insert({
-      user_id: userId,
-      message,
+  /**
+   * Main entry point
+   */
+  async processDeal(deal: Deal) {
+    if (!deal) return null;
+
+    const analysis = EMLCore.ai.scoreDeal(deal);
+
+    const risk = analysis.risk;
+
+    let action: AutomationAction = "REVIEW";
+
+    if (risk === "SAFE") action = "APPROVE";
+    if (risk === "RISKY") action = "REVIEW";
+    if (risk === "DANGEROUS") action = "REJECT";
+
+    // Save automation event (optional safe logging)
+    await supabase.from("automation_logs").insert({
+      deal_id: deal.id,
+      risk,
+      action,
+      created_at: new Date().toISOString(),
     });
+
+    return {
+      dealId: deal.id,
+      risk,
+      action,
+      score: analysis.score,
+      isHighValue: analysis.isHighValue,
+    };
   },
 
-  // =========================
-  // GET ADMINS
-  // =========================
-  getAdmins: async () => {
-    const { data } = await supabase
-      .from("profiles")
-      .select("id")
-      .in("role", ["admin", "super_admin"]);
+  /**
+   * Batch processing
+   */
+  async processDeals(deals: Deal[]) {
+    const results = [];
 
-    return data || [];
-  },
-
-  // =========================
-  // ON DEAL CREATED
-  // =========================
-  onDealCreated: async (deal: any) => {
-    if (!deal?.provider_id) return;
-
-    await AutomationEngine.notify(
-      deal.provider_id,
-      "📩 New deal request received"
-    );
-  },
-
-  // =========================
-  // ON DEAL APPROVED
-  // =========================
-  onDealApproved: async (deal: any) => {
-    if (!deal?.requester_id) return;
-
-    await AutomationEngine.notify(
-      deal.requester_id,
-      "✅ Your deal has been approved. Please proceed to payment."
-    );
-  },
-
-  // =========================
-  // ON PAYMENT SUBMITTED
-  // =========================
-  onPaymentSubmitted: async (deal: any) => {
-    if (!deal) return;
-
-    // Notify provider
-    if (deal.provider_id) {
-      await AutomationEngine.notify(
-        deal.provider_id,
-        "💰 Payment submitted by user"
-      );
+    for (const deal of deals) {
+      const result = await this.processDeal(deal);
+      if (result) results.push(result);
     }
 
-    // Notify admins
-    const admins = await AutomationEngine.getAdmins();
-
-    for (const admin of admins) {
-      await AutomationEngine.notify(
-        admin.id,
-        "🔍 Payment needs verification"
-      );
-    }
-  },
-
-  // =========================
-  // ON PAYMENT VERIFIED
-  // =========================
-  onPaymentVerified: async (deal: any) => {
-    if (!deal) return;
-
-    if (deal.requester_id) {
-      await AutomationEngine.notify(
-        deal.requester_id,
-        "🎉 Payment verified. Deal completed."
-      );
-    }
-
-    if (deal.provider_id) {
-      await AutomationEngine.notify(
-        deal.provider_id,
-        "🎉 Payment verified. Deal completed."
-      );
-    }
-  },
-
-  // =========================
-  // AUTO APPROVAL
-  // =========================
-  autoApprove: async (deal: any) => {
-    if (!deal) return;
-
-    const risk = AIEngine.detectFraud(deal);
-
-    if (risk === "SAFE" && deal.price && deal.price < 500000) {
-      const { error } = await supabase
-        .from("deals")
-        .update({
-          status: "approved",
-          approved_at: new Date().toISOString(),
-        })
-        .eq("id", deal.id);
-
-      if (!error) {
-        await AutomationEngine.onDealApproved(deal);
-      }
-    }
-  },
-
-  // =========================
-  // FRAUD CHECK
-  // =========================
-  fraudCheck: async (deal: any) => {
-    if (!deal) return;
-
-    const risk = AIEngine.detectFraud(deal);
-
-    if (risk === "HIGH RISK") {
-      const admins = await AutomationEngine.getAdmins();
-
-      for (const admin of admins) {
-        await AutomationEngine.notify(
-          admin.id,
-          "🚨 High-risk deal detected"
-        );
-      }
-    }
+    return results;
   },
 };

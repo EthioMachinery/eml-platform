@@ -1,299 +1,678 @@
 "use client";
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabaseClient";
 
-export default function PostMachinery() {
-  const router = useRouter();
+import { useEffect, useState } from "react";
 
-  const [title, setTitle] = useState("");
-  const [type, setType] = useState("");
-  const [model, setModel] = useState("");
-  const [location, setLocation] = useState("");
-  const [price, setPrice] = useState("");
-  const [contact, setContact] = useState("");
-  const [availability, setAvailability] = useState("available");
-  const [condition, setCondition] = useState("");
-  const [year, setYear] = useState("");
-  const [operatorIncluded, setOperatorIncluded] = useState(false);
+import Link from "next/link";
 
-  const [images, setImages] = useState<File[]>([]);
-  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+import {
+  Bell,
+  Brain,
+  Truck,
+  Wallet,
+  ShieldCheck,
+  BriefcaseBusiness,
+  FileText,
+  Sparkles,
+  CheckCircle2,
+  AlertTriangle,
+  Clock3,
+  ArrowUpRight,
+  Radio,
+  Bot,
+  BadgeDollarSign,
+  Building2,
+  Star,
+} from "lucide-react";
 
-  const [message, setMessage] = useState("");
-  const [loading, setLoading] = useState(false);
+import { supabase } from "@/lib/supabase";
+
+import { useLanguage } from "@/context/LanguageContext";
+
+type NotificationItem = {
+  id: string;
+  title: string;
+  title_am?: string;
+  message: string;
+  message_am?: string;
+  type: string;
+  created_at?: string;
+  read?: boolean;
+  action_url?: string;
+};
+
+export default function NotificationsPage() {
+  const { t } = useLanguage();
+
+  const [notifications, setNotifications] =
+    useState<NotificationItem[]>(
+      []
+    );
+
+  const [loading, setLoading] =
+    useState(true);
+
+  const [stats, setStats] =
+    useState({
+      total: 0,
+      unread: 0,
+      aiAlerts: 0,
+      finance: 0,
+      logistics: 0,
+    });
 
   useEffect(() => {
-    return () => {
-      imagePreviews.forEach((url) => URL.revokeObjectURL(url));
-    };
-  }, [imagePreviews]);
+    loadNotifications();
+  }, []);
 
-  const handleSubmit = async () => {
-    if (!title || !type || !model || !location || !price || !contact) {
-      setMessage("Please fill all required fields");
-      return;
-    }
-
+  async function loadNotifications() {
     setLoading(true);
-    setMessage("Submitting...");
 
-    const { data: userData } = await supabase.auth.getUser();
-    const user = userData.user;
-
-    if (!user) {
-      setMessage("User not authenticated");
-      setLoading(false);
-      return;
-    }
-
-    let imageUrls: string[] = [];
-
-    // 🔥 Upload Images
-    for (let img of images) {
-      const fileExt = img.name.split(".").pop();
-      const fileName = `${user.id}-${Date.now()}-${Math.random()}.${fileExt}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from("machinery-images")
-        .upload(fileName, img, {
-          contentType: img.type,
-        });
-
-      if (uploadError) {
-        console.error(uploadError);
-        setMessage("Image upload failed");
-        setLoading(false);
-        return;
-      }
-
-      const { data } = supabase.storage
-        .from("machinery-images")
-        .getPublicUrl(fileName);
-
-      imageUrls.push(data.publicUrl);
-    }
-
-    const primaryImage = imageUrls.length > 0 ? imageUrls[0] : "";
-
-    // 🔥 INSERT MACHINERY
-    const { data: insertedMachine, error } = await supabase
-      .from("machinery")
-      .insert([
-        {
-          title,
-          type,
-          model,
-          location,
-          price,
-          contact,
-          availability,
-          condition,
-          year,
-          operator_included: operatorIncluded,
-          image_url: primaryImage,
-          image_urls: imageUrls,
-          user_id: user.id,
-        },
-      ])
-      .select()
-      .single();
-
-    if (error) {
-      console.error(error);
-      setMessage("Error posting machinery");
-      setLoading(false);
-      return;
-    }
-
-    // 🔥 AUTOMATIC MATCH ALERT ENGINE
-    const { data: requests } = await supabase
-      .from("machine_requests")
-      .select("*");
-
-    if (requests) {
-      for (const req of requests) {
-
-        const typeMatch =
-          insertedMachine.type?.toLowerCase().includes(
-            req.machine_type?.toLowerCase()
-          );
-
-        const locationMatch =
-          insertedMachine.location?.toLowerCase().includes(
-            req.location?.toLowerCase()
-          );
-
-        const operatorMatch =
-          req.operator_required === null ||
-          req.operator_required === insertedMachine.operator_included;
-
-        const budgetMatch =
-          !req.budget ||
-          parseFloat(insertedMachine.price) <= parseFloat(req.budget);
-
-        if (typeMatch && locationMatch && operatorMatch && budgetMatch) {
-
-          await supabase.from("notifications").insert([
+    try {
+      const { data } =
+        await supabase
+          .from("notifications")
+          .select("*")
+          .order(
+            "created_at",
             {
-              user_id: req.user_id,
-              title: "New Machine Match Found",
-              message: `${insertedMachine.title} matches your request for ${req.machine_type}`,
-              link: `/machinery/${insertedMachine.id}`,
-            },
-          ]);
-        }
-      }
+              ascending:
+                false,
+            }
+          )
+          .limit(50);
+
+      const fallbackData: NotificationItem[] =
+        [
+          {
+            id: "1",
+
+            title:
+              "New AI Match Found",
+
+            title_am:
+              "አዲስ AI ማገናኛ ተገኝቷል",
+
+            message:
+              "A verified excavator supplier matches your latest request.",
+
+            message_am:
+              "የተረጋገጠ ኤክስካቫተር አቅራቢ ከጥያቄዎ ጋር ተዛማጅ ሆኗል።",
+
+            type: "match",
+
+            created_at:
+              new Date().toISOString(),
+
+            read: false,
+
+            action_url:
+              "/smart-match",
+          },
+
+          {
+            id: "2",
+
+            title:
+              "Transport Available",
+
+            title_am:
+              "መጓጓዣ ተገኝቷል",
+
+            message:
+              "Lowbed truck available for Addis Ababa → Bahir Dar route.",
+
+            message_am:
+              "ከአዲስ አበባ ወደ ባህር ዳር የሚሄድ ሎቤድ መኪና ተገኝቷል።",
+
+            type: "transport",
+
+            created_at:
+              new Date().toISOString(),
+
+            read: false,
+
+            action_url:
+              "/transport",
+          },
+
+          {
+            id: "3",
+
+            title:
+              "Financing Pre-Approved",
+
+            title_am:
+              "ፋይናንስ ቅድመ ማጽደቅ",
+
+            message:
+              "Your machinery financing request has been pre-approved.",
+
+            message_am:
+              "የማሽነሪ ፋይናንስ ጥያቄዎ በቅድሚያ ጸድቋል።",
+
+            type: "finance",
+
+            created_at:
+              new Date().toISOString(),
+
+            read: true,
+
+            action_url:
+              "/financing",
+          },
+
+          {
+            id: "4",
+
+            title:
+              "Insurance Offer Ready",
+
+            title_am:
+              "የመድን ቅናሽ ዝግጁ ነው",
+
+            message:
+              "AI generated machinery insurance quotation available.",
+
+            message_am:
+              "AI የፈጠረው የማሽነሪ መድን ዋጋ ተዘጋጅቷል።",
+
+            type: "insurance",
+
+            created_at:
+              new Date().toISOString(),
+
+            read: true,
+
+            action_url:
+              "/insurance",
+          },
+        ];
+
+      const finalData =
+        data &&
+        data.length > 0
+          ? data
+          : fallbackData;
+
+      setNotifications(
+        finalData
+      );
+
+      setStats({
+        total:
+          finalData.length,
+
+        unread:
+          finalData.filter(
+            (n: any) =>
+              !n.read
+          ).length,
+
+        aiAlerts:
+          finalData.filter(
+            (n: any) =>
+              n.type ===
+              "match"
+          ).length,
+
+        finance:
+          finalData.filter(
+            (n: any) =>
+              n.type ===
+              "finance"
+          ).length,
+
+        logistics:
+          finalData.filter(
+            (n: any) =>
+              n.type ===
+              "transport"
+          ).length,
+      });
+    } catch (err) {
+      console.error(err);
     }
 
-    setMessage("Machinery posted successfully!");
+    setLoading(false);
+  }
 
-    setTitle("");
-    setType("");
-    setModel("");
-    setLocation("");
-    setPrice("");
-    setContact("");
-    setCondition("");
-    setYear("");
-    setOperatorIncluded(false);
-    setImages([]);
-    setImagePreviews([]);
+  function getIcon(
+    type: string
+  ) {
+    switch (type) {
+      case "match":
+        return Sparkles;
 
-    setTimeout(() => router.push("/dashboard"), 1200);
+      case "transport":
+        return Truck;
+
+      case "finance":
+        return Wallet;
+
+      case "insurance":
+        return ShieldCheck;
+
+      case "deal":
+        return BriefcaseBusiness;
+
+      case "contract":
+        return FileText;
+
+      default:
+        return Bell;
+    }
+  }
+
+  function getColor(
+    type: string
+  ) {
+    switch (type) {
+      case "match":
+        return "text-cyan-400 bg-cyan-500/10";
+
+      case "transport":
+        return "text-orange-400 bg-orange-500/10";
+
+      case "finance":
+        return "text-green-400 bg-green-500/10";
+
+      case "insurance":
+        return "text-violet-400 bg-violet-500/10";
+
+      case "deal":
+        return "text-yellow-400 bg-yellow-500/10";
+
+      default:
+        return "text-zinc-400 bg-zinc-700";
+    }
+  }
+
+  return (
+    <main className="min-h-screen bg-zinc-950 text-white">
+
+      {/* HERO */}
+
+      <section className="relative overflow-hidden border-b border-cyan-500/10">
+
+        <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-blue-500/5 to-transparent" />
+
+        <div className="relative max-w-7xl mx-auto px-4 py-20">
+
+          <div className="max-w-5xl">
+
+            <div className="inline-flex items-center gap-3 bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 px-5 py-3 rounded-full font-black mb-8">
+
+              <Bot size={20} />
+
+              {t(
+                "EML Live Intelligence",
+                "የEML የቀጥታ AI ማሳወቂያ"
+              )}
+
+            </div>
+
+            <h1 className="text-5xl md:text-7xl font-black leading-tight">
+
+              {t(
+                "Enterprise Notifications",
+                "የድርጅት ማሳወቂያዎች"
+              )}
+
+            </h1>
+
+            <p className="mt-8 text-xl text-zinc-400 leading-9 max-w-4xl">
+
+              {t(
+                "Realtime AI-powered notifications across machinery, transport, financing, insurance and contracts.",
+                "በማሽነሪ፣ በመጓጓዣ፣ በፋይናንስ፣ በመድን እና በኮንትራቶች ላይ የAI የቀጥታ ማሳወቂያዎች።"
+              )}
+
+            </p>
+
+          </div>
+
+        </div>
+
+      </section>
+
+      {/* STATS */}
+
+      <section className="max-w-7xl mx-auto px-4 py-14">
+
+        <div className="grid md:grid-cols-2 xl:grid-cols-5 gap-6">
+
+          <StatCard
+            title={t(
+              "Total",
+              "ጠቅላላ"
+            )}
+            value={
+              stats.total
+            }
+            icon={Bell}
+            color="cyan"
+          />
+
+          <StatCard
+            title={t(
+              "Unread",
+              "ያልተነበቡ"
+            )}
+            value={
+              stats.unread
+            }
+            icon={
+              AlertTriangle
+            }
+            color="orange"
+          />
+
+          <StatCard
+            title={t(
+              "AI Alerts",
+              "AI ማሳወቂያዎች"
+            )}
+            value={
+              stats.aiAlerts
+            }
+            icon={Brain}
+            color="violet"
+          />
+
+          <StatCard
+            title={t(
+              "Financing",
+              "ፋይናንስ"
+            )}
+            value={
+              stats.finance
+            }
+            icon={Wallet}
+            color="green"
+          />
+
+          <StatCard
+            title={t(
+              "Transport",
+              "መጓጓዣ"
+            )}
+            value={
+              stats.logistics
+            }
+            icon={Truck}
+            color="yellow"
+          />
+
+        </div>
+
+      </section>
+
+      {/* LIST */}
+
+      <section className="max-w-7xl mx-auto px-4 pb-20">
+
+        <div className="bg-zinc-900 border border-zinc-800 rounded-[40px] overflow-hidden">
+
+          <div className="p-8 border-b border-zinc-800 flex items-center justify-between">
+
+            <div>
+
+              <div className="text-cyan-400 font-black tracking-widest mb-2">
+
+                {t(
+                  "LIVE FEED",
+                  "የቀጥታ ማሳወቂያ"
+                )}
+
+              </div>
+
+              <h2 className="text-3xl font-black">
+
+                {t(
+                  "Realtime Enterprise Events",
+                  "የቀጥታ የድርጅት ክስተቶች"
+                )}
+
+              </h2>
+
+            </div>
+
+            <div className="bg-green-500/10 text-green-400 px-5 py-3 rounded-full text-sm font-black flex items-center gap-2">
+
+              <Radio size={16} />
+
+              LIVE
+
+            </div>
+
+          </div>
+
+          {loading ? (
+            <div className="p-10 text-center text-zinc-400">
+
+              {t(
+                "Loading notifications...",
+                "ማሳወቂያዎች በመጫን ላይ..."
+              )}
+
+            </div>
+          ) : (
+            <div className="divide-y divide-zinc-800">
+
+              {notifications.map(
+                (
+                  notification
+                ) => {
+                  const Icon =
+                    getIcon(
+                      notification.type
+                    );
+
+                  return (
+                    <Link
+                      key={
+                        notification.id
+                      }
+                      href={
+                        notification.action_url ||
+                        "#"
+                      }
+                      className="block hover:bg-zinc-800/40 transition"
+                    >
+
+                      <div className="p-8 flex flex-col lg:flex-row gap-6 lg:items-center lg:justify-between">
+
+                        <div className="flex gap-5">
+
+                          <div
+                            className={`w-16 h-16 rounded-3xl flex items-center justify-center ${getColor(
+                              notification.type
+                            )}`}
+                          >
+                            <Icon />
+                          </div>
+
+                          <div>
+
+                            <div className="flex flex-wrap items-center gap-3 mb-3">
+
+                              <h3 className="text-2xl font-black">
+
+                                {t(
+                                  notification.title,
+                                  notification.title_am ||
+                                    notification.title
+                                )}
+
+                              </h3>
+
+                              {!notification.read && (
+                                <div className="bg-cyan-500 text-black text-xs px-3 py-1 rounded-full font-black">
+
+                                  NEW
+
+                                </div>
+                              )}
+
+                            </div>
+
+                            <p className="text-zinc-400 leading-8 max-w-3xl">
+
+                              {t(
+                                notification.message,
+                                notification.message_am ||
+                                  notification.message
+                              )}
+
+                            </p>
+
+                            <div className="mt-4 text-sm text-zinc-500 flex items-center gap-2">
+
+                              <Clock3 size={16} />
+
+                              {new Date(
+                                notification.created_at ||
+                                  ""
+                              ).toLocaleString()}
+
+                            </div>
+
+                          </div>
+
+                        </div>
+
+                        <div className="flex items-center gap-3 text-cyan-400 font-black">
+
+                          {t(
+                            "Open",
+                            "ክፈት"
+                          )}
+
+                          <ArrowUpRight size={20} />
+
+                        </div>
+
+                      </div>
+
+                    </Link>
+                  );
+                }
+              )}
+
+            </div>
+          )}
+
+        </div>
+
+      </section>
+
+      {/* ENTERPRISE AI */}
+
+      <section className="border-t border-zinc-800">
+
+        <div className="max-w-7xl mx-auto px-4 py-20">
+
+          <div className="bg-cyan-500/10 border border-cyan-500/20 rounded-[40px] p-10">
+
+            <div className="flex flex-col md:flex-row gap-10 md:items-center md:justify-between">
+
+              <div className="max-w-3xl">
+
+                <div className="text-cyan-400 font-black tracking-widest mb-4">
+
+                  {t(
+                    "AI AUTOMATION",
+                    "AI አውቶሜሽን"
+                  )}
+
+                </div>
+
+                <h2 className="text-4xl font-black mb-6">
+
+                  {t(
+                    "Autonomous Event Intelligence",
+                    "ራስ ሰር የAI ማሳወቂያ ስርዓት"
+                  )}
+
+                </h2>
+
+                <p className="text-zinc-300 text-lg leading-8">
+
+                  {t(
+                    "EML continuously monitors marketplace activity and automatically delivers intelligent notifications to users.",
+                    "EML የገበያ እንቅስቃሴዎችን በቀጥታ በመከታተል የAI ማሳወቂያዎችን ያቀርባል።"
+                  )}
+
+                </p>
+
+              </div>
+
+              <div className="w-28 h-28 rounded-[32px] bg-green-500/20 flex items-center justify-center">
+
+                <CheckCircle2
+                  size={60}
+                  className="text-green-400"
+                />
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+    </main>
+  );
+}
+
+function StatCard({
+  title,
+  value,
+  icon: Icon,
+  color,
+}: any) {
+  const colorMap: any = {
+    cyan: "text-cyan-400 bg-cyan-500/10",
+
+    orange:
+      "text-orange-400 bg-orange-500/10",
+
+    violet:
+      "text-violet-400 bg-violet-500/10",
+
+    green:
+      "text-green-400 bg-green-500/10",
+
+    yellow:
+      "text-yellow-400 bg-yellow-500/10",
   };
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center bg-black text-white px-6">
+    <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8">
 
-      <h1 className="text-3xl text-yellow-400 mb-6">
-        Post Machinery
-      </h1>
+      <div className="flex items-center justify-between mb-6">
 
-      <div className="w-full max-w-sm">
-
-        <input
-          placeholder="Title"
-          value={title}
-          onChange={(e)=>setTitle(e.target.value)}
-          className="w-full p-3 mb-3 rounded bg-white text-black"
-        />
-
-        <input
-          placeholder="Type"
-          value={type}
-          onChange={(e)=>setType(e.target.value)}
-          className="w-full p-3 mb-3 rounded bg-white text-black"
-        />
-
-        <input
-          placeholder="Model"
-          value={model}
-          onChange={(e)=>setModel(e.target.value)}
-          className="w-full p-3 mb-3 rounded bg-white text-black"
-        />
-
-        <input
-          placeholder="Location"
-          value={location}
-          onChange={(e)=>setLocation(e.target.value)}
-          className="w-full p-3 mb-3 rounded bg-white text-black"
-        />
-
-        <input
-          placeholder="Price"
-          value={price}
-          onChange={(e)=>setPrice(e.target.value)}
-          className="w-full p-3 mb-3 rounded bg-white text-black"
-        />
-
-        <input
-          placeholder="Contact"
-          value={contact}
-          onChange={(e)=>setContact(e.target.value)}
-          className="w-full p-3 mb-3 rounded bg-white text-black"
-        />
-
-        <input
-          type="file"
-          accept="image/*"
-          multiple
-          onChange={(e) => {
-            const files = Array.from(e.target.files || []);
-            setImages(files);
-
-            const previews = files.map((file) =>
-              URL.createObjectURL(file)
-            );
-
-            setImagePreviews(previews);
-          }}
-          className="w-full p-3 mb-3 bg-white text-black rounded"
-        />
-
-        {imagePreviews.length > 0 && (
-          <div className="grid grid-cols-3 gap-2 mb-4">
-            {imagePreviews.map((src, index) => (
-              <img
-                key={index}
-                src={src}
-                className="h-24 w-full object-cover rounded"
-              />
-            ))}
-          </div>
-        )}
-
-        <select
-          value={availability}
-          onChange={(e)=>setAvailability(e.target.value)}
-          className="w-full p-3 mb-3 rounded bg-white text-black"
+        <div
+          className={`w-16 h-16 rounded-3xl flex items-center justify-center ${colorMap[color]}`}
         >
-          <option value="available">Available</option>
-          <option value="rented">Rented</option>
-          <option value="sold">Sold</option>
-          <option value="maintenance">Maintenance</option>
-        </select>
+          <Icon />
+        </div>
 
-        <input
-          placeholder="Condition"
-          value={condition}
-          onChange={(e)=>setCondition(e.target.value)}
-          className="w-full p-3 mb-3 rounded bg-white text-black"
-        />
-
-        <input
-          placeholder="Year"
-          value={year}
-          onChange={(e)=>setYear(e.target.value)}
-          className="w-full p-3 mb-3 rounded bg-white text-black"
-        />
-
-        <label className="flex items-center mb-4">
-          <input
-            type="checkbox"
-            checked={operatorIncluded}
-            onChange={()=>setOperatorIncluded(!operatorIncluded)}
-            className="mr-2"
-          />
-          Operator Included
-        </label>
-
-        <button
-          onClick={handleSubmit}
-          disabled={loading}
-          className={`w-full py-3 rounded ${
-            loading
-              ? "bg-gray-500 cursor-not-allowed"
-              : "bg-yellow-500 text-black"
-          }`}
-        >
-          {loading ? "Posting..." : "Submit"}
-        </button>
-
-        {message && <p className="mt-4 text-center">{message}</p>}
+        <Star className="text-zinc-600" />
 
       </div>
 
-    </main>
+      <div className="text-zinc-400 text-sm mb-3">
+        {title}
+      </div>
+
+      <div className="text-4xl font-black">
+        {value}
+      </div>
+
+    </div>
   );
 }

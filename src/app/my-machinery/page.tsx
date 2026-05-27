@@ -2,73 +2,113 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
-import { useLanguage } from "@/lib/LanguageContext";
+import { getLang, Lang } from "@/lib/i18n";
 
-export default function MyMachinery() {
+type Machinery = {
+  id: string;
+  title: string;
+  created_at?: string;
+};
 
-  const { t } = useLanguage();
-
-  const [machines, setMachines] = useState<any[]>([]);
+export default function MyMachineryPage() {
+  const [lang, setLang] = useState<Lang>("en");
+  const [machines, setMachines] = useState<Machinery[]>([]);
   const [loading, setLoading] = useState(true);
+  const [userId, setUserId] = useState("");
 
-  const fetchMachines = async () => {
-    const { data: userData } = await supabase.auth.getUser();
-    const user = userData.user;
+  useEffect(() => {
+    setLang(getLang());
+    init();
+  }, []);
 
-    if (!user) return;
+  async function init() {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    const uid = user?.id || "";
+    setUserId(uid);
+
+    if (!uid) {
+      setLoading(false);
+      return;
+    }
+
+    await fetchMachines(uid);
+  }
+
+  async function fetchMachines(uid: string) {
+    setLoading(true);
 
     const { data } = await supabase
       .from("machinery")
       .select("*")
-      .eq("user_id", user.id);
+      .eq("owner_id", uid)
+      .order("created_at", { ascending: false });
 
     setMachines(data || []);
     setLoading(false);
-  };
+  }
 
-  useEffect(() => {
-    fetchMachines();
-  }, []);
+  const t = (key: string) => {
+    const dict: Record<string, string> = {
+      deleteConfirm: lang === "am"
+        ? "እርግጠኛ ነዎት መሰረዝ ይፈልጋሉ?"
+        : "Are you sure you want to delete this item?",
+      delete: lang === "am" ? "ሰርዝ" : "Delete",
+      title: lang === "am" ? "የእኔ ማሽኖች" : "My Machinery",
+    };
+
+    return dict[key] || key;
+  };
 
   const handleDelete = async (id: string) => {
-    if (!confirm(t.deleteConfirm)) return;
+    if (!confirm(t("deleteConfirm"))) return;
 
     await supabase.from("machinery").delete().eq("id", id);
-    fetchMachines();
+    await fetchMachines(userId);
   };
-
-  if (loading) {
-    return <div className="text-white p-10">{t.loading}</div>;
-  }
 
   return (
     <main className="min-h-screen bg-black text-white px-6 py-10">
+      <div className="max-w-5xl mx-auto">
 
-      <h1 className="text-3xl text-yellow-400 mb-8 text-center">
-        {t.myMachinery}
-      </h1>
+        <h1 className="text-4xl font-bold mb-8">
+          {t("title")}
+        </h1>
 
-      {machines.map((m) => (
+        {loading && (
+          <p className="text-zinc-400">Loading...</p>
+        )}
 
-        <div key={m.id} className="bg-gray-900 p-5 mb-4 rounded">
+        {!loading && machines.length === 0 && (
+          <p className="text-zinc-500">
+            No machinery found
+          </p>
+        )}
 
-          <h2 className="text-yellow-400">{m.title}</h2>
+        <div className="space-y-4">
+          {machines.map((m) => (
+            <div
+              key={m.id}
+              className="bg-zinc-900 border border-zinc-800 p-5 rounded-2xl flex justify-between items-center"
+            >
+              <div>
+                <p className="font-bold">{m.title}</p>
+                <p className="text-zinc-500 text-sm">{m.id}</p>
+              </div>
 
-          <p>{t.type}: {m.type}</p>
-          <p>{t.location}: {m.location}</p>
-          <p>{t.price}: {m.price}</p>
-
-          <button
-            onClick={() => handleDelete(m.id)}
-            className="bg-red-500 px-4 py-2 mt-3 rounded"
-          >
-            {t.delete}
-          </button>
-
+              <button
+                onClick={() => handleDelete(m.id)}
+                className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-xl font-bold"
+              >
+                {t("delete")}
+              </button>
+            </div>
+          ))}
         </div>
 
-      ))}
-
+      </div>
     </main>
   );
 }

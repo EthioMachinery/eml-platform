@@ -4,157 +4,78 @@ import { useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { motion } from "framer-motion";
 
-export default function RequestModal({ machine, user, onClose }: any) {
-  const [type, setType] = useState("rent");
-  const [message, setMessage] = useState("");
+type Props = {
+  onClose: () => void;
+};
+
+export default function RequestModal({ onClose }: Props) {
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
 
   const submitRequest = async () => {
-    if (!user) {
-      alert("Login required");
-      return;
-    }
+    if (!title || !description) return;
 
     setLoading(true);
 
     const { error } = await supabase.from("machine_requests").insert([
       {
-        requester_id: user.id,
-        owner_id: machine.user_id,
-        machine_id: machine.id,
-        request_type: type,
-        message,
-        status: "pending",
+        title,
+        description,
       },
     ]);
 
     setLoading(false);
 
     if (error) {
-      alert("Error submitting request");
-    } else {
-      alert("Request submitted (Admin will review)");
-      onClose();
-    }
-  };
-
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
-
-      <motion.div
-        initial={{ scale: 0.9 }}
-        animate={{ scale: 1 }}
-        className="bg-white p-6 w-full max-w-md"
-      >
-
-        <h2 className="font-bold text-lg mb-4">
-          Request Service
-        </h2>
-
-        <select
-          value={type}
-          onChange={(e) => setType(e.target.value)}
-          className="w-full border p-2 mb-3"
-        >
-          <option value="rent">Rent</option>
-          <option value="quote">Quote</option>
-          <option value="maintenance">Maintenance</option>
-        </select>
-
-        <textarea
-          placeholder="Describe your need..."
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          className="w-full border p-2 mb-4"
-        />
-
-        <button
-          onClick={submitRequest}
-          className="bg-yellow-400 w-full py-2 font-semibold"
-        >
-          {loading ? "Submitting..." : "Submit Request"}
-        </button>
-
-      </motion.div>
-    </div>
-  );
-}"use client";
-
-import { useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
-import { motion } from "framer-motion";
-
-export default function RequestModal({ machine, user, onClose }: any) {
-  const [type, setType] = useState("rent");
-  const [message, setMessage] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  const submitRequest = async () => {
-    if (!user) {
-      alert("Login required");
+      alert(error.message);
       return;
     }
 
-    setLoading(true);
-
-    const { error } = await supabase.from("machine_requests").insert([
-      {
-        requester_id: user.id,
-        owner_id: machine.user_id,
-        machine_id: machine.id,
-        request_type: type,
-        message,
-        status: "pending",
-      },
-    ]);
-
-    setLoading(false);
-
-    if (error) {
-      alert("Error submitting request");
-    } else {
-      alert("Request submitted (Admin will review)");
-      onClose();
-    }
+    onClose();
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
-
+    <div className="fixed inset-0 bg-black/70 flex items-center justify-center">
       <motion.div
-        initial={{ scale: 0.9 }}
-        animate={{ scale: 1 }}
-        className="bg-white p-6 w-full max-w-md"
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        className="bg-zinc-900 p-6 rounded-2xl w-[400px]"
       >
-
-        <h2 className="font-bold text-lg mb-4">
-          Request Service
+        <h2 className="text-xl font-bold mb-4">
+          Create Request
         </h2>
 
-        <select
-          value={type}
-          onChange={(e) => setType(e.target.value)}
-          className="w-full border p-2 mb-3"
-        >
-          <option value="rent">Rent</option>
-          <option value="quote">Quote</option>
-          <option value="maintenance">Maintenance</option>
-        </select>
-
-        <textarea
-          placeholder="Describe your need..."
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          className="w-full border p-2 mb-4"
+        <input
+          className="w-full p-2 mb-3 bg-zinc-800 rounded"
+          placeholder="Title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
         />
 
-        <button
-          onClick={submitRequest}
-          className="bg-yellow-400 w-full py-2 font-semibold"
-        >
-          {loading ? "Submitting..." : "Submit Request"}
-        </button>
+        <textarea
+          className="w-full p-2 mb-3 bg-zinc-800 rounded"
+          placeholder="Description"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+        />
 
+        <div className="flex justify-between gap-2">
+          <button
+            onClick={onClose}
+            className="bg-gray-600 px-4 py-2 rounded"
+          >
+            Cancel
+          </button>
+
+          <button
+            onClick={submitRequest}
+            disabled={loading}
+            className="bg-green-600 px-4 py-2 rounded"
+          >
+            {loading ? "..." : "Submit"}
+          </button>
+        </div>
       </motion.div>
     </div>
   );

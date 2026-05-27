@@ -2,85 +2,91 @@
 
 import { useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
-import { useLanguage } from "@/lib/LanguageContext";
+import { getLang, Lang } from "@/lib/i18n";
 
-export default function LeaveReview({ targetUserId }: { targetUserId: string }) {
-
-  const { t } = useLanguage();
-
+export default function LeaveReview({ listingId }: { listingId: string }) {
+  const [lang] = useState<Lang>(getLang());
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
-  const handleSubmit = async () => {
+  const t = (key: string) => {
+    const dict: Record<string, string> = {
+      submitting:
+        lang === "am"
+          ? "በመላክ ላይ..."
+          : "Submitting...",
+      success:
+        lang === "am"
+          ? "ተሳክቷል"
+          : "Review submitted successfully",
+      error:
+        lang === "am"
+          ? "ስህተት ተፈጥሯል"
+          : "Something went wrong",
+      submit:
+        lang === "am"
+          ? "ላክ"
+          : "Submit Review",
+    };
+
+    return dict[key] || key;
+  };
+
+  const submitReview = async () => {
+    if (!comment) return;
 
     setLoading(true);
-    setMessage(t.submitting);
+    setMessage(t("submitting"));
 
-    const { data: userData } = await supabase.auth.getUser();
-    const user = userData.user;
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
     if (!user) {
-      setMessage(t.loginRequired);
+      setMessage(t("error"));
       setLoading(false);
       return;
     }
 
-    // 🔥 INSERT REVIEW
     const { error } = await supabase
       .from("reviews")
       .insert([
         {
-          reviewer_id: user.id,
-          target_user_id: targetUserId,
+          listing_id: listingId,
+          user_id: user.id,
           rating,
           comment,
         },
       ]);
 
+    setLoading(false);
+
     if (error) {
-      setMessage(t.errorPosting);
-      setLoading(false);
+      setMessage(t("error"));
       return;
     }
 
-    // 🔥 UPDATE USER RATING (AGGREGATION)
-    const { data: reviews } = await supabase
-      .from("reviews")
-      .select("rating")
-      .eq("target_user_id", targetUserId);
-
-    const avg =
-      reviews?.reduce((sum, r) => sum + r.rating, 0) /
-      (reviews?.length || 1);
-
-    await supabase
-      .from("machinery")
-      .update({
-        rating: avg,
-        total_reviews: reviews?.length || 0,
-      })
-      .eq("user_id", targetUserId);
-
-    setMessage(t.successPost);
-    setLoading(false);
+    setMessage(t("success"));
     setComment("");
+    setRating(5);
   };
 
   return (
-    <div className="bg-gray-900 p-4 rounded mt-4">
-
-      <h3 className="text-yellow-400 mb-2">
-        {t.leaveReview}
-      </h3>
+    <div className="bg-zinc-900 border border-zinc-800 p-5 rounded-2xl space-y-3">
+      <h2 className="text-xl font-bold">
+        {t("submit")}
+      </h2>
 
       <select
+        className="w-full p-2 bg-zinc-800 rounded"
         value={rating}
-        onChange={(e)=>setRating(Number(e.target.value))}
-        className="w-full p-2 mb-3 text-black rounded"
+        onChange={(e) =>
+          setRating(Number(e.target.value))
+        }
       >
-        {[5,4,3,2,1].map(n => (
+        {[5, 4, 3, 2, 1].map((n) => (
           <option key={n} value={n}>
             {n} ⭐
           </option>
@@ -88,21 +94,27 @@ export default function LeaveReview({ targetUserId }: { targetUserId: string }) 
       </select>
 
       <textarea
-        placeholder={t.comment}
+        className="w-full p-2 bg-zinc-800 rounded"
+        placeholder="Write your review..."
         value={comment}
-        onChange={(e)=>setComment(e.target.value)}
-        className="w-full p-3 mb-3 rounded text-black"
+        onChange={(e) =>
+          setComment(e.target.value)
+        }
       />
 
       <button
-        onClick={handleSubmit}
+        onClick={submitReview}
         disabled={loading}
-        className="w-full bg-yellow-500 text-black py-2 rounded"
+        className="bg-green-600 px-4 py-2 rounded font-bold w-full"
       >
-        {loading ? t.posting : t.submit}
+        {loading ? "..." : t("submit")}
       </button>
 
-      {message && <p className="mt-2 text-sm">{message}</p>}
+      {message && (
+        <p className="text-yellow-400 text-sm">
+          {message}
+        </p>
+      )}
     </div>
   );
 }
