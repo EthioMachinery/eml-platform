@@ -11,12 +11,21 @@ import {
   LanguageCode,
 } from "@/constants/languages";
 
+import en from "@/translations/en";
+import am from "@/translations/am";
+import or from "@/translations/or";
+import ti from "@/translations/ti";
+
 type LanguageContextType = {
   language: LanguageCode;
 
   setLanguage: (
     lang: LanguageCode
   ) => void;
+
+  translations: Record<string, any>;
+
+  t: (key: string, fallback?: string) => string;
 };
 
 const LanguageContext =
@@ -59,12 +68,37 @@ export function LanguageProvider({
     );
   }
 
+  const dictionaries = {
+    en,
+    am,
+    or,
+    ti,
+  } as const;
+
+  function t(key: string, fallback = key) {
+    const dictionary = dictionaries[
+      language as keyof typeof dictionaries
+    ];
+
+    return (
+      dictionary[key as keyof typeof dictionary] || fallback
+    );
+  }
+
+  const translations = dictionaries[
+    language as keyof typeof dictionaries
+  ];
+
   return (
     <LanguageContext.Provider
       value={{
         language,
 
         setLanguage,
+
+        translations,
+
+        t,
       }}
     >
       {children}

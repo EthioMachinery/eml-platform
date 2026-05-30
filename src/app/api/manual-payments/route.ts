@@ -16,12 +16,24 @@ export async function GET() {
 export async function POST(req: Request) {
   const body = await req.json();
 
+  if (
+    !body?.payer_name ||
+    !body?.reference_no ||
+    !body?.amount ||
+    !body?.payment_method
+  ) {
+    return NextResponse.json(
+      { success: false, error: "Invalid payload" },
+      { status: 400 }
+    );
+  }
+
   await supabase
     .from("payment_requests")
     .insert({
       payer_name: body.payer_name,
       reference_no: body.reference_no,
-      amount: body.amount,
+      amount: Number(body.amount),
       payment_method: body.payment_method,
       status: "pending"
     });

@@ -18,6 +18,10 @@ export async function POST(req: Request) {
     const body = await req.json();
 
     const amount = Number(body.amount || 0);
+    const dealId = body.deal_id;
+    const payerId = body.payer_id;
+    const idempotencyKey =
+      String(body.idempotency_key || "");
 
     const commission =
       Math.round(amount * 0.05 * 100) / 100;
@@ -25,11 +29,22 @@ export async function POST(req: Request) {
     const providerAmount =
       amount - commission;
 
+    if (!dealId || !payerId || !Number.isFinite(amount) || amount <= 0) {
+      return NextResponse.json(
+        { success: false, error: "Invalid payload" },
+        { status: 400 }
+      );
+    }
+
     const { data } = await supabase
       .from("payments")
       .insert({
-        deal_id: body.deal_id,
-        payer_id: body.payer_id,
+        deal_id: dealId,
+        payer_id: payerId,
+        user_id: payerId,
+        idempotency_key:
+          idempotencyKey ||
+          `${dealId}:${payerId}:${amount}:${Date.now()}`,
         amount,
         commission,
         status: "paid"
@@ -43,7 +58,7 @@ export async function POST(req: Request) {
         status: "paid",
         amount
       })
-      .eq("id", body.deal_id);
+      .eq("id", dealId);
 
     return NextResponse.json({
       success: true,

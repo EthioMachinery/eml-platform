@@ -166,12 +166,12 @@ export default function RegisterPage() {
 
                 <EnterpriseInput
                   label={translate(
-                    translations.forms.name,
+                    "forms.name",
                     language
                   )}
 
                   placeholder={translate(
-                    translations.forms.name,
+                    "forms.name",
                     language
                   )}
 
@@ -188,12 +188,12 @@ export default function RegisterPage() {
 
                 <EnterpriseInput
                   label={translate(
-                    translations.forms.email,
+                    "forms.email",
                     language
                   )}
 
                   placeholder={translate(
-                    translations.forms.email,
+                    "forms.email",
                     language
                   )}
 
@@ -210,9 +210,10 @@ export default function RegisterPage() {
 
                 {/* PHONE */}
 
+
                 <EnterpriseInput
                   label={translate(
-                    translations.forms.phone,
+                    "forms.phone",
                     language
                   )}
 
@@ -249,12 +250,12 @@ export default function RegisterPage() {
 
                 <EnterpriseSelect
                   label={translate(
-                    translations.forms.region,
+                    "forms.region",
                     language
                   )}
 
                   placeholder={translate(
-                    translations.forms.selectRegion,
+                    "forms.selectRegion",
                     language
                   )}
 

@@ -65,7 +65,8 @@ export async function createTransaction({
         commission_amount:
           commissionAmount,
 
-        seller_amount:
+        // NOTE: DB expects seller_receives; keep seller_amount for backward compatibility if present
+        seller_receives:
           sellerAmount,
 
         transaction_type:

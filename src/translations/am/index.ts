@@ -1,10 +1,7 @@
 import { TranslationKey }
   from "@/translations/keys";
 
-const am: Record<
-  TranslationKey,
-  string
-> = {
+const am: Record<string, any> = {
   // NAVIGATION
 
   dashboard: "ዳሽቦርድ",
@@ -136,8 +133,21 @@ const am: Record<
     "የማሽነሪ ብድር፣ ሊዝ፣ escrow እና ኢንሹራንስ አገልግሎቶች።",
 
   // COMMON
-
   explore: "ይመልከቱ",
+
+  common: {
+    select: "አማራጭ ይምረጡ",
+    other: "ሌላ",
+    specify: "እባክዎ ያስገቡ",
+  },
+
+  forms: {
+    name: "ሙሉ ስም",
+    email: "ኢሜይል",
+    phone: "ስልክ ቁጥር",
+    region: "ክልል",
+    selectRegion: "ክልሉን ይምረጡ",
+  },
 };
 
 export default am;

@@ -47,6 +47,7 @@ export function useEnterpriseTranslation() {
 
   return {
     t,
+    tr: t,
     language,
     setLanguage,
   };

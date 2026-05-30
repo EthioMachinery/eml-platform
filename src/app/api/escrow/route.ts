@@ -32,7 +32,7 @@ export async function POST(req: Request) {
             payment_status:
               "held_in_escrow",
           },
-        ])
+        ] as any)
         .select()
         .single();
 

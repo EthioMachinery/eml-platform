@@ -1,10 +1,7 @@
 import { TranslationKey }
   from "@/translations/keys";
 
-const en: Record<
-  TranslationKey,
-  string
-> = {
+const en: Record<string, any> = {
   // NAVIGATION
 
   dashboard: "Dashboard",
@@ -136,8 +133,21 @@ const en: Record<
     "Machinery loans, leasing, escrow and insurance services.",
 
   // COMMON
-
   explore: "Explore",
+
+  common: {
+    select: "Select Option",
+    other: "Other",
+    specify: "Please specify",
+  },
+
+  forms: {
+    name: "Full Name",
+    email: "Email Address",
+    phone: "Phone Number",
+    region: "Region",
+    selectRegion: "Select Region",
+  },
 };
 
 export default en;

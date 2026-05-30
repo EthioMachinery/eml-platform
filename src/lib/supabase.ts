@@ -5,10 +5,10 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
 declare global {
   // eslint-disable-next-line no-var
-  var supabaseClient: ReturnType<typeof createClient> | undefined;
+  var supabaseClient: any | undefined;
 }
 
-export const supabase =
+const supabaseClient =
   globalThis.supabaseClient ??
   createClient(supabaseUrl, supabaseAnonKey, {
     auth: {
@@ -18,6 +18,8 @@ export const supabase =
     },
   });
 
+export const supabase = supabaseClient as any;
+
 if (process.env.NODE_ENV !== "production") {
-  globalThis.supabaseClient = supabase;
+  globalThis.supabaseClient = supabaseClient;
 }

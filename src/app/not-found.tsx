@@ -6,8 +6,8 @@ export default function ErrorPage({
   error,
   reset,
 }: {
-  error: Error;
-  reset: () => void;
+  error?: Error;
+  reset?: () => void;
 }) {
   return (
     <main className="min-h-screen bg-zinc-950 text-white flex items-center justify-center px-4">
@@ -23,7 +23,7 @@ export default function ErrorPage({
         </h1>
 
         <p className="text-zinc-400 leading-8 mb-10">
-          {error.message}
+          {error?.message || "An unexpected error occurred."}
         </p>
 
         <div className="flex flex-wrap items-center justify-center gap-4">

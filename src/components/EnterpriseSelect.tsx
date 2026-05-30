@@ -122,17 +122,7 @@ export default function EnterpriseSelect({
 
             {placeholder ||
               translate(
-                translations.common.select ||
-                  {
-                    en: "Select Option",
-
-                    am: "አማራጭ ይምረጡ",
-
-                    or: "Filannoo Filadhu",
-
-                    ti: "ምርጫ ምረፅ",
-                  },
-
+                "common.select",
                 language
               )}
 
@@ -167,8 +157,7 @@ export default function EnterpriseSelect({
           <option value="other">
 
             {translate(
-              translations.common
-                .other,
+              "common.other",
 
               language
             )}
@@ -195,8 +184,7 @@ export default function EnterpriseSelect({
           <label className="text-sm font-bold text-zinc-400">
 
             {translate(
-              translations.common
-                .specify,
+              "common.specify",
 
               language
             )}
