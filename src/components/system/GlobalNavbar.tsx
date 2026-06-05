@@ -5,7 +5,12 @@ import { useLanguage } from "@/context/LanguageContext";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 export default function GlobalNavbar() {
-  const { t, language } = useLanguage();
+  const { language } = useLanguage();
+
+  // Local helper to translate dual-strings
+  const t = (en, am) => {
+    return language === "am" ? am : en;
+  };
 
   return (
     <header className="w-full border-b bg-white sticky top-0 z-50">

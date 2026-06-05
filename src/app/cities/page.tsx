@@ -4,7 +4,12 @@ import Link from "next/link";
 import { useLanguage } from "@/context/LanguageContext";
 
 export default function EastAfricaScalePage() {
-  const { t } = useLanguage();
+  const { language } = useLanguage();
+
+  // Local helper to translate dual-strings without contract lookup errors
+  const t = (en: string, am: string): string => {
+    return language === "am" ? am : en;
+  };
 
   const markets = [
     {

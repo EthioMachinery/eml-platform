@@ -7,7 +7,12 @@ import { useLanguage } from "@/context/LanguageContext";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 export default function EditMachineryPage() {
-  const { t } = useLanguage();
+  const { language } = useLanguage();
+
+  // Local helper to translate dual-strings without contract lookup errors
+  const t = (en: string, am: string): string => {
+    return language === "am" ? am : en;
+  };
 
   const params = useParams();
   const router = useRouter();
@@ -25,8 +30,7 @@ export default function EditMachineryPage() {
   const [capacity, setCapacity] = useState("");
   const [fuelType, setFuelType] = useState("");
   const [rentalPeriod, setRentalPeriod] = useState("");
-  const [operatorIncluded, setOperatorIncluded] =
-    useState(false);
+  const [operatorIncluded, setOperatorIncluded] = useState(false);
 
   const [price, setPrice] = useState("");
   const [location, setLocation] = useState("");
@@ -160,9 +164,7 @@ export default function EditMachineryPage() {
     <div className="min-h-screen bg-zinc-950 text-white p-6">
 
       {/* HEADER */}
-
       <div className="flex items-center justify-between mb-8">
-
         <div>
           <h1 className="text-4xl font-bold">
             {t(
@@ -183,11 +185,8 @@ export default function EditMachineryPage() {
       </div>
 
       {/* FORM */}
-
       <div className="max-w-4xl mx-auto bg-zinc-900 border border-zinc-800 rounded-2xl p-8">
-
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-
           <Input
             label={t(
               "Machinery Title",
@@ -277,15 +276,11 @@ export default function EditMachineryPage() {
             value={sellerPhone}
             onChange={setSellerPhone}
           />
-
         </div>
 
         {/* OPERATOR */}
-
         <div className="mt-6">
-
           <label className="flex items-center gap-3">
-
             <input
               type="checkbox"
               checked={operatorIncluded}
@@ -293,26 +288,20 @@ export default function EditMachineryPage() {
                 setOperatorIncluded(e.target.checked)
               }
             />
-
             <span>
               {t(
                 "Operator Included",
                 "ኦፕሬተር ተካቷል"
               )}
             </span>
-
           </label>
-
         </div>
 
         {/* DESCRIPTION */}
-
         <div className="mt-6">
-
           <label className="block mb-2 font-bold">
             {t("Description", "መግለጫ")}
           </label>
-
           <textarea
             value={description}
             onChange={(e) =>
@@ -321,11 +310,9 @@ export default function EditMachineryPage() {
             rows={7}
             className="w-full p-4 rounded-xl bg-zinc-950 border border-zinc-700"
           />
-
         </div>
 
         {/* BUTTON */}
-
         <button
           onClick={updateMachinery}
           disabled={saving}
@@ -345,7 +332,6 @@ export default function EditMachineryPage() {
 }
 
 /* INPUT COMPONENT */
-
 function Input({
   label,
   value,
@@ -357,17 +343,14 @@ function Input({
 }) {
   return (
     <div>
-
       <label className="block mb-2 font-bold">
         {label}
       </label>
-
       <input
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className="w-full p-4 rounded-xl bg-zinc-950 border border-zinc-700"
       />
-
     </div>
   );
 }

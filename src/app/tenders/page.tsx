@@ -1,402 +1,289 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import Link from "next/link";
-import { getLang, Lang } from "@/lib/i18n";
+import React, { useState } from "react";
+import { useTranslate } from "@/hooks/useTranslate";
 
-type TenderRow = {
+interface TenderListing {
   id: string;
-  title: string;
-  client: string;
-  category: string;
-  city: string;
-  budget: string;
-  deadline: string;
-  verified?: boolean;
-  urgent?: boolean;
+  projectAgency: string;
+  category: "civil_works" | "mechanized_agriculture" | "mining_infrastructure";
+  localizedTitle: Record<string, string>;
+  localizedScope: Record<string, string>;
+  locationToken: string;
+  estimatedBudget: number;
+  deadlineDate: string;
+  verified: boolean;
+}
+
+// Localized Geographic Map Helper
+const localizedLocations: Record<string, Record<string, string>> = {
+  "addis_ababa": { en: "Addis Ababa", am: "አዲስ አበባ", om: "Finfinnee", ti: "ኣዲስ ኣበባ" },
+  "hawassa": { en: "Hawassa", am: "ሀዋሳ", om: "Hawaas", ti: "ሃዋሳ" },
+  "adama": { en: "Adama", am: "አዳማ", om: "Adaamaa", ti: "ኣማራ" },
+  "mekelle": { en: "Mekelle", am: "መቀሌ", om: "Maqalee", ti: "መቐለ" },
+  "bahir_dar": { en: "Bahir Dar", am: "ባህር ዳር", om: "Baahir Daar", ti: "ባህር ዳር" }
 };
 
-export default function TendersPage() {
-  const [lang, setLangState] =
-    useState<Lang>("en");
-
-  const [search, setSearch] =
-    useState("");
-
-  const [city, setCity] =
-    useState("");
-
-  const [category, setCategory] =
-    useState("");
-
-  const [verifiedOnly,
-    setVerifiedOnly] =
-    useState(false);
-
-  const [rows] =
-    useState<TenderRow[]>([
-      {
-        id: "1",
-        title: "Excavator Rental for Road Project",
-        client: "Habesha Roads PLC",
-        category: "machinery",
-        city: "Addis Ababa",
-        budget: "1,200,000 ETB",
-        deadline: "15 Days",
-        verified: true,
-        urgent: true,
-      },
-      {
-        id: "2",
-        title: "Bridge Site Operators Needed",
-        client: "Abay Engineering",
-        category: "workforce",
-        city: "Bahir Dar",
-        budget: "Negotiable",
-        deadline: "7 Days",
-        verified: true,
-      },
-      {
-        id: "3",
-        title: "Low-bed Transport Tender",
-        client: "Ethio Logistics",
-        category: "transport",
-        city: "Adama",
-        budget: "650,000 ETB",
-        deadline: "10 Days",
-        urgent: true,
-      },
-      {
-        id: "4",
-        title: "Spare Parts Supply Contract",
-        client: "Mega Fleet Group",
-        category: "parts",
-        city: "Dire Dawa",
-        budget: "900,000 ETB",
-        deadline: "20 Days",
-        verified: true,
-      },
-      {
-        id: "5",
-        title: "Tower Crane Lease Request",
-        client: "Capital Towers",
-        category: "machinery",
-        city: "Addis Ababa",
-        budget: "2,800,000 ETB",
-        deadline: "12 Days",
-      },
-      {
-        id: "6",
-        title: "Site Mechanics Required",
-        client: "South Build",
-        category: "workforce",
-        city: "Hawassa",
-        budget: "Negotiable",
-        deadline: "5 Days",
-        urgent: true,
-      },
-    ]);
-
-  useEffect(() => {
-    setLangState(getLang());
-  }, []);
-
-  const isAm =
-    lang === "am";
-
-  const t = {
-    title: isAm
-      ? "ጨረታ እና ፕሮጀክት ገበያ"
-      : "Tender & Projects Marketplace",
-
-    sub: isAm
-      ? "ማሽነሪ • ሰው ኃይል • ትራንስፖርት • ክፍሎች"
-      : "Machinery • Workforce • Transport • Parts",
-
-    search: isAm
-      ? "ጨረታ / ደንበኛ / ከተማ..."
-      : "Search tender / client / city...",
-
-    allCities: isAm
-      ? "ሁሉም ከተሞች"
-      : "All Cities",
-
-    allCats: isAm
-      ? "ሁሉም ክፍሎች"
-      : "All Categories",
-
-    machinery: isAm
-      ? "ማሽነሪ"
-      : "Machinery",
-
-    workforce: isAm
-      ? "የሰው ኃይል"
-      : "Workforce",
-
-    transport: isAm
-      ? "ትራንስፖርት"
-      : "Transport",
-
-    parts: isAm
-      ? "ክፍሎች"
-      : "Parts",
-
-    verified: isAm
-      ? "የተረጋገጡ ብቻ"
-      : "Verified Only",
-
-    urgent: isAm
-      ? "አስቸኳይ"
-      : "Urgent",
-
-    budget: isAm
-      ? "በጀት"
-      : "Budget",
-
-    deadline: isAm
-      ? "የመጨረሻ ቀን"
-      : "Deadline",
-
-    bid: isAm
-      ? "ይግቡ"
-      : "Submit Bid",
-
-    contact: isAm
-      ? "ያግኙ"
-      : "Contact",
-  };
-
-  const cities =
-    Array.from(
-      new Set(
-        rows.map(
-          (x) => x.city
-        )
-      )
-    );
-
-  const filtered =
-    useMemo(() => {
-      let list = [...rows];
-
-      if (search) {
-        list = list.filter(
-          (x) =>
-            x.title
-              .toLowerCase()
-              .includes(search.toLowerCase()) ||
-            x.client
-              .toLowerCase()
-              .includes(search.toLowerCase()) ||
-            x.city
-              .toLowerCase()
-              .includes(search.toLowerCase())
-        );
-      }
-
-      if (city) {
-        list = list.filter(
-          (x) =>
-            x.city === city
-        );
-      }
-
-      if (category) {
-        list = list.filter(
-          (x) =>
-            x.category === category
-        );
-      }
-
-      if (verifiedOnly) {
-        list = list.filter(
-          (x) =>
-            x.verified
-        );
-      }
-
-      return list;
-    }, [
-      rows,
-      search,
-      city,
-      category,
-      verifiedOnly,
-    ]);
-
-  function catLabel(v:string) {
-    if (v==="machinery") return t.machinery;
-    if (v==="workforce") return t.workforce;
-    if (v==="transport") return t.transport;
-    return t.parts;
+// Mock dataset representing active public and private tenders in Ethiopia
+const initialTenders: TenderListing[] = [
+  {
+    id: "tender-001",
+    projectAgency: "Ethiopian Roads Administration (ERA)",
+    category: "civil_works",
+    localizedTitle: {
+      en: "Addis Ababa - Adama Expressway Phase 3 Expansion",
+      am: "የአዲስ አበባ - አዳማ የፍጥነት መንገድ 3ኛ ምዕራፍ ማስፋፊያ",
+      om: "Ijaarsa Babal’isuu Daandii Saffisaa Finfinnee - Adaamaa Marsaa 3ffaa",
+      ti: "ህንጸት መጋፍሒ መገዲ ቅልጣፈ ኣዲስ ኣበባ - ኣዳማ ሳልሳይ ምዕራፍ"
+    },
+    localizedScope: {
+      en: "Requires deployment of 12 crawler excavators, 8 graders, and 14 heavy dump trucks. Escrow billing option integrated.",
+      am: "፲፪ ኤክስካቫተሮች፣ ፰ ግሬደሮች እና ፲፬ ከባድ ገልባጭ መኪናዎችን ማሰማራት ይጠይቃል። ታማኝ የክፍያ ዋስትና ተካቷል።",
+      om: "Eskavaatarii 12, Gireederii 8 fi Daampii 14 bobbaasuu gaafata. Kafaltiin wabii of keessaa qaba.",
+      ti: "፲፪ መኹዓቲ ማሽናት፣ ፰ ግሬደራት ከምኡ እውን ፲፬ ዱምፕ ትራክታት ምውፋር ዝሓትት። ውሑስ ክፍሊት ዝተሓወሶ እዩ።"
+    },
+    locationToken: "adama",
+    estimatedBudget: 85000000, // 85M ETB
+    deadlineDate: "2026-08-15",
+    verified: true
+  },
+  {
+    id: "tender-002",
+    projectAgency: "Afar Potash Mining & Sourcing Corp",
+    category: "mining_infrastructure",
+    localizedTitle: {
+      en: "Afar Salt Plain Quarry Digging & Heavy Sourcing Contract",
+      am: "የአፋር የጨው ሜዳ ቁፋሮ እና የከባድ ማሽነሪ አቅርቦት ስምምነት",
+      om: "Kiraa Qotama Lafa Soogidda Afaar fi Dhiyeessii Maashinarii Ulfaataa",
+      ti: "ናይ ዓፋር ጨው ጐልጐል መኹዓትን ቀረብ ከበድቲ ማሽነሪታትን ስምምዕ"
+    },
+    localizedScope: {
+      en: "Bidding open for 30-ton heavy mining loaders, stone crushers, and bulk diesel transport operators.",
+      am: "ለባለ 30 ቶን ሎደሮች፣ ለድንጋይ መፍጫ ማሽኖች እና ለነዳጅ ማጓጓዣዎች ክፍት የሆነ የጨረታ ጥሪ።",
+      om: "Loodaroota Toonii 30, maashinii dhagaa daakuufi dhiyeessitoota boba’aaf caalbaasiin qophaayeera.",
+      ti: "ንናይ 30 ቶን ሎደራት፣ መፍጨቒ ኣእማንን መጓዓዝቲ ነዳድን ዝተዳለወ ክፉት ጨረታ።"
+    },
+    locationToken: "addis_ababa",
+    estimatedBudget: 142000000, // 142M ETB
+    deadlineDate: "2026-09-01",
+    verified: true
+  },
+  {
+    id: "tender-003",
+    projectAgency: "Oromia Mechanized Sugarcane Sourcing",
+    category: "mechanized_agriculture",
+    localizedTitle: {
+      en: "Wonji Sugarcane Estate Irrigation & Harvesting Contract",
+      am: "የወንጂ ስኳር ፋብሪካ የሸንኮራ አገዳ የመስኖ ቦይ እና የመኸር ግንባታ",
+      om: "Ijaarsa Jallisiifi Haama Shonkooraa Warshaa Wonjii",
+      ti: "ናይ ወንጂ ሽኮር ፋብሪካ መትረብ መስኖን ዕደናን ህንጸት"
+    },
+    localizedScope: {
+      en: "Requires agricultural tractors, land clearers, and heavy lowbeds to transport equipment dynamically.",
+      am: "የግብርና ትራክተሮች፣ የጫካ መመንጠሪያ ማሽኖች እና የከባድ ጭነት መኪናዎችን ማሰማራት ይጠይቃል።",
+      om: "Tiraaktaroota qonnaa, maashinii lafa qulqulleessuufi geessitoota maashinarii ulfaatoo gaafata.",
+      ti: "ናይ ሕርሻ ትራክተራት፣ መመንጠሪ መሬትን ከበድቲ መጓዓዝቲ መኪናታትን ምውፋር ዝሓትት።"
+    },
+    locationToken: "hawassa",
+    estimatedBudget: 45000000, // 45M ETB
+    deadlineDate: "2026-07-20",
+    verified: false
   }
+];
+
+export default function TendersPage() {
+  const { t, currentLanguage } = useTranslate();
+  
+  // States
+  const [selectedCategory, setSelectedCategory] = useState<"all" | "civil" | "agro" | "mining">("all");
+  const [selectedLocation, setSelectedLocation] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const filteredTenders = initialTenders.filter((item) => {
+    // Category match
+    let matchesCategory = true;
+    if (selectedCategory === "civil") matchesCategory = item.category === "civil_works";
+    if (selectedCategory === "agro") matchesCategory = item.category === "mechanized_agriculture";
+    if (selectedCategory === "mining") matchesCategory = item.category === "mining_infrastructure";
+
+    // Location match
+    const matchesLocation = selectedLocation ? item.locationToken === selectedLocation : true;
+
+    // Search query match
+    const title = item.localizedTitle[currentLanguage] || item.localizedTitle["en"];
+    const scope = item.localizedScope[currentLanguage] || item.localizedScope["en"];
+    const matchesSearch = title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      scope.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.projectAgency.toLowerCase().includes(searchTerm.toLowerCase());
+
+    return matchesCategory && matchesLocation && matchesSearch;
+  });
 
   return (
-    <main className="min-h-screen bg-black text-white px-6 py-10">
-      <div className="max-w-7xl mx-auto">
+    <div className="bg-black min-h-screen text-white py-12 px-4 sm:px-6 lg:px-8" id="eml-tenders-portal">
+      <div className="max-w-7xl mx-auto space-y-10">
+        
+        {/* Page Header */}
+        <header className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 pb-6 border-b border-zinc-900">
+          <div className="space-y-1">
+            <span className="text-xs font-bold text-amber-500 bg-amber-500/10 px-3 py-1 rounded-full uppercase tracking-widest border border-amber-500/20">
+              🏛️ {t("services.tenders")}
+            </span>
+            <h1 className="text-3xl font-black text-white uppercase tracking-tight">
+              Ecosystem Bids & Tenders
+            </h1>
+            <p className="text-sm text-zinc-400">
+              Find, view, and bid on premium public and private sector heavy machinery contracts throughout Ethiopia.
+            </p>
+          </div>
 
-        {/* HERO */}
-        <div className="mb-10 text-center">
-          <h1 className="text-5xl font-black mb-4 bg-gradient-to-r from-cyan-400 via-green-500 to-yellow-500 bg-clip-text text-transparent">
-            {t.title}
-          </h1>
-
-          <p className="text-zinc-400 text-xl">
-            {t.sub}
-          </p>
-        </div>
-
-        {/* FILTERS */}
-        <div className="grid md:grid-cols-4 gap-4 mb-10">
-
-          <input
-            value={search}
-            onChange={(e)=>
-              setSearch(
-                e.target.value
-              )
-            }
-            placeholder={t.search}
-            className="bg-zinc-900 border border-zinc-800 rounded-2xl px-4 py-3"
-          />
-
-          <select
-            value={city}
-            onChange={(e)=>
-              setCity(
-                e.target.value
-              )
-            }
-            className="bg-zinc-900 border border-zinc-800 rounded-2xl px-4 py-3"
-          >
-            <option value="">
-              {t.allCities}
-            </option>
-
-            {cities.map((c)=>(
-              <option key={c} value={c}>
-                {c}
-              </option>
+          {/* Category Quick Filter */}
+          <div className="flex flex-wrap bg-zinc-900 p-1 rounded-lg border border-zinc-800">
+            {(["all", "civil", "agro", "mining"] as const).map((cat) => (
+              <button
+                key={cat}
+                type="button"
+                onClick={() => setSelectedCategory(cat)}
+                className={`px-4 py-1.5 rounded-md text-xs font-bold uppercase transition-all ${
+                  selectedCategory === cat
+                    ? "bg-amber-500 text-white"
+                    : "text-zinc-400 hover:text-white"
+                }`}
+              >
+                {cat === "all" ? "All Tenders" : cat === "civil" ? "Civil Works" : cat === "agro" ? "Agriculture" : "Mining"}
+              </button>
             ))}
-          </select>
+          </div>
+        </header>
 
-          <select
-            value={category}
-            onChange={(e)=>
-              setCategory(
-                e.target.value
-              )
-            }
-            className="bg-zinc-900 border border-zinc-800 rounded-2xl px-4 py-3"
-          >
-            <option value="">
-              {t.allCats}
-            </option>
-            <option value="machinery">
-              {t.machinery}
-            </option>
-            <option value="workforce">
-              {t.workforce}
-            </option>
-            <option value="transport">
-              {t.transport}
-            </option>
-            <option value="parts">
-              {t.parts}
-            </option>
-          </select>
+        {/* Filters and List Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          
+          {/* Sidebar Filters */}
+          <aside className="bg-zinc-950 border border-zinc-900 rounded-xl p-5 space-y-5 h-fit">
+            <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-400 border-b border-zinc-900 pb-3">
+              Filter Tenders
+            </h3>
 
-          <label className="bg-zinc-900 border border-zinc-800 rounded-2xl px-4 py-3 flex items-center gap-3">
-            <input
-              type="checkbox"
-              checked={verifiedOnly}
-              onChange={(e)=>
-                setVerifiedOnly(
-                  e.target.checked
-                )
-              }
-            />
-            {t.verified}
-          </label>
-
-        </div>
-
-        {/* GRID */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-7">
-
-          {filtered.map((item)=>(
-            <div
-              key={item.id}
-              className="bg-zinc-900 border border-zinc-800 rounded-3xl p-7"
-            >
-              <div className="flex justify-between items-start mb-4">
-
-                <div>
-                  <h2 className="text-2xl font-bold">
-                    {item.title}
-                  </h2>
-
-                  <p className="text-zinc-400 mt-1">
-                    {item.client}
-                  </p>
-                </div>
-
-                <div className="flex gap-2">
-                  {item.verified && (
-                    <span className="px-3 py-1 rounded-full bg-green-600 text-sm font-bold">
-                      ✓
-                    </span>
-                  )}
-
-                  {item.urgent && (
-                    <span className="px-3 py-1 rounded-full bg-red-600 text-sm font-bold">
-                      {t.urgent}
-                    </span>
-                  )}
-                </div>
-
-              </div>
-
-              <p className="mb-2">
-                📍 {item.city}
-              </p>
-
-              <p className="mb-2">
-                {catLabel(item.category)}
-              </p>
-
-              <p className="mb-2 text-green-400 font-bold">
-                {t.budget}: {item.budget}
-              </p>
-
-              <p className="mb-6 text-zinc-400">
-                {t.deadline}: {item.deadline}
-              </p>
-
-              <div className="grid grid-cols-2 gap-3">
-
-                <Link
-                  href="/dashboard/messages"
-                  className="text-center bg-blue-600 hover:bg-blue-700 py-3 rounded-2xl font-bold"
-                >
-                  {t.bid}
-                </Link>
-
-                <Link
-                  href="/dashboard/messages"
-                  className="text-center bg-green-600 hover:bg-green-700 py-3 rounded-2xl font-bold"
-                >
-                  {t.contact}
-                </Link>
-
-              </div>
-
+            {/* Keyword Search */}
+            <div className="space-y-1.5">
+              <label className="block text-xs font-bold text-zinc-400 uppercase tracking-wider">
+                Keyword Search
+              </label>
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search agency, project..."
+                className="w-full px-4 py-2.5 rounded-lg border bg-zinc-950 text-white border-zinc-800 focus:outline-none focus:ring-2 focus:ring-amber-500 transition-colors text-xs"
+              />
             </div>
-          ))}
 
+            {/* Location Select */}
+            <div className="space-y-1.5">
+              <label className="block text-xs font-bold text-zinc-400 uppercase tracking-wider">
+                {t("labels.location")}
+              </label>
+              <select
+                value={selectedLocation}
+                onChange={(e) => setSelectedLocation(e.target.value)}
+                className="w-full px-4 py-2.5 rounded-lg border bg-zinc-950 text-white border-zinc-800 focus:outline-none focus:ring-2 focus:ring-amber-500 transition-colors text-xs"
+              >
+                <option value="" className="bg-zinc-950 text-white">{t("placeholders.selectLocation")}</option>
+                {Object.keys(localizedLocations).map((key) => (
+                  <option key={key} value={key} className="bg-zinc-950 text-white">
+                    {localizedLocations[key][currentLanguage] || localizedLocations[key]["en"]}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </aside>
+
+          {/* Tenders Directory */}
+          <main className="lg:col-span-3 space-y-6">
+            {filteredTenders.length === 0 ? (
+              <div className="flex flex-col items-center justify-center p-12 border-2 border-dashed border-zinc-900 rounded-xl bg-zinc-950/20">
+                <p className="text-zinc-400 text-sm font-semibold">
+                  No active tenders found matching your selected criteria.
+                </p>
+              </div>
+            ) : (
+              filteredTenders.map((item) => {
+                const localizedTitle = item.localizedTitle[currentLanguage] || item.localizedTitle["en"];
+                const localizedScope = item.localizedScope[currentLanguage] || item.localizedScope["en"];
+                const localizedCity = localizedLocations[item.locationToken]?.[currentLanguage] || localizedLocations[item.locationToken]?.["en"];
+                const currencyFormatter = new Intl.NumberFormat("en-US", { style: "decimal" });
+
+                return (
+                  <article
+                    key={item.id}
+                    className="bg-zinc-950 border border-zinc-900 rounded-xl p-6 md:p-8 hover:border-zinc-800 transition-all duration-150 flex flex-col md:flex-row justify-between gap-6"
+                  >
+                    <div className="space-y-4 flex-grow max-w-2xl">
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-3">
+                          <span className="text-[10px] font-black text-amber-500 uppercase tracking-widest bg-amber-500/10 px-2 py-0.5 rounded">
+                            {item.category.replace("_", " ")}
+                          </span>
+                          
+                          {item.verified && (
+                            <span className="bg-green-500/10 text-green-400 border border-green-500/20 text-[9px] font-black uppercase px-2 py-0.5 rounded tracking-wider">
+                              Verified Agency
+                            </span>
+                          )}
+                        </div>
+                        <h3 className="text-lg sm:text-xl font-black text-white leading-snug">
+                          {localizedTitle}
+                        </h3>
+                        <span className="block text-xs font-bold text-zinc-500">
+                          Issued by: {item.projectAgency}
+                        </span>
+                      </div>
+
+                      <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed">
+                        {localizedScope}
+                      </p>
+
+                      {/* Details Strip */}
+                      <div className="flex flex-wrap gap-4 text-xs text-zinc-500 pt-2">
+                        <div>
+                          <span className="text-[9px] font-bold text-zinc-600 uppercase block">Deployment Site</span>
+                          <span className="font-semibold text-zinc-300">{localizedCity}</span>
+                        </div>
+                        <div>
+                          <span className="text-[9px] font-bold text-zinc-600 uppercase block">Submission Deadline</span>
+                          <span className="font-semibold text-zinc-300">{item.deadlineDate}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Financials & Action Footer */}
+                    <div className="flex flex-col justify-between items-start md:items-end min-w-[200px] border-t md:border-t-0 md:border-l border-zinc-900 pt-6 md:pt-0 md:pl-6">
+                      <div className="mb-4 md:text-right">
+                        <span className="text-[9px] text-zinc-500 block uppercase font-bold">
+                          Estimated Project Budget
+                        </span>
+                        <span className="text-xl font-black text-white tracking-tight">
+                          {currencyFormatter.format(item.estimatedBudget)} <span className="text-xs font-bold text-zinc-400">ETB</span>
+                        </span>
+                      </div>
+
+                      <button
+                        type="button"
+                        className="w-full md:w-auto px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-xs font-bold uppercase tracking-wider transition-all shadow-sm"
+                        onClick={() => alert(`EML Tender Registration. Processing administrative bidding document entry fee of 500 ETB.`)}
+                      >
+                        Register to Bid
+                      </button>
+                    </div>
+
+                  </article>
+                );
+              })
+            )}
+          </main>
         </div>
-
       </div>
-    </main>
+    </div>
   );
 }

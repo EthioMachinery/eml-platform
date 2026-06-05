@@ -18,7 +18,7 @@ export function getLang(): Lang {
     return "en";
   }
 
-  const storedLang = window.localStorage.getItem("lang");
+  const storedLang = window.localStorage.getItem("eml_locale") || window.localStorage.getItem("lang");
 
   if (
     storedLang === "en" ||
@@ -26,7 +26,7 @@ export function getLang(): Lang {
     storedLang === "or" ||
     storedLang === "ti"
   ) {
-    return storedLang;
+    return storedLang as Lang;
   }
 
   if (typeof navigator !== "undefined") {
@@ -34,7 +34,7 @@ export function getLang(): Lang {
       return "am";
     }
 
-    if (navigator.language?.startsWith("om")) {
+    if (navigator.language?.startsWith("om") || navigator.language?.startsWith("or")) {
       return "or";
     }
 
@@ -84,33 +84,17 @@ export function translate(
       );
     }
 
-    const langPack =
-      translations[language];
+    const langPack = translations[language];
 
-    const value =
-      getNestedValue(
-        langPack,
-        key as string
-      );
+    const value = getNestedValue(langPack, key as string);
 
-    if (
-      value !== null &&
-      value !== undefined
-    ) {
+    if (value !== null && value !== undefined) {
       return value;
     }
 
-    const englishFallback =
-      getNestedValue(
-        translations.en,
-        key as string
-      );
+    const englishFallback = getNestedValue(translations.en, key as string);
 
-    if (
-      englishFallback !== null &&
-      englishFallback !==
-        undefined
-    ) {
+    if (englishFallback !== null && englishFallback !== undefined) {
       return englishFallback;
     }
 

@@ -1,345 +1,279 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import Link from "next/link";
-import {
-  Search,
-  Briefcase,
-  MapPin,
-  Star,
-  ShieldCheck,
-  Filter,
-  Clock3,
-  ArrowRight,
-  Users,
-  Truck,
-  Wrench,
-} from "lucide-react";
+import React, { useState } from "react";
+import { useTranslate } from "@/hooks/useTranslate";
 
-type Job = {
-  id: number;
-  title: string;
-  company: string;
-  city: string;
-  type: string;
-  salary: string;
-  urgent: boolean;
+interface ProfessionalProfile {
+  id: string;
+  fullName: string;
+  roleToken: "certified_operator" | "equipment_mechanic" | "logistics_transporter";
+  specialtyTokens: string[]; // Token list for dynamic lookup
+  experienceYears: number;
+  locationToken: string;
+  phone: string;
   verified: boolean;
-  posted: string;
-  category: string;
+  dailyRate: number;
+}
+
+const localizedLocations: Record<string, Record<string, string>> = {
+  "addis_ababa": { en: "Addis Ababa", am: "አዲስ አበባ", om: "Finfinnee", ti: "ኣዲስ ኣበባ" },
+  "hawassa": { en: "Hawassa", am: "ሀዋሳ", om: "Hawaas", ti: "ሃዋሳ" },
+  "adama": { en: "Adama", am: "አዳማ", om: "Adaamaa", ti: "ኣማራ" },
+  "mekelle": { en: "Mekelle", am: "መቀሌ", om: "Maqalee", ti: "መቐለ" },
+  "bahir_dar": { en: "Bahir Dar", am: "ባህር ዳር", om: "Baahir Daar", ti: "ባህር ዳር" }
 };
 
-export default function JobsPage() {
-  const [query, setQuery] = useState("");
-  const [city, setCity] = useState("All Cities");
-  const [category, setCategory] = useState("All Roles");
-
-  const jobs: Job[] = [
-    {
-      id: 1,
-      title: "Excavator Operator",
-      company: "Addis Earthworks PLC",
-      city: "Addis Ababa",
-      type: "Full Time",
-      salary: "35,000 ETB / month",
-      urgent: true,
-      verified: true,
-      posted: "Today",
-      category: "Operator",
-    },
-    {
-      id: 2,
-      title: "Heavy Truck Driver",
-      company: "National Logistics Group",
-      city: "Adama",
-      type: "Contract",
-      salary: "28,000 ETB / month",
-      urgent: true,
-      verified: true,
-      posted: "1 day ago",
-      category: "Driver",
-    },
-    {
-      id: 3,
-      title: "Hydraulic Technician",
-      company: "Hawassa Machine Care",
-      city: "Hawassa",
-      type: "Full Time",
-      salary: "32,000 ETB / month",
-      urgent: false,
-      verified: true,
-      posted: "2 days ago",
-      category: "Technician",
-    },
-    {
-      id: 4,
-      title: "Crane Operator",
-      company: "Dire Mega Projects",
-      city: "Dire Dawa",
-      type: "Project Based",
-      salary: "45,000 ETB / month",
-      urgent: false,
-      verified: true,
-      posted: "Today",
-      category: "Operator",
-    },
-    {
-      id: 5,
-      title: "Fleet Maintenance Manager",
-      company: "Blue Nile Construction",
-      city: "Bahir Dar",
-      type: "Full Time",
-      salary: "55,000 ETB / month",
-      urgent: false,
-      verified: true,
-      posted: "3 days ago",
-      category: "Management",
-    },
-    {
-      id: 6,
-      title: "Diesel Mechanic",
-      company: "North Industrial Services",
-      city: "Mekelle",
-      type: "Full Time",
-      salary: "30,000 ETB / month",
-      urgent: true,
-      verified: false,
-      posted: "Today",
-      category: "Mechanic",
-    },
-  ];
-
-  const cities = [
-    "All Cities",
-    "Addis Ababa",
-    "Adama",
-    "Hawassa",
-    "Dire Dawa",
-    "Bahir Dar",
-    "Mekelle",
-  ];
-
-  const categories = [
-    "All Roles",
-    "Operator",
-    "Driver",
-    "Technician",
-    "Mechanic",
-    "Management",
-  ];
-
-  const filtered = useMemo(() => {
-    return jobs.filter((job) => {
-      const q =
-        job.title.toLowerCase().includes(query.toLowerCase()) ||
-        job.company.toLowerCase().includes(query.toLowerCase());
-
-      const c = city === "All Cities" ? true : job.city === city;
-
-      const g =
-        category === "All Roles"
-          ? true
-          : job.category === category;
-
-      return q && c && g;
-    });
-  }, [query, city, category]);
-
-  function iconByCategory(cat: string) {
-    if (cat === "Driver") return Truck;
-    if (cat === "Mechanic") return Wrench;
-    return Users;
+// Vetted talent records synced cleanly with the translation contract
+const initialProfessionals: ProfessionalProfile[] = [
+  {
+    id: "prof-1",
+    fullName: "Bekele Gizaw",
+    roleToken: "certified_operator",
+    specialtyTokens: ["categories.excavator", "categories.dozer"],
+    experienceYears: 8,
+    locationToken: "addis_ababa",
+    phone: "0911123456",
+    verified: true,
+    dailyRate: 1500
+  },
+  {
+    id: "prof-2",
+    fullName: "Tolosa Dibaba",
+    roleToken: "certified_operator",
+    specialtyTokens: ["categories.loader", "categories.grader"],
+    experienceYears: 5,
+    locationToken: "adama",
+    phone: "0912345678",
+    verified: true,
+    dailyRate: 1200
+  },
+  {
+    id: "prof-3",
+    fullName: "Gebremariam Kahsay",
+    roleToken: "equipment_mechanic",
+    specialtyTokens: ["jobs.hydraulics", "jobs.catEngines"],
+    experienceYears: 12,
+    locationToken: "mekelle",
+    phone: "0913456789",
+    verified: true,
+    dailyRate: 2000
+  },
+  {
+    id: "prof-4",
+    fullName: "Yonas Assefa",
+    roleToken: "logistics_transporter",
+    specialtyTokens: ["jobs.lowbed", "jobs.hauler"],
+    experienceYears: 6,
+    locationToken: "bahir_dar",
+    phone: "0914567890",
+    verified: false,
+    dailyRate: 4500
   }
+];
+
+export default function JobsPage() {
+  const { t, currentLanguage } = useTranslate();
+  
+  const [selectedRole, setSelectedRole] = useState<"all" | "operator" | "mechanic">("all");
+  const [selectedLocation, setSelectedLocation] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const filteredProfessionals = initialProfessionals.filter((item) => {
+    let matchesRole = true;
+    if (selectedRole === "operator") matchesRole = item.roleToken === "certified_operator";
+    if (selectedRole === "mechanic") matchesRole = item.roleToken === "equipment_mechanic";
+
+    const matchesLocation = selectedLocation ? item.locationToken === selectedLocation : true;
+
+    // Direct dynamic translation of name and specialties search matching
+    const translatedRole = item.roleToken === "certified_operator" ? t("stakeholders.operators") : t("stakeholders.mechanics");
+    const matchesKeyword = item.fullName.toLowerCase().includes(searchTerm.toLowerCase()) || 
+      item.specialtyTokens.some(tok => t(tok as any).toLowerCase().includes(searchTerm.toLowerCase())) ||
+      translatedRole.toLowerCase().includes(searchTerm.toLowerCase());
+
+    return matchesRole && matchesLocation && matchesKeyword;
+  });
 
   return (
-    <main className="min-h-screen bg-slate-50">
-
-      {/* HERO */}
-      <section className="bg-black text-white">
-        <div className="max-w-7xl mx-auto px-4 py-16">
-
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-500 text-black font-black text-sm">
-            Workforce & Talent Hub
+    <div className="bg-black min-h-screen text-white py-12 px-4 sm:px-6 lg:px-8" id="eml-jobs-portal">
+      <div className="max-w-7xl mx-auto space-y-10">
+        
+        {/* Portal Header */}
+        <header className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 pb-6 border-b border-zinc-900">
+          <div className="space-y-1">
+            <span className="text-xs font-bold text-amber-500 bg-amber-500/10 px-3 py-1 rounded-full uppercase tracking-widest border border-amber-500/20">
+              💼 {t("services.jobs")}
+            </span>
+            <h1 className="text-3xl font-black text-white uppercase tracking-tight">
+              {t("jobs.title")}
+            </h1>
+            <p className="text-sm text-zinc-400">
+              {t("jobs.subtitle")}
+            </p>
           </div>
 
-          <h1 className="mt-6 text-5xl md:text-7xl font-black leading-tight">
-            Hire Skilled Operators & Industrial Talent
-          </h1>
+          {/* Role Filter Tabs */}
+          <div className="flex bg-zinc-900 p-1 rounded-lg border border-zinc-800">
+            {(["all", "operator", "mechanic"] as const).map((role) => (
+              <button
+                key={role}
+                type="button"
+                onClick={() => setSelectedRole(role)}
+                className={`px-4 py-1.5 rounded-md text-xs font-bold uppercase transition-all ${
+                  selectedRole === role
+                    ? "bg-amber-500 text-white"
+                    : "text-zinc-400 hover:text-white"
+                }`}
+              >
+                {role === "all" ? t("actions.filterAll") : role === "operator" ? t("stakeholders.operators") : t("stakeholders.mechanics")}
+              </button>
+            ))}
+          </div>
+        </header>
 
-          <p className="mt-5 text-white/75 text-lg max-w-3xl leading-8">
-            Find excavator operators, crane operators, drivers,
-            mechanics, technicians and fleet managers across Ethiopia.
-          </p>
+        {/* Dynamic Sidebar Filters and Grid Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          
+          {/* Sidebar */}
+          <aside className="bg-zinc-950 border border-zinc-900 rounded-xl p-5 space-y-5 h-fit">
+            <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-400 border-b border-zinc-900 pb-3">
+              {t("jobs.filterTalent")}
+            </h3>
 
-          {/* SEARCH */}
-          <div className="mt-8 bg-white rounded-3xl p-3 grid md:grid-cols-4 gap-3">
-
-            <div className="md:col-span-2 flex items-center px-3">
-              <Search className="text-slate-400 mr-2" size={18} />
-
+            {/* Keyword Search */}
+            <div className="space-y-1.5">
+              <label className="block text-xs font-bold text-zinc-400 uppercase tracking-wider">
+                {t("jobs.keywordSearch")}
+              </label>
               <input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search operator, mechanic, driver..."
-                className="w-full h-12 outline-none text-black"
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder={t("jobs.searchPlaceholder")}
+                className="w-full px-4 py-2.5 rounded-lg border bg-zinc-950 text-white border-zinc-800 focus:outline-none focus:ring-2 focus:ring-amber-500 transition-colors text-xs"
               />
             </div>
 
-            <select
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-              className="h-12 rounded-2xl border px-4 text-black"
-            >
-              {cities.map((c) => (
-                <option key={c}>{c}</option>
-              ))}
-            </select>
-
-            <select
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className="h-12 rounded-2xl border px-4 text-black"
-            >
-              {categories.map((c) => (
-                <option key={c}>{c}</option>
-              ))}
-            </select>
-
-          </div>
-
-        </div>
-      </section>
-
-      {/* STATS */}
-      <section className="max-w-7xl mx-auto px-4 py-10">
-        <div className="grid md:grid-cols-4 gap-4">
-          {[
-            ["5K+", "Active Candidates"],
-            ["800+", "Open Jobs"],
-            ["80+", "Cities Reach"],
-            ["24h", "Urgent Hiring Speed"],
-          ].map(([value, label]) => (
-            <div
-              key={label}
-              className="bg-white rounded-3xl border p-6"
-            >
-              <div className="text-3xl font-black text-yellow-700">
-                {value}
-              </div>
-              <div className="text-slate-500 mt-1">
-                {label}
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* RESULTS */}
-      <section className="max-w-7xl mx-auto px-4 pb-20">
-
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-3xl font-black">
-            Open Roles
-          </h2>
-
-          <div className="text-slate-500 flex items-center gap-2">
-            <Filter size={16} />
-            {filtered.length} jobs
-          </div>
-        </div>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-
-          {filtered.map((job) => {
-            const Icon = iconByCategory(job.category);
-
-            return (
-              <div
-                key={job.id}
-                className="bg-white rounded-3xl border p-6 shadow-sm hover:shadow-xl transition"
+            {/* Location Select */}
+            <div className="space-y-1.5">
+              <label className="block text-xs font-bold text-zinc-400 uppercase tracking-wider">
+                {t("labels.location")}
+              </label>
+              <select
+                value={selectedLocation}
+                onChange={(e) => setSelectedLocation(e.target.value)}
+                className="w-full px-4 py-2.5 rounded-lg border bg-zinc-950 text-white border-zinc-800 focus:outline-none focus:ring-2 focus:ring-amber-500 transition-colors text-xs"
               >
-                <div className="flex items-start justify-between gap-3">
+                <option value="" className="bg-zinc-950 text-white">{t("placeholders.selectLocation")}</option>
+                {Object.keys(localizedLocations).map((key) => (
+                  <option key={key} value={key} className="bg-zinc-950 text-white">
+                    {localizedLocations[key][currentLanguage] || localizedLocations[key]["en"]}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </aside>
 
-                  <div>
-                    <div className="text-xl font-black">
-                      {job.title}
-                    </div>
-
-                    <div className="mt-2 text-slate-500 flex items-center gap-2">
-                      <Briefcase size={15} />
-                      {job.company}
-                    </div>
-
-                    <div className="mt-2 text-slate-500 flex items-center gap-2">
-                      <MapPin size={15} />
-                      {job.city}
-                    </div>
-                  </div>
-
-                  {job.verified && (
-                    <div className="px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-black flex items-center gap-1">
-                      <ShieldCheck size={12} />
-                      VERIFIED
-                    </div>
-                  )}
-
-                </div>
-
-                <div className="mt-5 text-3xl font-black text-yellow-700">
-                  {job.salary}
-                </div>
-
-                <div className="mt-3 flex items-center justify-between text-sm">
-                  <div className="text-slate-500">
-                    {job.type}
-                  </div>
-
-                  {job.urgent && (
-                    <div className="font-bold text-red-600">
-                      Urgent Hiring
-                    </div>
-                  )}
-                </div>
-
-                <div className="mt-4 flex items-center justify-between">
-                  <div className="text-slate-500 text-sm flex items-center gap-2">
-                    <Clock3 size={14} />
-                    {job.posted}
-                  </div>
-
-                  <div className="font-bold flex items-center gap-2">
-                    <Icon size={14} />
-                    {job.category}
-                  </div>
-                </div>
-
-                <div className="mt-6 grid grid-cols-2 gap-3">
-
-                  <Link
-                    href="/signup"
-                    className="h-12 rounded-2xl bg-black text-white font-bold flex items-center justify-center"
-                  >
-                    Apply
-                  </Link>
-
-                  <Link
-                    href="/messages"
-                    className="h-12 rounded-2xl bg-yellow-500 text-black font-black flex items-center justify-center gap-2"
-                  >
-                    Contact
-                    <ArrowRight size={16} />
-                  </Link>
-
-                </div>
-
+          {/* Directory Listings Grid */}
+          <main className="lg:col-span-3">
+            {filteredProfessionals.length === 0 ? (
+              <div className="flex flex-col items-center justify-center p-12 border-2 border-dashed border-zinc-900 rounded-xl bg-zinc-950/20">
+                <p className="text-zinc-400 text-sm font-semibold">
+                  No active professionals found matching your selected criteria.
+                </p>
               </div>
-            );
-          })}
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {filteredProfessionals.map((item) => {
+                  const localizedCity = localizedLocations[item.locationToken]?.[currentLanguage] || localizedLocations[item.locationToken]?.["en"];
+                  const currencyFormatter = new Intl.NumberFormat("en-US", { style: "decimal" });
 
+                  return (
+                    <article
+                      key={item.id}
+                      className="bg-zinc-950 border border-zinc-900 rounded-xl p-6 flex flex-col justify-between hover:border-zinc-800 transition-all duration-150"
+                    >
+                      <div className="space-y-4">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <span className="text-[10px] font-black text-amber-500 uppercase tracking-widest block mb-1">
+                              {item.roleToken === "certified_operator" ? t("stakeholders.operators") : t("stakeholders.mechanics")}
+                            </span>
+                            <h3 className="text-lg font-black text-white">
+                              {item.fullName}
+                            </h3>
+                          </div>
+                          
+                          {/* Trust Verification Badge */}
+                          {item.verified && (
+                            <span className="bg-green-500/10 text-green-400 border border-green-500/20 text-[9px] font-black uppercase px-2 py-0.5 rounded tracking-wider">
+                              {t("status.verified")}
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Location & Experience tags */}
+                        <div className="grid grid-cols-2 gap-2 text-xs border-t border-b border-zinc-900 py-3 text-zinc-400">
+                          <div>
+                            <span className="block text-[9px] font-bold text-zinc-500 uppercase tracking-wider">
+                              {t("labels.location")}
+                            </span>
+                            <span className="font-semibold text-zinc-200">{localizedCity}</span>
+                          </div>
+                          <div>
+                            <span className="block text-[9px] font-bold text-zinc-500 uppercase tracking-wider">
+                              {t("jobs.experience")}
+                            </span>
+                            <span className="font-semibold text-zinc-200">
+                              {item.experienceYears} {t("jobs.years")}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Specialty Tags */}
+                        <div className="space-y-1">
+                          <span className="block text-[9px] font-bold text-zinc-500 uppercase tracking-wider">
+                            {t("jobs.specialties")}
+                          </span>
+                          <div className="flex flex-wrap gap-1.5 pt-1">
+                            {item.specialtyTokens.map((tok, idx) => (
+                              <span
+                                key={idx}
+                                className="bg-zinc-900 border border-zinc-800 text-zinc-300 text-[10px] font-bold uppercase px-2.5 py-1 rounded"
+                              >
+                                {t(tok as any)}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Pricing and Action Footer */}
+                      <div className="pt-6 mt-6 border-t border-zinc-900 flex justify-between items-center gap-4">
+                        <div>
+                          <span className="text-[9px] text-zinc-500 block uppercase font-bold">
+                            {t("jobs.baseDailyRate")}
+                          </span>
+                          <span className="text-lg font-black text-white tracking-tight">
+                            {currencyFormatter.format(item.dailyRate)} <span className="text-xs font-bold text-zinc-400">ETB</span>
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          className="px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-xs font-bold uppercase tracking-wider transition-all shadow-sm"
+                          onClick={() => alert(`Initiating direct booking with ${item.fullName}. EML logistics match active.`)}
+                        >
+                          {t("jobs.bookStaff")}
+                        </button>
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+            )}
+          </main>
         </div>
-
-      </section>
-
-    </main>
+      </div>
+    </div>
   );
 }

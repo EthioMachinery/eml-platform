@@ -1,24 +1,23 @@
 {
-  "name": "Ethio Machinery Link",
   "short_name": "EML",
-  "description": "Buy, Rent & Sell Machinery in Ethiopia",
-  "start_url": "/",
-  "display": "standalone",
-  "background_color": "#0f172a",
-  "theme_color": "#eab308",
-  "orientation": "portrait",
-  "scope": "/",
-  "lang": "en",
+  "name": "Ethio Machinery Link",
+  "description": "Ethiopia's trusted heavy machinery marketplace and industrial ecosystem.",
   "icons": [
     {
       "src": "/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "sizes": "192x192"
     },
     {
       "src": "/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "sizes": "512x512"
     }
-  ]
+  ],
+  "start_url": "/",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "display": "standalone",
+  "orientation": "portrait",
+  "scope": "/"
 }

@@ -1,70 +1,81 @@
 "use client";
 
-type Option = {
+import React, { SelectHTMLAttributes } from 'react';
+import { useTranslate, TranslationPath } from '@/hooks/useTranslate';
+import TranslatedInput from './TranslatedInput';
+
+interface SelectOption {
   value: string;
+  labelKey?: TranslationPath;
+  label?: string; // Pre-translated string fallback (e.g. for dynamic locations)
+}
 
-  label: {
-    en: string;
-    am: string;
-    or: string;
-    ti: string;
-  };
-};
-
-type Props = {
-  options: Option[];
-
-  language: "en" | "am" | "or" | "ti";
-
-  value: string;
-
-  onChange: (
-    value: string
-  ) => void;
-
-  placeholder?: string;
-};
+interface TranslatedSelectProps extends Omit<SelectHTMLAttributes<HTMLSelectElement>, 'placeholder'> {
+  placeholderKey: TranslationPath;
+  labelKey?: TranslationPath;
+  options: SelectOption[];
+  
+  // Custom props to handle "Other (Specify)" workflow
+  enableOther?: boolean;
+  otherValue?: string;
+  onOtherChange?: (val: string) => void;
+  otherPlaceholderKey?: TranslationPath;
+}
 
 export default function TranslatedSelect({
+  placeholderKey,
+  labelKey,
   options,
-  language,
-  value,
-  onChange,
-  placeholder,
-}: Props) {
-  return (
-    <select
-      value={value}
-      onChange={(e) =>
-        onChange(
-          e.target.value
-        )
-      }
-      className="w-full rounded-xl border border-zinc-700 bg-zinc-800 p-3 outline-none focus:border-yellow-500"
-    >
-      <option value="">
-        {placeholder ||
-          "Select"}
-      </option>
+  enableOther = false,
+  otherValue = "",
+  onOtherChange,
+  otherPlaceholderKey = "placeholders.additionalDetails",
+  className = '',
+  ...props
+}: TranslatedSelectProps) {
+  const { t } = useTranslate();
 
-      {options.map(
-        (option) => (
-          <option
-            key={
-              option.value
-            }
-            value={
-              option.value
-            }
-          >
-            {
-              option.label[
-                language
-              ]
-            }
-          </option>
-        )
+  const isOtherSelected = props.value === "other";
+
+  return (
+    <div className="w-full">
+      {labelKey && (
+        <label className="block mb-1.5 text-xs font-bold text-zinc-400 uppercase tracking-wider">
+          {t(labelKey)}
+        </label>
       )}
-    </select>
+      
+      <select
+        {...props}
+        className={`w-full px-4 py-2.5 rounded-lg border bg-zinc-950 text-white border-zinc-800 focus:outline-none focus:ring-2 focus:ring-amber-500 transition-colors ${className}`}
+      >
+        <option value="" disabled>
+          {t(placeholderKey)}
+        </option>
+        {options.map((opt) => (
+          <option key={opt.value} value={opt.value} className="bg-zinc-950 text-white">
+            {opt.labelKey ? t(opt.labelKey) : opt.label}
+          </option>
+        ))}
+        {enableOther && (
+          <option value="other" className="bg-zinc-950 text-amber-500 font-bold">
+            {t("actions.other")}
+          </option>
+        )}
+      </select>
+
+      {/* Conditionally render dynamic specify input field when 'other' is selected */}
+      {enableOther && isOtherSelected && (
+        <div className="mt-3 animate-fadeIn">
+          <TranslatedInput
+            type="text"
+            required
+            value={otherValue}
+            onChange={(e) => onOtherChange?.(e.target.value)}
+            placeholderKey={otherPlaceholderKey}
+          />
+        </div>
+      )}
+    </div>
   );
 }

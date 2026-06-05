@@ -1,122 +1,72 @@
 "use client";
 
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { LanguageCode } from '@/constants/languages';
 
-import {
-  LanguageCode,
-} from "@/constants/languages";
-
-import en from "@/translations/en";
-import am from "@/translations/am";
-import or from "@/translations/or";
-import ti from "@/translations/ti";
-
-type LanguageContextType = {
+interface LanguageContextProps {
   language: LanguageCode;
+  setLanguage: (lang: LanguageCode) => void;
+  isPending: boolean;
+}
 
-  setLanguage: (
-    lang: LanguageCode
-  ) => void;
+const LanguageContext = createContext<LanguageContextProps | undefined>(undefined);
 
-  translations: Record<string, any>;
-
-  t: (key: string, fallback?: string) => string;
-};
-
-const LanguageContext =
-  createContext<
-    LanguageContextType | undefined
-  >(undefined);
-
-export function LanguageProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const [language,
-    setLanguageState,
-  ] = useState<LanguageCode>(
-    "en"
-  );
+export function LanguageProvider({ children }: { children: ReactNode }) {
+  const [language, setLanguageState] = useState<LanguageCode>('en');
+  const [isPending, setIsPending] = useState(true);
 
   useEffect(() => {
-    const savedLanguage =
-      localStorage.getItem(
-        "eml-language"
-      ) as LanguageCode | null;
+    // 1. Resolve client language on mount
+    const savedLang = localStorage.getItem('eml_locale') as LanguageCode;
+    if (savedLang && ['en', 'am', 'or', 'ti'].includes(savedLang)) {
+      setLanguageState(savedLang);
+      document.documentElement.setAttribute('lang', savedLang);
+    } else {
+      const browserLang = navigator.language.slice(0, 2);
+      const defaultLang: LanguageCode = ['am', 'or', 'ti'].includes(browserLang) 
+        ? (browserLang as LanguageCode) 
+        : 'en';
+      setLanguageState(defaultLang);
+      document.documentElement.setAttribute('lang', defaultLang);
+    }
+    setIsPending(false);
 
-    if (savedLanguage) {
-      setLanguageState(
-        savedLanguage
-      );
+    // 2. Register EML PWA Service Worker for offline resilience
+    if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then((registration) => {
+            console.log('EML Service Worker registered successfully. Scope:', registration.scope);
+          })
+          .catch((error) => {
+            console.error('EML Service Worker registration failed:', error);
+          });
+      });
     }
   }, []);
 
-  function setLanguage(
-    lang: LanguageCode
-  ) {
+  const setLanguage = (lang: LanguageCode) => {
+    setIsPending(true);
     setLanguageState(lang);
-
-    localStorage.setItem(
-      "eml-language",
-      lang
-    );
-  }
-
-  const dictionaries = {
-    en,
-    am,
-    or,
-    ti,
-  } as const;
-
-  function t(key: string, fallback = key) {
-    const dictionary = dictionaries[
-      language as keyof typeof dictionaries
-    ];
-
-    return (
-      dictionary[key as keyof typeof dictionary] || fallback
-    );
-  }
-
-  const translations = dictionaries[
-    language as keyof typeof dictionaries
-  ];
+    localStorage.setItem('eml_locale', lang);
+    document.documentElement.setAttribute('lang', lang);
+    
+    // Notify other windows/instances
+    window.dispatchEvent(new Event('eml_language_changed'));
+    setIsPending(false);
+  };
 
   return (
-    <LanguageContext.Provider
-      value={{
-        language,
-
-        setLanguage,
-
-        translations,
-
-        t,
-      }}
-    >
+    <LanguageContext.Provider value={{ language, setLanguage, isPending }}>
       {children}
     </LanguageContext.Provider>
   );
 }
 
 export function useLanguage() {
-  const context =
-    useContext(
-      LanguageContext
-    );
-
+  const context = useContext(LanguageContext);
   if (!context) {
-    throw new Error(
-      "useLanguage must be used inside LanguageProvider"
-    );
+    throw new Error('useLanguage must be utilized within a LanguageProvider wrapper.');
   }
-
   return context;
 }

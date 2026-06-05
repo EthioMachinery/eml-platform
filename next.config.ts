@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  devIndicators: false,
   images: {
     remotePatterns: [
       {
@@ -9,10 +10,6 @@ const nextConfig: NextConfig = {
         pathname: "/storage/v1/object/public/**",
       },
     ],
-
-    // IMPORTANT:
-    // disables Next.js image optimization
-    // prevents timeout + 500 errors
     unoptimized: true,
   },
 };

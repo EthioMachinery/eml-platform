@@ -27,7 +27,12 @@ export default function InquiryForm({
   machineryId,
   ownerId,
 }: Props) {
-  const { t } = useLanguage();
+  const { language } = useLanguage();
+
+  // Local helper to translate dual-strings
+  const t = (en, am) => {
+    return language === "am" ? am : en;
+  };
 
   const [message, setMessage] =
     useState("");

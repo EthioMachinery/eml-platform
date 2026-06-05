@@ -1,215 +1,130 @@
-// src/app/api/verify-payment/route.ts
-// Ethio Machinery Link (EML) — Manual Bank Payment Reference Verification Handler
-// Accepts offline payment inputs (CBE transfer, Telebirr), logs to public.transactions,
-// updates escrow flags on public.deals, and writes audit payloads to public.eml_events.
+import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
 
-import { createClient } from '@supabase/supabase-js';
-import { NextRequest, NextResponse } from 'next/server';
-
-// ---------------------------------------------------------------------------
-// Admin Supabase Client — Service Role (bypasses RLS for server-side writes)
-// ---------------------------------------------------------------------------
+// Initialize the backend database client using the service role key for full transactional write access
 const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false,
-    },
-  }
+  process.env.NEXT_PUBLIC_SUPABASE_URL || "",
+  process.env.SUPABASE_SERVICE_ROLE_KEY || ""
 );
 
-// ---------------------------------------------------------------------------
-// Request Body Type
-// ---------------------------------------------------------------------------
-interface VerifyPaymentRequestBody {
-  deal_id: string;           // UUID of the deal being funded
-  amount: number;            // Transferred amount in ETB
-  payment_method: 'cbe_transfer' | 'telebirr' | 'other';
-  payment_reference: string; // Bank receipt / Telebirr reference code
-  verified_by: string;       // UUID of the actor (admin or counterparty) submitting verification
+interface PaymentVerificationPayload {
+  transactionRef: string;
+  escrowId: string;
+  paymentMethod: string;
+  senderPhone: string;
+  amountReceived: number;
 }
 
-// ---------------------------------------------------------------------------
-// POST /api/verify-payment
-// ---------------------------------------------------------------------------
-export async function POST(request: NextRequest) {
+export async function POST(req: NextRequest) {
   try {
-    // --- 1. Parse & Validate Request Body -----------------------------------
-    let body: VerifyPaymentRequestBody;
+    const payload = (await req.json()) as PaymentVerificationPayload;
+    const { transactionRef, escrowId, paymentMethod, senderPhone, amountReceived } = payload;
 
-    try {
-      body = await request.json();
-    } catch {
+    if (!transactionRef || !escrowId || !amountReceived) {
       return NextResponse.json(
-        { error: 'Malformed request body. Expected valid JSON.' },
+        { error: "Missing required transactional parameters in request." },
         { status: 400 }
       );
     }
 
-    const { deal_id, amount, payment_method, payment_reference, verified_by } = body;
-
-    const missingFields: string[] = [];
-    if (!deal_id)            missingFields.push('deal_id');
-    if (!amount)             missingFields.push('amount');
-    if (!payment_method)     missingFields.push('payment_method');
-    if (!payment_reference)  missingFields.push('payment_reference');
-    if (!verified_by)        missingFields.push('verified_by');
-
-    if (missingFields.length > 0) {
-      return NextResponse.json(
-        { error: `Missing required fields: ${missingFields.join(', ')}` },
-        { status: 400 }
-      );
-    }
-
-    if (typeof amount !== 'number' || amount <= 0) {
-      return NextResponse.json(
-        { error: 'Invalid amount: must be a positive number (ETB).' },
-        { status: 400 }
-      );
-    }
-
-    const validMethods = ['cbe_transfer', 'telebirr', 'other'];
-    if (!validMethods.includes(payment_method)) {
-      return NextResponse.json(
-        { error: `Invalid payment_method. Accepted values: ${validMethods.join(', ')}` },
-        { status: 400 }
-      );
-    }
-
-    // Sanitize reference number — strip whitespace, enforce minimum length
-    const sanitizedReference = payment_reference.trim();
-    if (sanitizedReference.length < 6) {
-      return NextResponse.json(
-        { error: 'payment_reference is too short. Minimum 6 characters required.' },
-        { status: 400 }
-      );
-    }
-
-    const now = new Date().toISOString();
-
-    // --- 2. Confirm Deal Exists & Is Not Already Verified -------------------
-    const { data: deal, error: dealFetchError } = await supabaseAdmin
-      .from('deals')
-      .select('id, payment_verified')
-      .eq('id', deal_id)
+    // 1. Retrieve the corresponding escrow record from the database
+    const { data: escrowRecord, error: escrowError } = await supabaseAdmin
+      .from("escrows")
+      .select(`
+        id,
+        listing_id,
+        buyer_id,
+        seller_id,
+        total_amount,
+        eml_commission_fee,
+        current_stage
+      `)
+      .eq("id", escrowId)
       .single();
 
-    if (dealFetchError || !deal) {
+    if (escrowError || !escrowRecord) {
       return NextResponse.json(
-        {
-          error: 'Deal not found. Verify the deal_id is correct.',
-          details: dealFetchError?.message ?? null,
-        },
+        { error: "Corresponding escrow ledger not found." },
         { status: 404 }
       );
     }
 
-    if (deal.payment_verified === true) {
+    // 2. Verify that the received payment matches the expected total amount
+    if (Number(amountReceived) < Number(escrowRecord.total_amount)) {
       return NextResponse.json(
-        { error: 'Conflict: payment has already been verified for this deal.' },
-        { status: 409 }
-      );
-    }
-
-    // --- 3. Log Transaction to public.transactions --------------------------
-    const { data: transaction, error: transactionError } = await supabaseAdmin
-      .from('transactions')
-      .insert({
-        deal_id,
-        amount,
-        payment_method,
-        payment_reference:  sanitizedReference,
-        verified_by,
-        verified_at:        now,
-        status:             'verified',
-        created_at:         now,
-      })
-      .select('id')
-      .single();
-
-    if (transactionError || !transaction) {
-      console.error('[verify-payment] transactions insert failed:', transactionError?.message);
-      return NextResponse.json(
-        {
-          error: 'Failed to log transaction record.',
-          details: transactionError?.message ?? 'No data returned from insert.',
+        { 
+          error: "Transaction Rejected: Insufficient funds received.", 
+          expected: escrowRecord.total_amount, 
+          received: amountReceived 
         },
-        { status: 500 }
+        { status: 400 }
       );
     }
 
-    // --- 4. Update Escrow Flags on public.deals -----------------------------
-    const { error: dealUpdateError } = await supabaseAdmin
-      .from('deals')
+    // 3. Prevent duplicate funding transitions if the transaction has already cleared
+    if (escrowRecord.current_stage !== "awaiting_funding") {
+      return NextResponse.json(
+        { error: "Transaction Rejected: This escrow account is already funded or complete." },
+        { status: 400 }
+      );
+    }
+
+    // 4. Update the Escrow Milestone Stage to 'funded'
+    const { error: updateEscrowError } = await supabaseAdmin
+      .from("escrows")
       .update({
-        payment_verified: true,
-        updated_at:       now,
+        current_stage: "funded" as any,
+        updated_at: new Date().toISOString()
       })
-      .eq('id', deal_id);
+      .eq("id", escrowId);
 
-    if (dealUpdateError) {
-      // Transaction is already written — log clearly for manual reconciliation.
-      console.error(
-        `[verify-payment] RECONCILIATION REQUIRED — transaction ${transaction.id} logged ` +
-        `but deals update failed for deal ${deal_id}:`,
-        dealUpdateError.message
-      );
-      return NextResponse.json(
+    if (updateEscrowError) {
+      throw updateEscrowError;
+    }
+
+    // 5. Update the equipment listing status to 'escrow_funded' to lock out other buyers
+    const { error: updateListingError } = await supabaseAdmin
+      .from("listings")
+      .update({
+        status: "escrow_funded" as any,
+        updated_at: new Date().toISOString()
+      })
+      .eq("id", escrowRecord.listing_id);
+
+    if (updateListingError) {
+      throw updateListingError;
+    }
+
+    // 6. Log EML Platform Commissions directly into the revenue ledger (Autopilot Profit)
+    const { error: logRevenueError } = await supabaseAdmin
+      .from("revenue")
+      .insert([
         {
-          error: 'Transaction logged but escrow status update failed. Manual reconciliation required.',
-          transaction_id: transaction.id,
-          details:        dealUpdateError.message,
-        },
-        { status: 500 }
-      );
+          id: crypto.randomUUID(),
+          transaction_id: escrowId,
+          amount: Number(escrowRecord.eml_commission_fee),
+          source: `escrow_commission_${paymentMethod}`,
+          created_at: new Date().toISOString()
+        }
+      ]);
+
+    if (logRevenueError) {
+      // Log the error internally but do not crash the transaction response
+      console.error("Critical warning: Failed to write commission ledger row:", logRevenueError);
     }
 
-    // --- 5. Write Audit Payload to public.eml_events ------------------------
-    const { error: eventError } = await supabaseAdmin
-      .from('eml_events')
-      .insert({
-        deal_id,
-        event_name: 'PAYMENT_VERIFIED',
-        actor_id:   verified_by,
-        severity:   'INFO',
-        payload: {
-          transaction_id:   transaction.id,
-          payment_reference: sanitizedReference,
-          payment_method,
-          amount,
-          verified_at:      now,
-        },
-        created_at: now,
-      });
+    return NextResponse.json({
+      success: true,
+      transactionId: escrowId,
+      newEscrowStage: "funded",
+      emlCommissionEarned: escrowRecord.eml_commission_fee,
+      message: "Payment verified successfully. EML commission logged, and escrow account is funded."
+    });
 
-    if (eventError) {
-      // Non-fatal: core operations succeeded. Log for observability only.
-      console.error(
-        `[verify-payment] Non-fatal — eml_events audit write failed for deal ${deal_id}:`,
-        eventError.message
-      );
-    }
-
-    // --- 6. Success Response ------------------------------------------------
+  } catch (err: any) {
+    console.error("EML Automated Verification Exception:", err);
     return NextResponse.json(
-      {
-        success:        true,
-        message:        'Payment verified successfully. Escrow status updated.',
-        transaction_id: transaction.id,
-        deal_id,
-        verified_at:    now,
-      },
-      { status: 200 }
-    );
-
-  } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : 'Unexpected server error.';
-    console.error('[verify-payment] Unhandled exception:', message);
-    return NextResponse.json(
-      { error: 'Internal server error.', details: message },
+      { error: err.message || "Internal server error during transaction processing." },
       { status: 500 }
     );
   }

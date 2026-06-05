@@ -89,8 +89,12 @@ type Operator = {
 };
 
 export default function OperatorsPage() {
-  const { t } =
-    useLanguage();
+  const { language } = useLanguage();
+
+  // Local helper to translate dual-strings
+  const t = (en, am) => {
+    return language === "am" ? am : en;
+  };
 
   const [loading, setLoading] =
     useState(true);

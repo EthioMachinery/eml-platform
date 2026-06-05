@@ -1,845 +1,217 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import React, { useState } from "react";
+import { useTranslate } from "@/hooks/useTranslate";
 
-import Link from "next/link";
+interface SparePart {
+  id: string;
+  partName: string;
+  localizedName: Record<string, string>;
+  partNumber: string;
+  brandCompatibility: string;
+  price: number;
+  locationToken: string;
+  importerName: string;
+  verified: boolean;
+  category: "engine" | "hydraulics" | "undercarriage" | "filters";
+}
 
-import {
-  BadgeCheck,
-  BatteryCharging,
-  Brain,
-  CircleDollarSign,
-  Cog,
-  Factory,
-  Filter,
-  Globe2,
-  HardHat,
-  Package,
-  Search,
-  ShieldCheck,
-  ShoppingCart,
-  Sparkles,
-  Star,
-  TrendingUp,
-  Truck,
-  Warehouse,
-  Wrench,
-} from "lucide-react";
-
-type SparePart = {
-  id: number;
-
-  name: string;
-
-  category: string;
-
-  compatibleMachines: string[];
-
-  supplier: string;
-
-  location: string;
-
-  price: string;
-
-  stock: string;
-
-  condition: string;
-
-  aiScore: number;
-
-  rating: number;
-
-  image:
-    | string
-    | null;
+const localizedLocations: Record<string, Record<string, string>> = {
+  "addis_ababa": { en: "Addis Ababa", am: "አዲስ አበባ", om: "Finfinnee", ti: "ኣዲስ ኣበባ" },
+  "adama": { en: "Adama", am: "አዳማ", om: "Adaamaa", ti: "ኣማራ" },
+  "mekelle": { en: "Mekelle", am: "መቀሌ", om: "Maqalee", ti: "መቐለ" }
 };
 
-export default function SparePartsPage() {
-  const [search, setSearch] =
-    useState("");
-
-  const [parts, setParts] =
-    useState<SparePart[]>([]);
-
-  useEffect(() => {
-    loadParts();
-  }, []);
-
-  function loadParts() {
-    const demoParts: SparePart[] =
-      [
-        {
-          id: 1,
-
-          name:
-            "Excavator Hydraulic Pump",
-
-          category:
-            "Hydraulic System",
-
-          compatibleMachines:
-            [
-              "CAT 320",
-              "Komatsu PC200",
-            ],
-
-          supplier:
-            "Ethio Industrial Parts",
-
-          location:
-            "Addis Ababa",
-
-          price:
-            "185,000 ETB",
-
-          stock:
-            "In Stock",
-
-          condition:
-            "New",
-
-          aiScore: 96,
-
-          rating: 4.9,
-
-          image: null,
-        },
-
-        {
-          id: 2,
-
-          name:
-            "Bulldozer Track Chain",
-
-          category:
-            "Track System",
-
-          compatibleMachines:
-            [
-              "CAT D6",
-              "Shantui SD16",
-            ],
-
-          supplier:
-            "Blue Nile Machinery Parts",
-
-          location:
-            "Bahir Dar",
-
-          price:
-            "92,000 ETB",
-
-          stock:
-            "Limited",
-
-          condition:
-            "OEM",
-
-          aiScore: 92,
-
-          rating: 4.8,
-
-          image: null,
-        },
-
-        {
-          id: 3,
-
-          name:
-            "Heavy Duty Air Filter",
-
-          category:
-            "Filters",
-
-          compatibleMachines:
-            [
-              "Excavator",
-              "Loader",
-              "Truck",
-            ],
-
-          supplier:
-            "Hawassa Parts Center",
-
-          location:
-            "Hawassa",
-
-          price:
-            "4,500 ETB",
-
-          stock:
-            "In Stock",
-
-          condition:
-            "New",
-
-          aiScore: 89,
-
-          rating: 4.7,
-
-          image: null,
-        },
-      ];
-
-    setParts(demoParts);
+const initialParts: SparePart[] = [
+  {
+    id: "part-1",
+    partName: "Hydraulic Pump Assembly",
+    localizedName: {
+      en: "Hydraulic Pump Assembly (CAT 320D compatible)",
+      am: "የሃይድሮሊክ ፓምፕ አስለቃቂ (ለካተርፒላር 320D የሚሆን)",
+      or: "Haayidirooliki Paampii CAT 320D",
+      ti: "ሃይድሮሊክ ፓምፕ አስለቃቂ (ንካተርፒላር 320D)"
+    },
+    partNumber: "CAT-320D-90218-HP",
+    brandCompatibility: "Caterpillar",
+    price: 320000,
+    locationToken: "addis_ababa",
+    importerName: "Kality Parts Importers",
+    verified: true,
+    category: "hydraulics"
+  },
+  {
+    id: "part-2",
+    partName: "Cylinder Liner Kit",
+    localizedName: {
+      en: "Komatsu Engine Cylinder Liner Kit",
+      am: "የኮማትሱ ሞተር ሲሊንደር ላይነር ኪት",
+      or: "Siliindara Mootora Komatsu",
+      ti: "ናይ ኮማትሱ ሞተር ሲሊንደር ላይነር ኪት"
+    },
+    partNumber: "KOM-D155-6112-CYL",
+    brandCompatibility: "Komatsu",
+    price: 185000,
+    locationToken: "addis_ababa",
+    importerName: "Admas Imports",
+    verified: true,
+    category: "engine"
+  },
+  {
+    id: "part-3",
+    partName: "Undercarriage Track Roller",
+    localizedName: {
+      en: "Excavator Undercarriage Track Roller",
+      am: "የኤክስካቫተር ታችኛው ክፍል የመንኮራኩር ሮለር (Track Roller)",
+      or: "Roolerii Eskavaatarii Track",
+      ti: "ናይ መኹዓቲ ታሕተዋይ ክፋል መንኮራኩር ሮለር"
+    },
+    partNumber: "SANY-SY215-TRACK",
+    brandCompatibility: "Sany",
+    price: 45000,
+    locationToken: "adama",
+    importerName: "Nile Equipment Parts",
+    verified: false,
+    category: "undercarriage"
   }
+];
 
-  const filtered =
-    useMemo(() => {
-      return parts.filter(
-        (part) => {
-          const keyword =
-            `${part.name} ${part.category} ${part.location} ${part.supplier}`
-              .toLowerCase();
+export default function SparePartsPage() {
+  const { t, currentLanguage } = useTranslate();
+  
+  const [selectedCategory, setSelectedCategory] = useState<"all" | "engine" | "hydraulics" | "undercarriage">("all");
+  const [searchTerm, setSearchTerm] = useState("");
 
-          return keyword.includes(
-            search.toLowerCase()
-          );
-        }
-      );
-    }, [parts, search]);
+  const filteredParts = initialParts.filter((item) => {
+    let matchesCategory = true;
+    if (selectedCategory !== "all") matchesCategory = item.category === selectedCategory;
+
+    const title = item.localizedName[currentLanguage] || item.localizedName["en"];
+    const matchesSearch = title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.partNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.brandCompatibility.toLowerCase().includes(searchTerm.toLowerCase());
+
+    return matchesCategory && matchesSearch;
+  });
+
+  const formatter = new Intl.NumberFormat("en-US", { style: "decimal" });
 
   return (
-    <main className="min-h-screen bg-black text-white">
-
-      {/* HERO */}
-
-      <section className="relative overflow-hidden border-b border-yellow-500/10">
-
-        <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/10 via-orange-500/5 to-transparent" />
-
-        <div className="relative max-w-7xl mx-auto px-4 py-24">
-
-          <div className="max-w-5xl">
-
-            <div className="inline-flex items-center gap-3 bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 px-5 py-3 rounded-full font-black mb-8">
-
-              <Cog size={20} />
-
-              EML SPARE PARTS MARKETPLACE
-
-            </div>
-
-            <h1 className="text-5xl md:text-7xl font-black leading-tight">
-
-              Industrial Spare Parts Ecosystem
-
+    <div className="bg-black min-h-screen text-white py-12 px-4 sm:px-6 lg:px-8" id="eml-parts-portal">
+      <div className="max-w-7xl mx-auto space-y-10">
+        
+        {/* Header */}
+        <header className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 pb-6 border-b border-zinc-900">
+          <div className="space-y-1">
+            <span className="text-xs font-bold text-amber-500 bg-amber-500/10 px-3 py-1 rounded-full uppercase tracking-widest border border-amber-500/20">
+              ⚙️ {t("services.spareParts")}
+            </span>
+            <h1 className="text-3xl font-black text-white uppercase tracking-tight">
+              Spare Parts Hub
             </h1>
-
-            <p className="mt-8 text-xl text-zinc-400 leading-9 max-w-4xl">
-
-              Buy,
-              sell,
-              source,
-              and distribute machinery spare parts,
-              industrial components,
-              hydraulic systems,
-              filters,
-              engines,
-              tires,
-              and maintenance products across Africa.
-
+            <p className="text-sm text-zinc-400">
+              Source genuine heavy machinery engine components, undercarriage tracks, and hydraulic lines under EML Escrow protection.
             </p>
-
-            <div className="flex flex-wrap gap-5 mt-10">
-
-              <Link
-                href="/sell"
-                className="bg-yellow-500 hover:bg-yellow-400 text-black font-black px-8 py-5 rounded-2xl transition"
-              >
-
-                Sell Spare Parts
-
-              </Link>
-
-              <Link
-                href="/fleet"
-                className="border border-zinc-700 hover:border-zinc-500 font-black px-8 py-5 rounded-2xl transition"
-              >
-
-                Fleet Marketplace
-
-              </Link>
-
-            </div>
-
           </div>
 
-        </div>
-
-      </section>
-
-      {/* KPI */}
-
-      <section className="max-w-7xl mx-auto px-4 py-12">
-
-        <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-6">
-
-          <KPI
-            title="Active Parts"
-            value="124K+"
-            icon={Package}
-            color="yellow"
-          />
-
-          <KPI
-            title="Verified Suppliers"
-            value="8,300"
-            icon={BadgeCheck}
-            color="green"
-          />
-
-          <KPI
-            title="Daily Transactions"
-            value="19K+"
-            icon={
-              ShoppingCart
-            }
-            color="cyan"
-          />
-
-          <KPI
-            title="AI Matching"
-            value="95%"
-            icon={Brain}
-            color="violet"
-          />
-
-        </div>
-
-      </section>
-
-      {/* AI */}
-
-      <section className="max-w-7xl mx-auto px-4 pb-12">
-
-        <div className="bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border border-yellow-500/20 rounded-[40px] p-10">
-
-          <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-10">
-
-            <div className="max-w-4xl">
-
-              <div className="flex items-center gap-3 text-yellow-400 font-black tracking-widest mb-5">
-
-                <Sparkles size={22} />
-
-                AI PARTS INTELLIGENCE
-
-              </div>
-
-              <h2 className="text-4xl font-black mb-6">
-
-                EML AI predicts compatibility,
-                demand,
-                inventory needs,
-                and counterfeit risk automatically.
-
-              </h2>
-
-              <p className="text-zinc-300 text-lg leading-8">
-
-                AI analyzes machinery history,
-                maintenance cycles,
-                regional demand,
-                and supplier quality to optimize industrial procurement.
-
-              </p>
-
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-
-              <MiniStat
-                title="Compatibility Accuracy"
-                value="95%"
-              />
-
-              <MiniStat
-                title="Counterfeit Detection"
-                value="ACTIVE"
-              />
-
-              <MiniStat
-                title="Inventory Forecasting"
-                value="+41%"
-              />
-
-              <MiniStat
-                title="Supply Optimization"
-                value="+37%"
-              />
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </section>
-
-      {/* SEARCH */}
-
-      <section className="max-w-7xl mx-auto px-4 pb-10">
-
-        <div className="bg-zinc-900 border border-zinc-800 rounded-[35px] p-6">
-
-          <div className="relative">
-
-            <Search className="absolute left-4 top-4 text-zinc-500" />
-
-            <input
-              value={search}
-              onChange={(e) =>
-                setSearch(
-                  e.target.value
-                )
-              }
-              placeholder="Search parts, suppliers, compatibility..."
-              className="w-full bg-black border border-zinc-800 rounded-2xl py-4 pl-12 pr-4 outline-none"
-            />
-
-          </div>
-
-        </div>
-
-      </section>
-
-      {/* PARTS GRID */}
-
-      <section className="max-w-7xl mx-auto px-4 pb-24">
-
-        <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-8">
-
-          {filtered.map(
-            (part) => (
-              <div
-                key={part.id}
-                className="bg-zinc-900 border border-zinc-800 rounded-[35px] overflow-hidden hover:border-yellow-500/30 transition"
+          <div className="flex flex-wrap bg-zinc-900 p-1 rounded-lg border border-zinc-800">
+            {(["all", "engine", "hydraulics", "undercarriage"] as const).map((cat) => (
+              <button
+                key={cat}
+                type="button"
+                onClick={() => setSelectedCategory(cat)}
+                className={`px-4 py-1.5 rounded-md text-xs font-bold uppercase transition-all ${
+                  selectedCategory === cat
+                    ? "bg-amber-500 text-white"
+                    : "text-zinc-400 hover:text-white"
+                }`}
               >
+                {cat === "all" ? "All Parts" : cat}
+              </button>
+            ))}
+          </div>
+        </header>
 
-                {/* IMAGE */}
+        {/* Filters and List */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          <aside className="bg-zinc-950 border border-zinc-900 rounded-xl p-5 space-y-5 h-fit">
+            <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-400 border-b border-zinc-900 pb-3">
+              Search Parts
+            </h3>
+            <div className="space-y-1.5">
+              <label className="block text-xs font-bold text-zinc-400 uppercase tracking-wider">Part Keyword</label>
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search part number, brand..."
+                className="w-full px-4 py-2.5 rounded-lg border bg-zinc-950 text-white border-zinc-800 focus:outline-none focus:ring-2 focus:ring-amber-500 text-xs"
+              />
+            </div>
+          </aside>
 
-                <div className="h-64 bg-gradient-to-br from-yellow-500/10 to-orange-500/10 border-b border-zinc-800 flex items-center justify-center">
+          <main className="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-6">
+            {filteredParts.map((item) => {
+              const localizedTitle = item.localizedName[currentLanguage] || item.localizedName["en"];
+              const city = localizedLocations[item.locationToken]?.[currentLanguage] || localizedLocations[item.locationToken]?.["en"];
 
-                  <Cog
-                    size={90}
-                    className="text-yellow-400"
-                  />
-
-                </div>
-
-                {/* BODY */}
-
-                <div className="p-8">
-
-                  <div className="flex items-start justify-between gap-4 mb-6">
-
-                    <div>
-
-                      <div className="text-2xl font-black">
-
-                        {part.name}
-
+              return (
+                <article
+                  key={item.id}
+                  className="bg-zinc-950 border border-zinc-900 rounded-xl p-6 flex flex-col justify-between hover:border-zinc-800 transition-all duration-150"
+                >
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <span className="text-[9px] font-black text-amber-500 uppercase tracking-widest bg-amber-500/10 px-2 py-0.5 rounded">
+                          {item.category}
+                        </span>
+                        <h3 className="text-lg font-black text-white mt-1.5">
+                          {localizedTitle}
+                        </h3>
+                        <span className="text-xs text-zinc-500 block mt-1">Part No: {item.partNumber}</span>
                       </div>
-
-                      <div className="text-zinc-400 mt-2">
-
-                        {
-                          part.category
-                        }
-
-                      </div>
-
-                    </div>
-
-                    <div className="bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 px-4 py-2 rounded-full text-sm font-black">
-
-                      AI:
-                      {" "}
-                      {part.aiScore}
-                      %
-
-                    </div>
-
-                  </div>
-
-                  {/* PRICE */}
-
-                  <div className="text-4xl font-black text-yellow-400 mb-6">
-
-                    {part.price}
-
-                  </div>
-
-                  {/* META */}
-
-                  <div className="space-y-4 mb-7">
-
-                    <Info
-                      icon={
-                        Warehouse
-                      }
-                      label={
-                        part.supplier
-                      }
-                    />
-
-                    <Info
-                      icon={
-                        Globe2
-                      }
-                      label={
-                        part.location
-                      }
-                    />
-
-                    <Info
-                      icon={Star}
-                      label={`${part.rating} Rating`}
-                    />
-
-                    <Info
-                      icon={
-                        BadgeCheck
-                      }
-                      label={
-                        part.condition
-                      }
-                    />
-
-                  </div>
-
-                  {/* COMPATIBILITY */}
-
-                  <div className="mb-7">
-
-                    <div className="flex items-center gap-3 text-zinc-400 mb-4">
-
-                      <Wrench
-                        size={18}
-                      />
-
-                      Compatible Machines
-
-                    </div>
-
-                    <div className="flex flex-wrap gap-3">
-
-                      {part.compatibleMachines.map(
-                        (
-                          machine
-                        ) => (
-                          <div
-                            key={
-                              machine
-                            }
-                            className="bg-zinc-800 px-4 py-2 rounded-full text-sm"
-                          >
-
-                            {
-                              machine
-                            }
-
-                          </div>
-                        )
+                      {item.verified && (
+                        <span className="bg-green-500/10 text-green-400 border border-green-500/20 text-[9px] font-black uppercase px-2 py-0.5 rounded">
+                          {t("status.verified")}
+                        </span>
                       )}
-
                     </div>
 
+                    <div className="grid grid-cols-2 gap-2 text-xs border-t border-b border-zinc-900 py-3 text-zinc-400">
+                      <div>
+                        <span className="block text-[9px] font-bold text-zinc-600 uppercase">Importer</span>
+                        <span className="font-semibold text-zinc-300">{item.importerName}</span>
+                      </div>
+                      <div>
+                        <span className="block text-[9px] font-bold text-zinc-600 uppercase">Hub Location</span>
+                        <span className="font-semibold text-zinc-300">{city}</span>
+                      </div>
+                    </div>
                   </div>
 
-                  {/* AI */}
-
-                  <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-3xl p-5 mb-7">
-
-                    <div className="flex items-center gap-3 text-yellow-400 font-black mb-3">
-
-                      <Brain size={18} />
-
-                      AI Insight
-
+                  <div className="pt-6 mt-6 border-t border-zinc-900 flex justify-between items-center gap-4">
+                    <div>
+                      <span className="text-[9px] text-zinc-500 block uppercase font-bold">Price</span>
+                      <span className="text-xl font-black text-white tracking-tight">
+                        {formatter.format(item.price)} <span className="text-xs font-bold text-zinc-400">ETB</span>
+                      </span>
                     </div>
-
-                    <p className="text-zinc-300 text-sm leading-7">
-
-                      High compatibility confidence with strong demand prediction across fleet maintenance systems.
-
-                    </p>
-
-                  </div>
-
-                  {/* STOCK */}
-
-                  <div className="flex items-center justify-between mb-8">
-
-                    <div className="text-zinc-400">
-
-                      Availability
-
-                    </div>
-
-                    <div className="bg-green-500/10 border border-green-500/20 text-green-400 px-4 py-2 rounded-full text-sm font-black">
-
-                      {part.stock}
-
-                    </div>
-
-                  </div>
-
-                  {/* ACTIONS */}
-
-                  <div className="flex gap-4">
-
-                    <button className="flex-1 bg-yellow-500 hover:bg-yellow-400 text-black font-black py-4 rounded-2xl transition">
-
-                      Buy Now
-
+                    <button
+                      type="button"
+                      className="px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-xs font-bold uppercase tracking-wider transition-all"
+                      onClick={() => alert(`Redirecting to Secure Escrow checkout for ${item.partName}.`)}
+                    >
+                      Checkout Parts
                     </button>
-
-                    <button className="w-16 h-16 rounded-2xl bg-zinc-800 hover:bg-zinc-700 flex items-center justify-center transition">
-
-                      <ShoppingCart />
-
-                    </button>
-
                   </div>
-
-                </div>
-
-              </div>
-            )
-          )}
-
+                </article>
+              );
+            })}
+          </main>
         </div>
 
-      </section>
-
-      {/* SERVICES */}
-
-      <section className="border-t border-zinc-800">
-
-        <div className="max-w-7xl mx-auto px-4 py-20">
-
-          <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-6">
-
-            <Service
-              icon={Truck}
-              title="Logistics Integration"
-              text="Integrated industrial delivery and transport systems."
-            />
-
-            <Service
-              icon={ShieldCheck}
-              title="Supplier Verification"
-              text="AI-driven supplier reputation and fraud detection."
-            />
-
-            <Service
-              icon={BatteryCharging}
-              title="Fleet Maintenance AI"
-              text="Predictive maintenance and inventory forecasting."
-            />
-
-            <Service
-              icon={Factory}
-              title="OEM & Aftermarket"
-              text="Connect with original and aftermarket suppliers."
-            />
-
-          </div>
-
-        </div>
-
-      </section>
-
-      {/* FOOTER */}
-
-      <section className="border-t border-zinc-800">
-
-        <div className="max-w-7xl mx-auto px-4 py-20">
-
-          <div className="bg-zinc-900 border border-zinc-800 rounded-[40px] p-12">
-
-            <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-10">
-
-              <div className="max-w-4xl">
-
-                <div className="text-yellow-400 font-black tracking-widest mb-4">
-
-                  INDUSTRIAL SUPPLY CHAIN
-
-                </div>
-
-                <h2 className="text-5xl font-black mb-6 leading-tight">
-
-                  Build Africa’s largest industrial spare parts network
-
-                </h2>
-
-                <p className="text-zinc-300 text-xl leading-9">
-
-                  EML connects suppliers,
-                  machinery owners,
-                  contractors,
-                  maintenance teams,
-                  fleet operators,
-                  and logistics providers into one AI-powered industrial ecosystem.
-
-                </p>
-
-              </div>
-
-              <div className="flex flex-wrap gap-5">
-
-                <Link
-                  href="/contractors"
-                  className="bg-yellow-500 hover:bg-yellow-400 text-black font-black px-8 py-5 rounded-2xl transition"
-                >
-
-                  Contractor Marketplace
-
-                </Link>
-
-                <Link
-                  href="/operators"
-                  className="border border-zinc-700 hover:border-zinc-500 font-black px-8 py-5 rounded-2xl transition"
-                >
-
-                  Operator Marketplace
-
-                </Link>
-
-              </div>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </section>
-
-    </main>
-  );
-}
-
-function KPI({
-  title,
-  value,
-  icon: Icon,
-  color,
-}: any) {
-  const colors: any = {
-    yellow:
-      "bg-yellow-500/10 text-yellow-400",
-
-    green:
-      "bg-green-500/10 text-green-400",
-
-    cyan:
-      "bg-cyan-500/10 text-cyan-400",
-
-    violet:
-      "bg-violet-500/10 text-violet-400",
-  };
-
-  return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-7">
-
-      <div className="flex items-center justify-between mb-7">
-
-        <div
-          className={`w-16 h-16 rounded-3xl flex items-center justify-center ${colors[color]}`}
-        >
-
-          <Icon size={30} />
-
-        </div>
-
-        <TrendingUp className="text-zinc-700" />
-
       </div>
-
-      <div className="text-zinc-400 text-sm mb-3">
-
-        {title}
-
-      </div>
-
-      <div className="text-4xl font-black">
-
-        {value}
-
-      </div>
-
-    </div>
-  );
-}
-
-function MiniStat({
-  title,
-  value,
-}: any) {
-  return (
-    <div className="bg-black/40 border border-yellow-500/10 rounded-3xl p-5">
-
-      <div className="text-zinc-400 text-sm mb-2">
-
-        {title}
-
-      </div>
-
-      <div className="font-black text-xl">
-
-        {value}
-
-      </div>
-
-    </div>
-  );
-}
-
-function Info({
-  icon: Icon,
-  label,
-}: any) {
-  return (
-    <div className="flex items-center gap-3 text-zinc-300">
-
-      <Icon size={18} className="text-yellow-400" />
-
-      <span>{label}</span>
-
-    </div>
-  );
-}
-
-function Service({
-  icon: Icon,
-  title,
-  text,
-}: any) {
-  return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-[35px] p-8">
-
-      <div className="w-16 h-16 rounded-3xl bg-yellow-500/10 flex items-center justify-center mb-6">
-
-        <Icon className="text-yellow-400" size={30} />
-
-      </div>
-
-      <h3 className="text-2xl font-black mb-4">
-
-        {title}
-
-      </h3>
-
-      <p className="text-zinc-400 leading-8">
-
-        {text}
-
-      </p>
-
     </div>
   );
 }

@@ -29,7 +29,12 @@ export default function AuthMenu() {
     signOutUser,
   } = useAuth();
 
-  const { t } = useLanguage();
+  const { language } = useLanguage();
+
+  // Local helper to translate dual-strings
+  const t = (en, am) => {
+    return language === "am" ? am : en;
+  };
 
   const [open, setOpen] =
     useState(false);

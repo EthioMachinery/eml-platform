@@ -4,7 +4,12 @@ import Link from "next/link";
 import { useLanguage } from "@/context/LanguageContext";
 
 export default function PricingPage() {
-  const { t } = useLanguage();
+  const { language } = useLanguage();
+
+  // Local helper to translate dual-strings (strictly typed to prevent implicit 'any' warnings)
+  const t = (en: string, am: string): string => {
+    return language === "am" ? am : en;
+  };
 
   const plans = [
     {
@@ -70,7 +75,7 @@ export default function PricingPage() {
           <p className="mt-6 text-lg md:text-xl text-slate-200 max-w-3xl mx-auto">
             {t(
               "Upgrade visibility, win more leads, close more deals, and dominate Ethiopia’s machinery market.",
-              "ታይነት ያሻሽሉ፣ ብዙ ደንበኞች ያግኙ፣ ብዙ ግብይቶች ይዝጉ፣ የኢትዮጵያን የማሽነሪ ገበያ ይቆጣጠሩ።"
+              "የማስታወቂያ ታይነት ያሻሽሉ፣ ብዙ ፈላጊ ደንበኞችን ያግኙ፣ ተጨማሪ ስምምነቶችን ይዝጉ፣ እና የኢትዮጵያን የከባድ ማሽነሪ ገበያ ይቆጣጠሩ።"
             )}
           </p>
         </div>
@@ -84,8 +89,8 @@ export default function PricingPage() {
               key={i}
               className={`rounded-3xl border p-8 relative transition hover:shadow-2xl ${
                 plan.featured
-                  ? "border-blue-600 scale-105 shadow-2xl"
-                  : "border-gray-200"
+                  ? "border-blue-600 scale-105 shadow-2xl bg-white"
+                  : "border-gray-200 bg-white"
               }`}
             >
               {plan.badge && (
@@ -103,8 +108,8 @@ export default function PricingPage() {
 
               <ul className="mt-8 space-y-4">
                 {plan.features.map((f, idx) => (
-                  <li key={idx} className="flex gap-3">
-                    <span className="text-green-600">✓</span>
+                  <li key={idx} className="flex gap-3 text-sm">
+                    <span className="text-green-600 font-bold">✓</span>
                     <span>{f}</span>
                   </li>
                 ))}
@@ -112,7 +117,7 @@ export default function PricingPage() {
 
               <Link
                 href={plan.href}
-                className={`mt-10 block text-center py-4 rounded-2xl font-bold transition ${
+                className={`mt-10 block text-center py-4 rounded-2xl font-bold transition text-xs uppercase tracking-wider ${
                   plan.featured
                     ? "bg-blue-600 text-white hover:bg-blue-700"
                     : "bg-slate-900 text-white hover:bg-slate-800"
@@ -131,28 +136,28 @@ export default function PricingPage() {
           <Stat number="4,500+" label={t("Listings", "ማስታወቂያ")} />
           <Stat number="12,000+" label={t("Users", "ተጠቃሚዎች")} />
           <Stat number="98%" label={t("Trust Score", "እምነት")} />
-          <Stat number="10x" label={t("Lead Growth", "የደንበኛ እድገት")} />
+          <Stat number="10x" label={t("Lead Growth", "የየደንበኛ እድገት")} />
         </div>
       </section>
 
       {/* FAQ */}
       <section className="max-w-5xl mx-auto px-4 py-24">
         <h3 className="text-4xl font-black text-center mb-14">
-          {t("Frequently Asked Questions", "ብዙ ጊዜ የሚጠየቁ")}
+          {t("Frequently Asked Questions", "ብዙ ጊዜ የሚጠየቁ ጥያቄዎች")}
         </h3>
 
         <div className="space-y-6">
           <Faq
             q={t("Can I cancel anytime?", "ማንኛውንም ጊዜ ማቋረጥ እችላለሁ?")}
-            a={t("Yes. No contracts required.", "አዎን። ውል አያስፈልግም።")}
+            a={t("Yes. No contracts required.", "አዎን። ምንም አይነት ግዴታ ወይም ውል አያስፈልግም።")}
           />
           <Faq
             q={t("Do verified badges help?", "የተረጋገጠ ምልክት ይረዳል?")}
-            a={t("Yes. Verified sellers get more trust and leads.", "አዎን። የተረጋገጡ ሻጮች ብዙ እምነት እና ደንበኛ ያገኛሉ።")}
+            a={t("Yes. Verified sellers get more trust and leads.", "አዎን። የተረጋገጡ ሻጮች ከደንበኞች ከፍተኛ እምነት እና ተጨማሪ ጥያቄዎችን ያገኛሉ።")}
           />
           <Faq
             q={t("Can enterprises get custom plans?", "ኢንተርፕራይዞች ልዩ እቅድ ያገኛሉ?")}
-            a={t("Yes. Contact our sales team.", "አዎን። የሽያጭ ቡድናችንን ያነጋግሩ።")}
+            a={t("Yes. Contact our sales team.", "አዎን። የሽያጭ እና የቴክኒክ ቡድናችንን ያነጋግሩ።")}
           />
         </div>
       </section>
@@ -167,7 +172,7 @@ export default function PricingPage() {
           <p className="mt-6 text-lg text-white/90">
             {t(
               "Upgrade today and unlock more customers.",
-              "ዛሬ ያሻሽሉ እና ብዙ ደንበኞችን ይክፈቱ።"
+              "ዛሬውኑ ያሻሽሉ እና ተጨማሪ ደንበኞችን ይድረሱ።"
             )}
           </p>
 
@@ -207,8 +212,8 @@ function Faq({
 }) {
   return (
     <div className="rounded-2xl border p-6">
-      <h4 className="font-bold text-xl">{q}</h4>
-      <p className="mt-3 text-gray-600">{a}</p>
+      <h4 className="font-bold text-xl text-zinc-900">{q}</h4>
+      <p className="mt-3 text-gray-600 text-sm leading-relaxed">{a}</p>
     </div>
   );
 }

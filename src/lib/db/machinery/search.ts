@@ -1,213 +1,154 @@
-// src/lib/db/machinery/search.ts
-// EML — Machinery Search Engine
-//
-// Powers the marketplace search with full-text search and composite filters.
-// Utilises the composite index: (category, city, status, created_at DESC)
-//
-// Usage:
-//   import { searchMachinery } from '@/lib/db/machinery/search';
-//
-//   const results = await searchMachinery({
-//     query:    'excavator',
-//     category: 'earthmoving',
-//     city:     'Addis Ababa',
-//     minPrice: 100000,
-//     maxPrice: 5000000,
-//   });
+import { supabase } from "@/lib/supabaseClient";
+import { SupportedLanguage } from "@/translations/keys";
 
-import { supabaseAdmin } from '@/lib/supabase/adminClient';
-
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
-
-export interface MachinerySearchParams {
-  query?:      string;   // Full-text search on title + description
-  category?:   string;   // e.g. 'earthmoving', 'lifting', 'concrete'
-  city?:       string;   // Ethiopian city name
-  type?:       string;   // Machine type e.g. 'excavator', 'crane'
-  condition?:  string;   // 'new' | 'used' | 'refurbished'
-  minPrice?:   number;   // Minimum price in ETB
-  maxPrice?:   number;   // Maximum price in ETB
-  minYear?:    number;   // Minimum manufacture year
-  maxYear?:    number;   // Maximum manufacture year
-  forSale?:    boolean;  // Filter for sale listings
-  forRent?:    boolean;  // Filter for rent listings
-  sortBy?:     'newest' | 'price_asc' | 'price_desc' | 'most_relevant';
-  page?:       number;   // Page number (1-based)
-  limit?:      number;   // Results per page (max 50)
+export interface LocalizedListing {
+  id: string;
+  brand: string;
+  model: string;
+  categoryToken: string;
+  modelYear: number;
+  serialNumber: string;
+  title: string;       // Resolved localized title
+  description: string; // Resolved localized description
+  priceSale: number | null;
+  priceRentalDaily: number | null;
+  isRentalOnly: boolean;
+  status: string;
+  engineHours?: number;
+  locationToken?: string;
+  verified?: boolean;
+  imageUrl: string | null; // Added to map uploaded photo URLs
+  ownerPhone?: string;     // Gated attribute
+  ownerName?: string;      // Gated attribute
 }
 
-export interface MachinerySearchResult {
-  id:          string;
-  title:       string;
-  category:    string;
-  type:        string | null;
-  brand:       string | null;
-  city:        string;
-  region:      string | null;
-  condition:   string | null;
-  year:        number | null;
-  price:       number;
-  rent_price:  number | null;
-  for_sale:    boolean;
-  for_rent:    boolean;
-  image_url:   string | null;
-  created_at:  string;
-  seller: {
-    full_name:   string;
-    trust_score: number | null;
-    verified:    boolean;
-  } | null;
-}
+/**
+ * Fetches active listings from Supabase, checks the user's active subscription tier, 
+ * and scrubs sensitive details for free accounts [4].
+ */
+export async function fetchLocalizedListings(
+  lang: SupportedLanguage,
+  filters?: {
+    category?: string;
+    location?: string;
+    maxPrice?: number;
+    intent?: 'all' | 'rent' | 'sale';
+  }
+): Promise<LocalizedListing[]> {
+  try {
+    // 1. Resolve current active user session to check monetization tiers [4]
+    const { data: { user } } = await supabase.auth.getUser();
+    let isPremiumUser = false;
 
-export interface MachinerySearchResponse {
-  data:    MachinerySearchResult[];
-  total:   number;
-  page:    number;
-  limit:   number;
-  pages:   number;
-}
+    if (user) {
+      const { data: subData } = await supabase
+        .from('subscriptions')
+        .select('tier, active')
+        .eq('user_id', user.id)
+        .eq('active', true)
+        .maybeSingle();
 
-// ---------------------------------------------------------------------------
-// searchMachinery
-//
-// Main search function. Combines full-text search with composite filters.
-// Always filters to status = 'active' listings only.
-// ---------------------------------------------------------------------------
-export async function searchMachinery(
-  params: MachinerySearchParams = {}
-): Promise<MachinerySearchResponse> {
-
-  const {
-    query,
-    category,
-    city,
-    type,
-    condition,
-    minPrice,
-    maxPrice,
-    minYear,
-    maxYear,
-    forSale,
-    forRent,
-    sortBy    = 'newest',
-    page      = 1,
-    limit     = 20,
-  } = params;
-
-  // Enforce pagination limits
-  const safePage  = Math.max(1, page);
-  const safeLimit = Math.min(50, Math.max(1, limit));
-  const offset    = (safePage - 1) * safeLimit;
-
-  // Build base query
-  let dbQuery = supabaseAdmin
-    .from('machinery')
-    .select(
-      `id, title, category, type, brand, city, region,
-       condition, year, price, rent_price, for_sale, for_rent,
-       image_url, created_at,
-       seller:profiles!user_id (full_name, trust_score, verified)`,
-      { count: 'exact' }
-    )
-    .eq('status', 'active');
-
-  // --- Full-text search ---
-  // Uses PostgreSQL full-text search on title and description
-  if (query && query.trim().length > 0) {
-    const sanitized = query.trim().replace(/[^a-zA-Z0-9\s\u1200-\u137F]/g, '');
-    if (sanitized.length > 0) {
-      dbQuery = dbQuery.textSearch('title', sanitized, {
-        type:   'websearch',
-        config: 'english',
-      });
+      if (subData && subData.tier !== 'free') {
+        isPremiumUser = true;
+      }
     }
-  }
 
-  // --- Composite filters ---
-  if (category)  dbQuery = dbQuery.eq('category', category);
-  if (city)      dbQuery = dbQuery.eq('city', city);
-  if (type)      dbQuery = dbQuery.eq('type', type);
-  if (condition) dbQuery = dbQuery.eq('condition', condition);
-  if (minPrice !== undefined) dbQuery = dbQuery.gte('price', minPrice);
-  if (maxPrice !== undefined) dbQuery = dbQuery.lte('price', maxPrice);
-  if (minYear  !== undefined) dbQuery = dbQuery.gte('year', minYear);
-  if (maxYear  !== undefined) dbQuery = dbQuery.lte('year', maxYear);
-  if (forSale  !== undefined) dbQuery = dbQuery.eq('for_sale', forSale);
-  if (forRent  !== undefined) dbQuery = dbQuery.eq('for_rent', forRent);
+    let query = supabase
+      .from('listings')
+      .select(`
+        id,
+        brand,
+        model,
+        category_token,
+        model_year,
+        serial_number,
+        title_am,
+        title_en,
+        description_am,
+        description_en,
+        localized_title,
+        localized_description,
+        price,
+        price_sale,
+        price_rental_daily,
+        is_rental_only,
+        status,
+        image_url,
+        owner:owner_id (
+          full_name,
+          phone_number
+        )
+      `);
 
-  // --- Sorting ---
-  switch (sortBy) {
-    case 'price_asc':
-      dbQuery = dbQuery.order('price', { ascending: true });
-      break;
-    case 'price_desc':
-      dbQuery = dbQuery.order('price', { ascending: false });
-      break;
-    case 'most_relevant':
-      // Falls back to newest when no full-text query is provided
-      dbQuery = dbQuery.order('created_at', { ascending: false });
-      break;
-    case 'newest':
-    default:
-      dbQuery = dbQuery.order('created_at', { ascending: false });
-      break;
-  }
+    // Only display verified available assets in directory
+    query = query.eq('status', 'verified_available');
 
-  // --- Pagination ---
-  dbQuery = dbQuery.range(offset, offset + safeLimit - 1);
+    // Apply active sidebar filters
+    if (filters?.category) {
+      query = query.eq('category_token', filters.category);
+    }
+    if (filters?.location) {
+      query = query.eq('location', filters.location);
+    }
+    if (filters?.intent === 'rent') {
+      query = query.eq('is_rental_only', true);
+    } else if (filters?.intent === 'sale') {
+      query = query.eq('is_rental_only', false);
+    }
 
-  // --- Execute ---
-  const { data, error, count } = await dbQuery;
+    const { data, error } = await query;
 
-  if (error) {
-    throw new Error(`[EML] searchMachinery failed: ${error.message}`);
-  }
+    if (error) {
+      throw error;
+    }
 
-  const total = count ?? 0;
+    if (!data) return [];
 
-  return {
-    data:  (data ?? []) as unknown as MachinerySearchResult[],
-    total,
-    page:  safePage,
-    limit: safeLimit,
-    pages: Math.ceil(total / safeLimit),
-  };
-}
+    // Map columns dynamically according to selected language
+    return data.map((item: any) => {
+      let title = "No Title";
+      if (item.localized_title && typeof item.localized_title === "object") {
+        title = item.localized_title[lang] || item.localized_title['en'] || title;
+      } else {
+        title = lang === 'am' ? (item.title_am || item.title_en) : (item.title_en || item.title_am || title);
+      }
 
-// ---------------------------------------------------------------------------
-// getRelatedListings
-//
-// Returns up to 4 similar listings based on category and city.
-// Used on the machinery detail page to show related machines.
-// ---------------------------------------------------------------------------
-export async function getRelatedListings(
-  machineryId: string,
-  category:    string,
-  city:        string,
-  limit:       number = 4
-): Promise<MachinerySearchResult[]> {
+      let description = "No Description";
+      if (item.localized_description && typeof item.localized_description === "object") {
+        description = item.localized_description[lang] || item.localized_description['en'] || description;
+      } else {
+        description = lang === 'am' ? (item.description_am || item.description_en) : (item.description_en || item.description_am || description);
+      }
 
-  const { data, error } = await supabaseAdmin
-    .from('machinery')
-    .select(
-      `id, title, category, type, brand, city, region,
-       condition, year, price, rent_price, for_sale, for_rent,
-       image_url, created_at,
-       seller:profiles!user_id (full_name, trust_score, verified)`
-    )
-    .eq('status', 'active')
-    .eq('category', category)
-    .eq('city', city)
-    .neq('id', machineryId)
-    .order('created_at', { ascending: false })
-    .limit(limit);
+      // 2. Perform Role Gating: Hide direct seller details for free users [4]
+      const ownerInfo = item.owner as any;
+      const ownerName = isPremiumUser ? (ownerInfo?.full_name || "Supplier") : "Verified EML Supplier";
+      const ownerPhone = isPremiumUser ? (ownerInfo?.phone_number || "Contact via EML") : "Upgrade to view phone";
+      const serialNumber = isPremiumUser ? (item.serial_number || "N/A") : "Vetted & Hidden";
 
-  if (error) {
-    console.error(`[EML] getRelatedListings failed: ${error.message}`);
+      return {
+        id: item.id,
+        brand: item.brand || "Unknown",
+        model: item.model || "Unknown",
+        categoryToken: item.category_token || "machinery",
+        modelYear: item.model_year || 2020,
+        serialNumber,
+        title,
+        description,
+        priceSale: item.price_sale ? Number(item.price_sale) : (item.price ? Number(item.price) : null),
+        priceRentalDaily: item.price_rental_daily ? Number(item.price_rental_daily) : null,
+        isRentalOnly: item.is_rental_only || false,
+        status: item.status,
+        engineHours: 1200, // Placeholder mapping
+        locationToken: item.location || "addis_ababa",
+        verified: true,    // Default trust state
+        imageUrl: item.image_url || null,
+        ownerName,
+        ownerPhone
+      };
+    });
+  } catch (err) {
+    console.error("Failed to fetch machinery listings from database:", err);
     return [];
   }
-
-  return (data ?? []) as unknown as MachinerySearchResult[];
 }

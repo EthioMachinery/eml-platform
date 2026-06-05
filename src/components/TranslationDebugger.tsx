@@ -6,25 +6,33 @@ import {
 } from "react";
 
 import { useLanguage } from "@/context/LanguageContext";
+import { translations } from "@/lib/i18n";
+
+type NotificationItem = {
+  id: string;
+  title: string;
+  title_am?: string;
+  message: string;
+  message_am?: string;
+  type: string;
+  created_at?: string;
+  read?: boolean;
+  action_url?: string;
+};
 
 export default function TranslationDebugger() {
-  const {
-    language,
-    translations,
-  } = useLanguage();
+  const { language } = useLanguage();
 
-  const [missing, setMissing] =
-    useState<string[]>([]);
+  const [missing, setMissing] = useState<string[]>([]);
 
   useEffect(() => {
-    const issues: string[] =
-      [];
+    const issues: string[] = [];
 
     function scan(
       obj: any,
       path = ""
     ) {
-      // Fix: Guard check to prevent "Cannot convert undefined or null to object" runtime error
+      // Guard check to prevent "Cannot convert undefined or null to object" runtime error
       if (!obj || typeof obj !== "object") {
         return;
       }
@@ -60,10 +68,11 @@ export default function TranslationDebugger() {
       );
     }
 
-    scan(translations);
+    // Scan only the dictionary of the active selected language
+    scan(translations[language]);
 
     setMissing(issues);
-  }, [translations]);
+  }, [language]);
 
   if (
     process.env.NODE_ENV !==

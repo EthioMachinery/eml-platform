@@ -1,444 +1,294 @@
 "use client";
 
-import {
-  useMemo,
-  useState,
-} from "react";
+import React, { useState, useEffect, useTransition } from "react";
+import { useTranslate } from "@/hooks/useTranslate";
+import { fetchLocalizedListings, LocalizedListing } from "@/lib/db/machinery/search";
+import TranslatedInput from "@/components/ui/TranslatedInput";
+import TranslatedSelect from "@/components/ui/TranslatedSelect";
 
-import Link from "next/link";
+const localizedLocations: Record<string, Record<string, string>> = {
+  "addis_ababa": { en: "Addis Ababa", am: "አዲስ አበባ", om: "Finfinnee", ti: "ኣዲስ ኣበባ" },
+  "hawassa": { en: "Hawassa", am: "ሀዋሳ", om: "Hawaas", ti: "ሃዋሳ" },
+  "adama": { en: "Adama", am: "አዳማ", om: "Adaamaa", ti: "ኣማራ" },
+  "mekelle": { en: "Mekelle", am: "መቀሌ", om: "Maqalee", ti: "መቐለ" },
+  "bahir_dar": { en: "Bahir Dar", am: "ባህር ዳር", om: "Baahir Daar", ti: "ባህር ዳር" },
+  "dire_dawa": { en: "Dire Dawa", am: "ድሬዳዋ", om: "Dirree Dhawaa", ti: "ድሬዳዋ" }
+};
 
-import {
-  Search,
-  Filter,
-  ChevronRight,
-  ShieldCheck,
-  MapPin,
-  Sparkles,
-} from "lucide-react";
+export default function EMLUniversalMarketplace() {
+  const { t, currentLanguage } = useTranslate();
+  const [isPending, startTransition] = useTransition();
+  
+  const [listings, setListings] = useState<LocalizedListing[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-import {
-  EML_CATEGORIES,
-} from "@/lib/emlCategories";
+  // Search & Filter state variables
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [otherCategorySpecification, setOtherCategorySpecification] = useState("");
+  const [selectedLocation, setSelectedLocation] = useState("");
+  const [otherLocationSpecification, setOtherLocationSpecification] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
+  const [rentFilter, setRentFilter] = useState<"all" | "rent" | "sale">("all");
 
-import {
-  generateSmartSuggestions,
-} from "@/lib/emlMarketplaceEngine";
+  useEffect(() => {
+    async function loadData() {
+      setIsLoading(true);
+      
+      const targetCategory = selectedCategory === "other" ? otherCategorySpecification : selectedCategory;
+      const targetLocation = selectedLocation === "other" ? otherLocationSpecification : selectedLocation;
 
-import { useLanguage } from "@/context/LanguageContext";
+      const data = await fetchLocalizedListings(currentLanguage, {
+        category: targetCategory || undefined,
+        location: targetLocation || undefined,
+        maxPrice: maxPrice ? Number(maxPrice) : undefined,
+        intent: rentFilter
+      });
+      setListings(data);
+      setIsLoading(false);
+    }
+    
+    startTransition(() => {
+      loadData();
+    });
+  }, [currentLanguage, selectedCategory, otherCategorySpecification, selectedLocation, otherLocationSpecification, maxPrice, rentFilter]);
 
-interface Props {
-  title?: string;
-
-  subtitle?: string;
-
-  showFeatured?: boolean;
-}
-
-export default function EMLUniversalMarketplace({
-  title,
-
-  subtitle,
-
-  showFeatured = true,
-}: Props) {
-  const { t } =
-    useLanguage();
-
-  const [search, setSearch] =
-    useState("");
-
-  const [selectedCategory,
-    setSelectedCategory] =
-    useState("all");
-
-  const suggestions =
-    useMemo(() => {
-      if (!search)
-        return [];
-
-      return generateSmartSuggestions(
-        search
-      );
-    }, [search]);
-
-  const filteredCategories =
-    useMemo(() => {
-      if (
-        selectedCategory ===
-        "all"
-      ) {
-        return EML_CATEGORIES;
-      }
-
-      return EML_CATEGORIES.filter(
-        (item) =>
-          item.id ===
-          selectedCategory
-      );
-    }, [selectedCategory]);
+  const displayedListings = listings.filter((item) => {
+    return `${item.brand} ${item.model}`.toLowerCase().includes(searchTerm.toLowerCase());
+  });
 
   return (
-    <section className="relative">
+    <section className="max-w-7xl mx-auto px-4 py-8" id="eml-marketplace-app">
+      
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-6 border-b border-zinc-900">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight flex items-center gap-2">
+            <span className="text-amber-500">EML</span> {t("nav.browse")}
+          </h1>
+          <p className="text-sm text-zinc-400 mt-1">
+            {isLoading ? "..." : `${displayedListings.length} ${t("status.available")}`}
+          </p>
+        </div>
+      </header>
 
-      {/* HERO */}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mt-8">
+        <aside className="bg-zinc-950 border border-zinc-900 rounded-xl p-5 space-y-5 h-fit">
+          <h3 className="text-sm font-bold uppercase tracking-wider text-zinc-200 border-b border-zinc-900 pb-3">
+            {t("actions.search")}
+          </h3>
 
-      <div className="relative overflow-hidden rounded-[40px] border border-yellow-500/10 bg-gradient-to-br from-yellow-500/10 via-orange-500/5 to-zinc-900">
-
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,208,0,0.15),transparent_35%)]" />
-
-        <div className="relative p-8 md:p-14">
-
-          <div className="max-w-4xl">
-
-            <div className="inline-flex items-center gap-2 bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 px-4 py-2 rounded-full text-sm font-black mb-6">
-
-              <Sparkles size={16} />
-
-              {t(
-                "AI Powered Machinery Ecosystem",
-                "AI የተጎለበተ የማሽነሪ ስርዓት"
-              )}
-
-            </div>
-
-            <h1 className="text-4xl md:text-6xl font-black leading-tight mb-6">
-
-              {title ||
-                t(
-                  "Discover Ethiopia’s Machinery Economy",
-                  "የኢትዮጵያን የማሽነሪ ኢኮኖሚ ያግኙ"
-                )}
-
-            </h1>
-
-            <p className="text-zinc-300 text-lg leading-8 max-w-3xl">
-
-              {subtitle ||
-                t(
-                  "Buy, rent, transport, repair, insure and finance machinery across Ethiopia through one intelligent ecosystem.",
-                  "በአንድ ዘመናዊ ስርዓት ማሽነሪ ይግዙ፣ ይከራዩ፣ ያጓጉዙ፣ ያስጠግኑ፣ ያስመዝግቡ እና ፋይናንስ ያግኙ።"
-                )}
-
-            </p>
-
-            {/* SEARCH */}
-
-            <div className="mt-10 grid lg:grid-cols-[1fr_240px] gap-4">
-
-              <div className="relative">
-
-                <Search
-                  className="absolute left-5 top-1/2 -translate-y-1/2 text-zinc-500"
-                  size={22}
-                />
-
-                <input
-                  value={search}
-                  onChange={(e) =>
-                    setSearch(
-                      e.target.value
-                    )
-                  }
-                  placeholder={t(
-                    "Search machinery, transport, operators, mechanics...",
-                    "ማሽነሪ፣ ትራንስፖርት፣ ኦፕሬተሮች፣ መካኒኮች..."
-                  )}
-                  className="w-full h-16 rounded-3xl bg-zinc-950/80 border border-zinc-800 pl-16 pr-6 text-white outline-none focus:border-yellow-500 transition"
-                />
-
-                {/* SUGGESTIONS */}
-
-                {suggestions.length >
-                  0 && (
-                  <div className="absolute top-full left-0 right-0 mt-3 bg-zinc-950 border border-zinc-800 rounded-3xl overflow-hidden z-30 shadow-2xl">
-
-                    {suggestions.map(
-                      (item) => (
-                        <button
-                          key={
-                            item.id
-                          }
-                          onClick={() =>
-                            setSearch(
-                              item.name_en
-                            )
-                          }
-                          className="w-full flex items-center justify-between px-5 py-4 hover:bg-zinc-900 transition text-left"
-                        >
-
-                          <div className="flex items-center gap-4">
-
-                            <div className="text-2xl">
-                              {
-                                item.icon
-                              }
-                            </div>
-
-                            <div>
-
-                              <div className="font-bold">
-                                {
-                                  item.name_en
-                                }
-                              </div>
-
-                              <div className="text-sm text-zinc-500">
-                                {
-                                  item.name_am
-                                }
-                              </div>
-
-                            </div>
-
-                          </div>
-
-                          <ChevronRight
-                            size={18}
-                          />
-
-                        </button>
-                      )
-                    )}
-
-                  </div>
-                )}
-
-              </div>
-
-              <button className="h-16 rounded-3xl bg-yellow-500 hover:bg-yellow-400 text-black font-black transition flex items-center justify-center gap-3">
-
-                <Filter size={20} />
-
-                {t(
-                  "Advanced Search",
-                  "የላቀ ፍለጋ"
-                )}
-
-              </button>
-
-            </div>
-
+          {/* Search Term input */}
+          <div>
+            <TranslatedInput
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholderKey="placeholders.searchPlaceholder"
+              labelKey="actions.search"
+            />
           </div>
 
-        </div>
+          {/* Category Dropdown */}
+          <div>
+            <TranslatedSelect
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              placeholderKey="placeholders.selectCategory"
+              labelKey="placeholders.selectCategory"
+              enableOther={true}
+              otherValue={otherCategorySpecification}
+              onOtherChange={setOtherCategorySpecification}
+              otherPlaceholderKey="placeholders.searchPlaceholder"
+              options={[
+                { value: "excavator", labelKey: "categories.excavator" },
+                { value: "loader", labelKey: "categories.loader" },
+                { value: "dozer", labelKey: "categories.dozer" },
+                { value: "crane", labelKey: "categories.crane" },
+                { value: "grader", labelKey: "categories.grader" },
+                { value: "roller", labelKey: "categories.roller" },
+                { value: "dumpTruck", labelKey: "categories.dumpTruck" },
+                { value: "generator", labelKey: "categories.generator" },
+                { value: "backhoe", labelKey: "categories.backhoe" }
+              ]}
+            />
+          </div>
 
-      </div>
+          {/* Location Dropdown */}
+          <div>
+            <TranslatedSelect
+              value={selectedLocation}
+              onChange={(e) => setSelectedLocation(e.target.value)}
+              placeholderKey="placeholders.selectLocation"
+              labelKey="labels.location"
+              enableOther={true}
+              otherValue={otherLocationSpecification}
+              onOtherChange={setOtherLocationSpecification}
+              otherPlaceholderKey="placeholders.selectLocation"
+              options={Object.keys(localizedLocations).map((key) => ({
+                value: key,
+                label: localizedLocations[key][currentLanguage] || localizedLocations[key]["en"]
+              }))}
+            />
+          </div>
 
-      {/* CATEGORY GRID */}
+          <div className="space-y-2">
+            <span className="block text-xs font-bold text-zinc-400 uppercase tracking-wider">
+              {t("actions.sell")}
+            </span>
+            <div className="grid grid-cols-3 gap-1 bg-zinc-900 p-1 rounded-lg border border-zinc-800">
+              {(["all", "rent", "sale"] as const).map((type) => {
+                let labelKey: any = "actions.filterAll";
+                if (type === "rent") labelKey = "actions.filterRent";
+                if (type === "sale") labelKey = "actions.filterBuy";
 
-      <div className="mt-14">
+                return (
+                  <button
+                    key={type}
+                    type="button"
+                    onClick={() => setRentFilter(type)}
+                    className={`py-1.5 rounded text-[10px] font-bold uppercase transition-all ${
+                      rentFilter === type
+                        ? "bg-amber-500 text-white shadow-sm"
+                        : "text-zinc-400 hover:text-white"
+                    }`}
+                  >
+                    {t(labelKey)}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
 
-        <div className="flex flex-wrap gap-3 mb-10">
+          <div>
+            <TranslatedInput
+              type="number"
+              value={maxPrice}
+              onChange={(e) => setMaxPrice(e.target.value)}
+              placeholderKey="placeholders.priceMax"
+              labelKey="placeholders.priceMax"
+            />
+          </div>
+        </aside>
 
-          <button
-            onClick={() =>
-              setSelectedCategory(
-                "all"
-              )
-            }
-            className={`px-5 h-12 rounded-2xl font-bold transition ${
-              selectedCategory ===
-              "all"
-                ? "bg-yellow-500 text-black"
-                : "bg-zinc-900 border border-zinc-800"
-            }`}
-          >
-            {t(
-              "All",
-              "ሁሉም"
-            )}
-          </button>
-
-          {EML_CATEGORIES.map(
-            (item) => (
-              <button
-                key={item.id}
-                onClick={() =>
-                  setSelectedCategory(
-                    item.id
-                  )
-                }
-                className={`px-5 h-12 rounded-2xl font-bold transition ${
-                  selectedCategory ===
-                  item.id
-                    ? "bg-yellow-500 text-black"
-                    : "bg-zinc-900 border border-zinc-800"
-                }`}
-              >
-                {
-                  item.name_en
-                }
-              </button>
-            )
-          )}
-
-        </div>
-
-        <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-7">
-
-          {filteredCategories.map(
-            (item) => (
-              <Link
-                key={item.id}
-                href={`/browse?category=${item.id}`}
-                className="group relative overflow-hidden bg-zinc-900 border border-zinc-800 rounded-[32px] p-8 hover:border-yellow-500/40 transition-all duration-300 hover:-translate-y-2"
-              >
-
-                <div
-                  className={`absolute inset-0 opacity-10 bg-gradient-to-br ${item.color}`}
-                />
-
-                <div className="relative">
-
-                  <div className="flex items-start justify-between mb-8">
-
-                    <div className="text-6xl">
-                      {
-                        item.icon
-                      }
-                    </div>
-
-                    <div className="flex items-center gap-2 text-green-400 text-sm font-bold bg-green-500/10 border border-green-500/20 px-3 py-1 rounded-full">
-
-                      <ShieldCheck
-                        size={14}
-                      />
-
-                      VERIFIED
-
-                    </div>
-
-                  </div>
-
-                  <h3 className="text-3xl font-black leading-tight mb-3">
-
-                    {
-                      item.name_en
-                    }
-
-                  </h3>
-
-                  <div className="text-zinc-500 font-semibold mb-6">
-
-                    {
-                      item.name_am
-                    }
-
-                  </div>
-
-                  <div className="flex items-center gap-2 text-zinc-400 mb-8">
-
-                    <MapPin
-                      size={18}
-                    />
-
-                    {t(
-                      "Available across Ethiopia",
-                      "በመላው ኢትዮጵያ ይገኛል"
-                    )}
-
-                  </div>
-
-                  <div className="flex items-center justify-between">
-
-                    <div className="text-yellow-400 font-black">
-
-                      {t(
-                        "Explore",
-                        "ይመልከቱ"
+        <main className="lg:col-span-3">
+          {isLoading ? (
+            <div className="flex justify-center items-center py-20">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500" />
+            </div>
+          ) : displayedListings.length === 0 ? (
+            <div className="flex flex-col items-center justify-center p-12 border-2 border-dashed border-zinc-900 rounded-xl bg-zinc-950/20">
+              <p className="text-zinc-400 text-sm font-semibold">
+                No active machinery found matches your selected filters.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+              {displayedListings.map((item) => {
+                const translatedCategory = t(`categories.${item.categoryToken}` as any);
+                const localizedCity = item.locationToken ? (localizedLocations[item.locationToken]?.[currentLanguage] || localizedLocations[item.locationToken]?.["en"]) : "N/A";
+                const currencyFormatter = new Intl.NumberFormat("en-US", { style: "decimal" });
+                const displayPrice = item.isRentalOnly ? item.priceRentalDaily : item.priceSale;
+                
+                return (
+                  <article
+                    key={item.id}
+                    className="flex flex-col bg-zinc-950 border border-zinc-900 rounded-xl overflow-hidden shadow-sm hover:shadow-md hover:border-zinc-800 transition-all duration-200"
+                  >
+                    {/* Visual Imagery Mock Container - Dynamically loads user image if present */}
+                    <div className="relative h-48 bg-zinc-900 flex items-center justify-center border-b border-zinc-900 overflow-hidden">
+                      {item.imageUrl ? (
+                        <img
+                          src={item.imageUrl}
+                          alt={item.brand}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            // Fallback to text template if image load fails
+                            e.currentTarget.style.display = "none";
+                          }}
+                        />
+                      ) : (
+                        <div className="text-center">
+                          <span className="block text-xs font-bold text-zinc-500 uppercase tracking-wider">
+                            {translatedCategory}
+                          </span>
+                          <span className="block text-lg font-black text-zinc-300">
+                            {item.brand}
+                          </span>
+                        </div>
                       )}
 
+                      {/* Trust Verification Badge */}
+                      {item.verified && (
+                        <span className="absolute top-3 left-3 bg-green-500 text-white text-[9px] font-black uppercase px-2 py-1 rounded shadow-sm tracking-widest z-10">
+                          {t("status.verified")}
+                        </span>
+                      )}
+
+                      {/* Transaction Intent Badge */}
+                      <span className="absolute top-3 right-3 bg-black text-white text-[9px] font-black uppercase px-2 py-1 rounded shadow-sm tracking-wider border border-zinc-800 z-10">
+                        {item.isRentalOnly ? t("actions.rent") : t("actions.buy")}
+                      </span>
                     </div>
 
-                    <div className="w-12 h-12 rounded-2xl bg-yellow-500/10 flex items-center justify-center text-yellow-400 group-hover:bg-yellow-500 group-hover:text-black transition">
+                    {/* Content Details */}
+                    <div className="p-5 flex-grow flex flex-col justify-between">
+                      <div>
+                        <div className="flex justify-between items-start">
+                          <h4 className="text-base font-bold text-white">
+                            {item.title}
+                          </h4>
+                          <span className="text-xs font-black text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded">
+                            {item.modelYear}
+                          </span>
+                        </div>
 
-                      <ChevronRight
-                        size={22}
-                      />
+                        {/* Localized Metadata Fields */}
+                        <div className="grid grid-cols-2 gap-2 mt-4 text-[11px] text-zinc-400 border-t border-b border-zinc-900 py-3 my-3">
+                          <div>
+                            <span className="block font-bold text-zinc-500 uppercase text-[9px]">
+                              {t("labels.location")}
+                            </span>
+                            <span className="font-semibold text-zinc-200">
+                              {localizedCity}
+                            </span>
+                          </div>
+                          <div>
+                            <span className="block font-bold text-zinc-500 uppercase text-[9px]">
+                              {t("labels.workingHours")}
+                            </span>
+                            <span className="font-semibold text-zinc-200">
+                              {item.engineHours || "N/A"} Hrs
+                            </span>
+                          </div>
+                        </div>
+                      </div>
 
+                      {/* Pricing and Intent Action */}
+                      <div className="mt-2">
+                        <div className="mb-3">
+                          <span className="text-xs text-zinc-500 block uppercase font-bold">
+                            {item.isRentalOnly ? t("labels.dailyRate") : t("labels.salePrice")}
+                          </span>
+                          <span className="text-xl font-black text-white tracking-tight">
+                            {displayPrice ? currencyFormatter.format(displayPrice) : "0"} <span className="text-sm font-bold text-zinc-400">ETB</span>
+                          </span>
+                        </div>
+                        
+                        <button
+                          type="button"
+                          className="w-full py-2.5 rounded-lg text-xs font-bold uppercase transition-all shadow-sm flex items-center justify-center gap-1.5 bg-amber-500 hover:bg-amber-600 text-white"
+                        >
+                          {item.isRentalOnly ? t("actions.rent") : t("actions.buy")}
+                        </button>
+                      </div>
                     </div>
-
-                  </div>
-
-                </div>
-
-              </Link>
-            )
+                  </article>
+                );
+              })}
+            </div>
           )}
-
-        </div>
-
+        </main>
       </div>
-
-      {/* FEATURED SECTION */}
-
-      {showFeatured && (
-
-        <div className="mt-20 bg-zinc-900 border border-zinc-800 rounded-[40px] p-8 md:p-12">
-
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
-
-            <div>
-
-              <div className="text-yellow-400 font-black tracking-widest mb-4">
-
-                {t(
-                  "ENTERPRISE EML",
-                  "ኢንተርፕራይዝ EML"
-                )}
-
-              </div>
-
-              <h2 className="text-4xl font-black leading-tight mb-5">
-
-                {t(
-                  "One Platform. Entire Machinery Economy.",
-                  "አንድ ስርዓት። ሙሉ የማሽነሪ ኢኮኖሚ።"
-                )}
-
-              </h2>
-
-              <p className="text-zinc-400 max-w-3xl leading-8">
-
-                {t(
-                  "EML intelligently connects machinery owners, transport providers, operators, mechanics, financiers, insurers and buyers into one digital infrastructure.",
-                  "EML የማሽነሪ ባለቤቶችን፣ አጓጓዦችን፣ ኦፕሬተሮችን፣ መካኒኮችን፣ ፋይናንስ ተቋማትን፣ ኢንሹራንስን እና ገዥዎችን በአንድ ዲጂታል መሰረተ ልማት ያገናኛል።"
-                )}
-
-              </p>
-
-            </div>
-
-            <div className="flex flex-wrap gap-4">
-
-              <Link
-                href="/upload"
-                className="px-8 h-14 rounded-2xl bg-yellow-500 hover:bg-yellow-400 text-black font-black flex items-center transition"
-              >
-                {t(
-                  "Post Listing",
-                  "ዝርዝር ያስገቡ"
-                )}
-              </Link>
-
-              <Link
-                href="/ecosystem"
-                className="px-8 h-14 rounded-2xl border border-zinc-700 hover:border-yellow-500 font-bold flex items-center transition"
-              >
-                {t(
-                  "Explore Ecosystem",
-                  "ስርዓቱን ይመልከቱ"
-                )}
-              </Link>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      )}
-
     </section>
   );
 }
