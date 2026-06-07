@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import { LanguageProvider } from "@/context/LanguageContext";
 import HardcodedTextScanner from "@/components/HardcodedTextScanner";
 
-// Advanced Multilingual SEO Metadata with your unique Google Search Console verification key
+// Advanced Multilingual SEO Metadata with your correct Google Search Console verification key
 export const metadata: Metadata = {
   title: {
     default: "ኢትዮ ማሽነሪ አገናኝ | Ethio Machinery Link (EML)",
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     }
   },
   verification: {
-    google: "7MBhfJWDcEaB7jNSJ8AkZcDGB5SQqNlWl2u9AHj3ro0" // Your verified Google Search Console key
+    google: "z17dkxq0SlSBqX5vxc47_iAvDw87K2t336IlR3IURq4" // Your correct Google Search Console key
   },
   openGraph: {
     title: "ኢትዮ ማሽነሪ አገናኝ | Ethio Machinery Link (EML)",
