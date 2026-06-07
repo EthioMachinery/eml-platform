@@ -25,23 +25,23 @@ export const metadata: Metadata = {
     "construction equipment rent",
     "escrow machinery sales"
   ],
-  metadataBase: new URL("https://www.ethiomachinerylink.com"),
+  metadataBase: new URL("https://ethiomachinery.vercel.app"),
   alternates: {
     canonical: "/",
     languages: {
       "en-US": "/en",
       "am-ET": "/am",
-      "om-ET": "/om",
+      "or-ET": "/or",
       "ti-ET": "/ti"
     }
   },
   verification: {
-    google: "z17dkxq0SlSBqX5vxc47_iAvDw87K2t336IlR3IURq4" // Your correct Google Search Console key
+    google: "5GQa2rRrEiIn-xt_rPKBVGe8iJfDFPsXUPt0yY3Sdcc" // Your correct Google Search Console key for ethiomachinery.vercel.app
   },
   openGraph: {
     title: "ኢትዮ ማሽነሪ አገናኝ | Ethio Machinery Link (EML)",
     description: "የከባድ ማሽነሪዎች መገበያያ በኢትዮጵያ። Rent, buy, or sell verified heavy construction equipment with secure escrow guarantees.",
-    url: "https://www.ethiomachinerylink.com",
+    url: "https://ethiomachinery.vercel.app",
     siteName: "Ethio Machinery Link",
     locale: "en_US",
     type: "website",
