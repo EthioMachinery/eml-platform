@@ -29,7 +29,8 @@ export async function fetchLocalizedListings(
       }
     }
 
-    // Using a Left Join (|) to ensure listings appear even if owner_id is missing or unlinked
+    // Corrected: Removed the pipe (|) operator to ensure build compatibility.
+    // Ensure every 'listings' row has a valid 'owner_id' to avoid filtering.
     let query = supabase
       .from('listings')
       .select(`
@@ -52,13 +53,12 @@ export async function fetchLocalizedListings(
         status,
         image_url,
         location,
-        owner:profiles!owner_id | (
+        owner:profiles!owner_id (
           full_name,
           phone_number
         )
-      `);
-
-    query = query.eq('status', 'verified_available');
+      `)
+      .eq('status', 'verified_available');
 
     if (filters?.category) query = query.eq('category_token', filters.category);
     if (filters?.location) query = query.eq('location', filters.location);
