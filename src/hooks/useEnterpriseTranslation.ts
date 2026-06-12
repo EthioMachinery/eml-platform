@@ -35,13 +35,15 @@ export function useEnterpriseTranslation() {
       ];
 
     if (!dictionary) {
-      return key;
+      return (en as Record<string, any>)[key] || key;
     }
 
     return (
       dictionary[
         key as keyof typeof dictionary
-      ] || key
+      ] ||
+      (en as Record<string, any>)[key] ||
+      key
     );
   }
 

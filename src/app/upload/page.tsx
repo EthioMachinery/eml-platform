@@ -171,7 +171,7 @@ export default function UploadPage() {
           rent_price:  forRent ? parseInt(rentPrice) : null,
           description: description.trim() || null,
           image_url:   imageUrl || null,
-          status:      "active",
+          status:      "pending_review",
         });
 
       if (insertError) { setError(insertError.message); return; }

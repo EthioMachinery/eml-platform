@@ -1,9 +1,9 @@
 "use client";
 
-import {
-  useEnterpriseTranslation,
-} from "@/hooks/useEnterpriseTranslation";
+import { useLanguage } from '../context/LanguageContext';
+import { translations } from '../lib/i18n/translations';
+import { TranslationSchema } from '../translations/keys';
 
-export function useI18n() {
-  return useEnterpriseTranslation();
-}
+// Nested Key extraction helper types for strict path typing
+type PathsToStringProps<T> = T extends string
+ 

@@ -209,6 +209,128 @@ alter table referrals enable row level security;
 alter table subscriptions enable row level security;
 alter table saved_searches enable row level security;
 
+-- =====================================================================
+-- COMPATIBILITY ENGINE ADDITIONS (Syncing with active TypeScript queries)
+-- =====================================================================
+
+-- ---- profiles updates
+alter table profiles
+  add column if not exists phone_number text,
+  add column if not exists primary_role text default 'buyer',
+  add column if not exists is_verified boolean default false;
+
+-- ---- listings table
+create table if not exists listings (
+  id uuid primary key default gen_random_uuid(),
+  owner_id uuid references profiles(id) on delete set null,
+  brand text,
+  model text,
+  category_token text,
+  model_year int,
+  serial_number text,
+  title_am text,
+  title_en text,
+  description_am text,
+  description_en text,
+  localized_title jsonb default '{}'::jsonb,
+  localized_description jsonb default '{}'::jsonb,
+  price numeric default 0,
+  price_sale numeric default 0,
+  price_rental_daily numeric default 0,
+  is_rental_only boolean default false,
+  status text default 'active',
+  image_url text,
+  created_at timestamptz default now()
+);
+
+alter table listings enable row level security;
+create policy "public read listings" on listings for select using (true);
+create policy "own listings" on listings for all using (auth.uid() = owner_id) with check (auth.uid() = owner_id);
+
+-- ---- tenders table
+create table if not exists tenders (
+  id uuid primary key default gen_random_uuid(),
+  project_agency text,
+  category text,
+  location_token text,
+  estimated_budget numeric default 0,
+  deadline_date timestamptz,
+  verified boolean default false,
+  localized_title jsonb default '{}'::jsonb,
+  localized_scope jsonb default '{}'::jsonb,
+  updated_at timestamptz default now(),
+  created_at timestamptz default now()
+);
+
+alter table tenders enable row level security;
+create policy "public read tenders" on tenders for select using (true);
+
+-- ---- jobs table
+create table if not exists jobs (
+  id uuid primary key default gen_random_uuid(),
+  title text,
+  description text,
+  budget numeric default 0,
+  duration text,
+  created_at timestamptz default now()
+);
+
+alter table jobs enable row level security;
+create policy "public read jobs" on jobs for select using (true);
+
+-- ---- service_providers table
+create table if not exists service_providers (
+  id uuid primary key default gen_random_uuid(),
+  name text,
+  description text,
+  city text,
+  region text,
+  category text,
+  created_at timestamptz default now()
+);
+
+alter table service_providers enable row level security;
+create policy "public read service_providers" on service_providers for select using (true);
+
+-- ---- spare_parts table
+create table if not exists spare_parts (
+  id uuid primary key default gen_random_uuid(),
+  name text,
+  description text,
+  price numeric default 0,
+  category text,
+  created_at timestamptz default now()
+);
+
+alter table spare_parts enable row level security;
+create policy "public read spare_parts" on spare_parts for select using (true);
+
+-- ---- transporters table
+create table if not exists transporters (
+  id uuid primary key default gen_random_uuid(),
+  name text,
+  description text,
+  type text,
+  capacity text,
+  created_at timestamptz default now()
+);
+
+alter table transporters enable row level security;
+create policy "public read transporters" on transporters for select using (true);
+
+-- ---- finance_products table
+create table if not exists finance_products (
+  id uuid primary key default gen_random_uuid(),
+  name text,
+  description text,
+  rate numeric default 0,
+  term text,
+  created_at timestamptz default now()
+);
+
+alter table finance_products enable row level security;
+create policy "public read finance_products" on finance_products for select using (true);
+
 -- ==========================================
 -- DONE
 -- ==========================================

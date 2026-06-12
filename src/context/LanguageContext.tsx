@@ -16,19 +16,26 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const [isPending, setIsPending] = useState(true);
 
   useEffect(() => {
-    // 1. Resolve client language on mount
+    // 1. Resolve client language on mount (checking query param, then localStorage, then browser language)
+    const params = new URLSearchParams(window.location.search);
+    const queryLang = params.get('lang') as LanguageCode;
     const savedLang = localStorage.getItem('eml_locale') as LanguageCode;
-    if (savedLang && ['en', 'am', 'or', 'ti'].includes(savedLang)) {
-      setLanguageState(savedLang);
-      document.documentElement.setAttribute('lang', savedLang);
+    
+    let resolvedLang: LanguageCode = 'en';
+    if (queryLang && ['en', 'am', 'or', 'ti'].includes(queryLang)) {
+      resolvedLang = queryLang;
+      localStorage.setItem('eml_locale', queryLang);
+    } else if (savedLang && ['en', 'am', 'or', 'ti'].includes(savedLang)) {
+      resolvedLang = savedLang;
     } else {
       const browserLang = navigator.language.slice(0, 2);
-      const defaultLang: LanguageCode = ['am', 'or', 'ti'].includes(browserLang) 
+      resolvedLang = ['am', 'or', 'ti'].includes(browserLang) 
         ? (browserLang as LanguageCode) 
         : 'en';
-      setLanguageState(defaultLang);
-      document.documentElement.setAttribute('lang', defaultLang);
     }
+    
+    setLanguageState(resolvedLang);
+    document.documentElement.setAttribute('lang', resolvedLang);
     setIsPending(false);
 
     // 2. Register EML PWA Service Worker for offline resilience

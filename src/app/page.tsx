@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useTranslate } from "@/hooks/useTranslate";
 import PushNotificationEngine from "@/components/PushNotificationEngine";
@@ -21,56 +21,95 @@ interface RevenueModule {
 export default function HomePage() {
   const { t } = useTranslate();
   const [activeTab, setActiveTab] = useState<"all" | "supply" | "demand">("all");
+  
+  // Carousel state
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const carouselSlides = [
+    {
+      title: "Browse Verified Machinery",
+      description: "Explore hundreds of heavy equipment listings from verified sellers across Ethiopia.",
+      cta: "Browse Now",
+      link: "/browse",
+      bgGradient: "from-amber-900/40 to-amber-800/20",
+      icon: "🔧"
+    },
+    {
+      title: "Secure Escrow Protection",
+      description: "Optional payment protection – funds released only after your inspection and approval.",
+      cta: "Learn More",
+      link: "/escrow",
+      bgGradient: "from-blue-900/40 to-blue-800/20",
+      icon: "🛡️"
+    },
+    {
+      title: "Unlock \"ኢትዮ ማሽነሪ አገናኝ-Ethio Machinery Link (EML)\" Room Contact – ETB 1000",
+      description: "Until an agreement is reached, no direct contact is allowed. All communication goes through the EML platform.",
+      cta: "Learn More",
+      link: "/faq#communication-policy",
+      bgGradient: "from-green-900/40 to-green-800/20",
+      icon: "🔓"
+    }
+  ];
 
-  // Representing emojis as safe unicode escapes to prevent terminal copy-paste corruption
+  // Auto-rotate carousel
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % carouselSlides.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [carouselSlides.length]);
+
+  const goToSlide = (index: number) => setCurrentSlide(index);
+  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % carouselSlides.length);
+  const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + carouselSlides.length) % carouselSlides.length);
+
   const supplyStakeholders: StakeholderItem[] = [
-    { key: "owners", emoji: "\u{1F3D7}\u{FE0F}", colorClass: "border-amber-500/20 hover:border-amber-500 bg-amber-500/5 text-amber-400" }, // 🏗️
-    { key: "operators", emoji: "\u{1F477}", colorClass: "border-emerald-500/20 hover:border-emerald-500 bg-emerald-500/5 text-emerald-400" }, // 👷
-    { key: "mechanics", emoji: "\u{1F527}", colorClass: "border-blue-500/20 hover:border-blue-500 bg-blue-500/5 text-blue-400" }, // 🔧
-    { key: "transporters", emoji: "\u{1F69B}", colorClass: "border-cyan-500/20 hover:border-cyan-500 bg-cyan-500/5 text-cyan-400" }, // 🚛
-    { key: "insurers", emoji: "\u{1F6E1}\u{FE0F}", colorClass: "border-violet-500/20 hover:border-violet-500 bg-violet-500/5 text-violet-400" }, // 🛡️
-    { key: "parts", emoji: "\u{2699}\u{FE0F}", colorClass: "border-pink-500/20 hover:border-pink-500 bg-pink-500/5 text-pink-400" }, // ⚙️
-    { key: "fuel", emoji: "\u{26FD}", colorClass: "border-teal-500/20 hover:border-teal-500 bg-teal-500/5 text-teal-400" } // ⛽
+    { key: "owners", emoji: "\u{1F3D7}\u{FE0F}", colorClass: "border-amber-500/20 hover:border-amber-500 bg-amber-500/5 text-amber-400" },
+    { key: "operators", emoji: "\u{1F477}", colorClass: "border-emerald-500/20 hover:border-emerald-500 bg-emerald-500/5 text-emerald-400" },
+    { key: "mechanics", emoji: "\u{1F527}", colorClass: "border-blue-500/20 hover:border-blue-500 bg-blue-500/5 text-blue-400" },
+    { key: "transporters", emoji: "\u{1F69B}", colorClass: "border-cyan-500/20 hover:border-cyan-500 bg-cyan-500/5 text-cyan-400" },
+    { key: "insurers", emoji: "\u{1F6E1}\u{FE0F}", colorClass: "border-violet-500/20 hover:border-violet-500 bg-violet-500/5 text-violet-400" },
+    { key: "parts", emoji: "\u{2699}\u{FE0F}", colorClass: "border-pink-500/20 hover:border-pink-500 bg-pink-500/5 text-pink-400" },
+    { key: "fuel", emoji: "\u{26FD}", colorClass: "border-teal-500/20 hover:border-teal-500 bg-teal-500/5 text-teal-400" }
   ];
 
   const demandStakeholders: StakeholderItem[] = [
-    { key: "renters", emoji: "\u{1F4BC}", colorClass: "border-indigo-500/20 hover:border-indigo-500 bg-indigo-500/5 text-indigo-400" }, // 💼
-    { key: "contractors", emoji: "\u{1F6E3}\u{FE0F}", colorClass: "border-yellow-500/20 hover:border-yellow-500 bg-yellow-500/5 text-yellow-400" }, // 🛣️
-    { key: "miners", emoji: "\u{26CF}\u{FE0F}", colorClass: "border-orange-500/20 hover:border-orange-500 bg-orange-500/5 text-orange-400" }, // ⛏️
-    { key: "farmers", emoji: "\u{1F33E}", colorClass: "border-green-500/20 hover:border-green-500 bg-green-500/5 text-green-400" }, // 🌾
-    { key: "investors", emoji: "\u{1F4C8}", colorClass: "border-sky-500/20 hover:border-sky-500 bg-sky-500/5 text-sky-400" } // 📈
+    { key: "renters", emoji: "\u{1F4BC}", colorClass: "border-indigo-500/20 hover:border-indigo-500 bg-indigo-500/5 text-indigo-400" },
+    { key: "contractors", emoji: "\u{1F6E3}\u{FE0F}", colorClass: "border-yellow-500/20 hover:border-yellow-500 bg-yellow-500/5 text-yellow-400" },
+    { key: "miners", emoji: "\u{26CF}\u{FE0F}", colorClass: "border-orange-500/20 hover:border-orange-500 bg-orange-500/5 text-orange-400" },
+    { key: "farmers", emoji: "\u{1F33E}", colorClass: "border-green-500/20 hover:border-green-500 bg-green-500/5 text-green-400" },
+    { key: "investors", emoji: "\u{1F4C8}", colorClass: "border-sky-500/20 hover:border-sky-500 bg-sky-500/5 text-sky-400" }
   ];
 
   const automatedRevenueModules: RevenueModule[] = [
-    { key: "escrow", desc: "Optional secure escrow processing with standard low-commission fee cuts on heavy equipment sales and rental contracts.", emoji: "\u{1F512}", link: "/escrow" }, // 🔐
-    { key: "jobs", desc: "Passive listings and verification fee cuts connecting construction contractors directly with certified heavy vehicle operators.", emoji: "\u{1F4CB}", link: "/jobs" }, // 📋
-    { key: "tenders", desc: "Tender bidding registration fees matching project contractors with active private/governmental infrastructure bids.", emoji: "\u{1F3DB}\u{FE0F}", link: "/tenders" }, // 🏛️
-    { key: "logistics", desc: "Instant commissions collected on lowbed and heavy trailer matches dispatched to transport equipment across regions.", emoji: "\u{1F6A2}", link: "/transport" }, // 🚢
-    { key: "spareParts", desc: "Brokerage model sourcing genuine spare parts from importers directly to mechanics and equipment fleet owners.", emoji: "\u{1F529}", link: "/spare-parts" }, // 🔩
-    { key: "inspection", desc: "Direct, premium pre-purchase verification and engine assessment inspection fees verified on-site by certified EML inspectors.", emoji: "\u{1F50D}", link: "/services" } // 🔍
+    { key: "escrow", desc: "Optional secure escrow processing with standard low-commission fee cuts on heavy equipment sales and rental contracts.", emoji: "\u{1F512}", link: "/escrow" },
+    { key: "jobs", desc: "Passive listings and verification fee cuts connecting construction contractors directly with certified heavy vehicle operators.", emoji: "\u{1F4CB}", link: "/jobs" },
+    { key: "tenders", desc: "Tender bidding registration fees matching project contractors with active private/governmental infrastructure bids.", emoji: "\u{1F3DB}\u{FE0F}", link: "/tenders" },
+    { key: "logistics", desc: "Instant commissions collected on lowbed and heavy trailer matches dispatched to transport equipment across regions.", emoji: "\u{1F6A2}", link: "/transport" },
+    { key: "spareParts", desc: "Brokerage model sourcing genuine spare parts from importers directly to mechanics and equipment fleet owners.", emoji: "\u{1F529}", link: "/spare-parts" },
+    { key: "inspection", desc: "Direct, premium pre-purchase verification and engine assessment inspection fees verified on-site by certified EML inspectors.", emoji: "\u{1F50D}", link: "/services" }
   ];
 
   return (
     <div className="bg-black min-h-screen text-white">
       
-      {/* Hero Section */}
+      {/* Hero Section with Updated Headline */}
       <section className="relative overflow-hidden py-24 px-4 sm:px-6 lg:px-8 border-b border-zinc-900">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-amber-500/10 via-transparent to-transparent pointer-events-none" />
         
         <div className="max-w-5xl mx-auto text-center relative z-10 space-y-8">
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 text-amber-500 text-xs font-bold uppercase tracking-widest border border-amber-500/20">
-            {"\u{1F1EA}\u{1F1F9}"} {t("ecosystem.tagline")} {/* 🇪🇹 */}
+            {"\u{1F1EA}\u{1F1F9}"} Ethiopia's Premier Machinery Hub
           </span>
           
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-none text-white max-w-4xl mx-auto">
-            {t("ecosystem.title")}
+            Ethiopia's Verified Heavy Machinery Marketplace
           </h1>
           
           <p className="text-base sm:text-lg text-zinc-400 max-w-2xl mx-auto font-normal leading-relaxed">
-            {t("ecosystem.subtitle")}
+            Connect with trusted sellers, secure every transaction, and access real‑time market insights – all in one place.
           </p>
 
-          {/* Quick Action Navigation Grid */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-md mx-auto pt-4">
             <Link
               href="/browse"
@@ -84,6 +123,65 @@ export default function HomePage() {
             >
               {t("nav.postRequest")}
             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Banner Carousel Section */}
+      <section className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+        <div className="relative rounded-2xl overflow-hidden bg-zinc-950 border border-zinc-900 shadow-xl">
+          <div className="relative h-64 md:h-80">
+            {carouselSlides.map((slide, idx) => (
+              <div
+                key={idx}
+                className={`absolute inset-0 transition-all duration-700 ease-in-out transform ${
+                  idx === currentSlide
+                    ? "opacity-100 translate-x-0"
+                    : "opacity-0 translate-x-full"
+                }`}
+                style={{ pointerEvents: idx === currentSlide ? "auto" : "none" }}
+              >
+                <div className={`w-full h-full bg-gradient-to-r ${slide.bgGradient} flex flex-col justify-center px-8 md:px-16`}>
+                  <div className="text-5xl mb-4">{slide.icon}</div>
+                  <h3 className="text-2xl md:text-3xl font-black text-white mb-2">{slide.title}</h3>
+                  <p className="text-sm text-zinc-300 max-w-lg mb-6">{slide.description}</p>
+                  <Link
+                    href={slide.link}
+                    className="inline-flex w-fit px-6 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-xs font-bold uppercase tracking-wider transition-all"
+                  >
+                    {slide.cta} →
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <button
+            onClick={prevSlide}
+            className="absolute left-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 backdrop-blur-sm transition-all"
+            aria-label="Previous slide"
+          >
+            ❮
+          </button>
+          <button
+            onClick={nextSlide}
+            className="absolute right-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 backdrop-blur-sm transition-all"
+            aria-label="Next slide"
+          >
+            ❯
+          </button>
+
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+            {carouselSlides.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => goToSlide(idx)}
+                className={`w-2 h-2 rounded-full transition-all ${
+                  idx === currentSlide ? "bg-amber-500 w-4" : "bg-zinc-500 hover:bg-zinc-400"
+                }`}
+                aria-label={`Go to slide ${idx + 1}`}
+              />
+            ))}
           </div>
         </div>
       </section>
@@ -159,12 +257,12 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Escrow Banner (Featuring Optional Choice) */}
+      {/* Escrow Banner */}
       <section className="max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8 border-b border-zinc-900">
         <div className="bg-zinc-950 border border-zinc-900 rounded-2xl p-8 sm:p-12 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8">
           <div className="space-y-4 max-w-xl relative z-10 text-center md:text-left">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 text-amber-500 text-[10px] font-black uppercase tracking-widest border border-amber-500/20">
-              {"\u{1F512}"} {t("nav.escrow")} {/* 🔒 */}
+              {"\u{1F512}"} {t("nav.escrow")}
             </span>
             <h3 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
               Optional Secured Escrow Protection
@@ -228,7 +326,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Interactive PWA Radar Alerts */}
+      {/* PWA Radar Alerts */}
       <section className="max-w-7xl mx-auto px-4 pb-24 sm:px-6 lg:px-8">
         <PushNotificationEngine />
       </section>

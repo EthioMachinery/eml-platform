@@ -32,6 +32,12 @@ export default function EMLUniversalMarketplace() {
   const [maxPrice, setMaxPrice] = useState("");
   const [rentFilter, setRentFilter] = useState<"all" | "rent" | "sale">("all");
 
+  // Contact unlock modal state
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [selectedListingForContact, setSelectedListingForContact] = useState<LocalizedListing | null>(null);
+  const [paymentSuccess, setPaymentSuccess] = useState(false);
+  const [sellerContact, setSellerContact] = useState("");
+
   useEffect(() => {
     async function loadData() {
       setIsLoading(true);
@@ -58,9 +64,46 @@ export default function EMLUniversalMarketplace() {
     return `${item.brand} ${item.model}`.toLowerCase().includes(searchTerm.toLowerCase());
   });
 
+  // Compute stats
+  const totalListings = displayedListings.length;
+  const verifiedCount = displayedListings.filter(l => l.verified).length;
+  const avgPrice = totalListings > 0 
+    ? Math.floor(displayedListings.reduce((sum, l) => sum + (l.isRentalOnly ? (l.priceRentalDaily || 0) : (l.priceSale || 0)), 0) / totalListings)
+    : 0;
+
+  // Handle contact unlock click
+  const handleUnlockContact = (listing: LocalizedListing) => {
+    setSelectedListingForContact(listing);
+    setPaymentSuccess(false);
+    setSellerContact("");
+    setShowPaymentModal(true);
+  };
+
+  // Simulate payment (replace with actual Telebirr/CBE/Chapa integration)
+  const processPayment = (method: string) => {
+    // In real implementation, call payment API
+    setTimeout(() => {
+      // Simulate success
+      setPaymentSuccess(true);
+      // Mock seller contact info (in real app, fetch from backend after payment)
+      setSellerContact(`Phone: +251-9XX-XXX-XXX | Email: seller@example.com`);
+    }, 1000);
+  };
+
   return (
     <section className="max-w-7xl mx-auto px-4 py-8" id="eml-marketplace-app">
       
+      {/* BANNER SECTION (add carousel later) */}
+      <div className="mb-6 bg-gradient-to-r from-amber-600 to-amber-800 rounded-xl p-4 text-white shadow-lg">
+        <div className="flex justify-between items-center">
+          <div>
+            <h2 className="text-xl font-bold">🔥 Special Offer</h2>
+            <p className="text-sm">List your machinery for free until end of month!</p>
+          </div>
+          <button className="bg-white text-amber-800 px-4 py-2 rounded-lg font-bold text-sm">Learn More</button>
+        </div>
+      </div>
+
       <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-6 border-b border-zinc-900">
         <div>
           <h1 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight flex items-center gap-2">
@@ -71,6 +114,54 @@ export default function EMLUniversalMarketplace() {
           </p>
         </div>
       </header>
+
+      {/* TRUST INDICATORS BAR */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 mb-8 bg-zinc-950 border border-zinc-900 rounded-xl p-4">
+        <div className="flex items-center gap-3">
+          <span className="text-green-500 text-xl">✓</span>
+          <div>
+            <p className="text-xs text-zinc-400">Verified Sellers</p>
+            <p className="text-sm font-bold text-white">100% ID Check</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <span className="text-blue-500 text-xl">🛡️</span>
+          <div>
+            <p className="text-xs text-zinc-400">Secure Escrow</p>
+            <p className="text-sm font-bold text-white">Payment Protected</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <span className="text-amber-500 text-xl">📞</span>
+          <div>
+            <p className="text-xs text-zinc-400">24/7 Support</p>
+            <p className="text-sm font-bold text-white">Dedicated Team</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <span className="text-purple-500 text-xl">📊</span>
+          <div>
+            <p className="text-xs text-zinc-400">Market Insights</p>
+            <p className="text-sm font-bold text-white">Real-time Pricing</p>
+          </div>
+        </div>
+      </div>
+
+      {/* MARKETPLACE STATS */}
+      <div className="grid grid-cols-3 gap-4 mb-8 bg-zinc-900/30 rounded-xl p-4 border border-zinc-800">
+        <div className="text-center">
+          <p className="text-2xl font-black text-white">{totalListings}</p>
+          <p className="text-xs text-zinc-400">Total Listings</p>
+        </div>
+        <div className="text-center">
+          <p className="text-2xl font-black text-green-400">{verifiedCount}</p>
+          <p className="text-xs text-zinc-400">Verified Sellers</p>
+        </div>
+        <div className="text-center">
+          <p className="text-2xl font-black text-amber-400">{avgPrice.toLocaleString()}</p>
+          <p className="text-xs text-zinc-400">Avg. Price (ETB)</p>
+        </div>
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mt-8">
         <aside className="bg-zinc-950 border border-zinc-900 rounded-xl p-5 space-y-5 h-fit">
@@ -264,7 +355,7 @@ export default function EMLUniversalMarketplace() {
                         </div>
                       </div>
 
-                      {/* Pricing and Intent Action */}
+                      {/* Pricing and Contact Unlock Button */}
                       <div className="mt-2">
                         <div className="mb-3">
                           <span className="text-xs text-zinc-500 block uppercase font-bold">
@@ -277,9 +368,10 @@ export default function EMLUniversalMarketplace() {
                         
                         <button
                           type="button"
+                          onClick={() => handleUnlockContact(item)}
                           className="w-full py-2.5 rounded-lg text-xs font-bold uppercase transition-all shadow-sm flex items-center justify-center gap-1.5 bg-amber-500 hover:bg-amber-600 text-white"
                         >
-                          {item.isRentalOnly ? t("actions.rent") : t("actions.buy")}
+                          🔓 Unlock Contact (ETB 500)
                         </button>
                       </div>
                     </div>
@@ -290,6 +382,64 @@ export default function EMLUniversalMarketplace() {
           )}
         </main>
       </div>
+
+      {/* PAYMENT MODAL FOR CONTACT UNLOCK */}
+      {showPaymentModal && selectedListingForContact && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+          <div className="bg-zinc-950 border border-zinc-800 rounded-xl max-w-md w-full p-6 shadow-2xl">
+            {!paymentSuccess ? (
+              <>
+                <h3 className="text-xl font-bold text-white mb-2">Unlock Seller Contact</h3>
+                <p className="text-zinc-400 text-sm mb-4">
+                  Pay <strong className="text-amber-400">ETB 500</strong> to get phone & email of the seller for "{selectedListingForContact.title}".
+                </p>
+                <div className="space-y-3">
+                  <button
+                    onClick={() => processPayment("telebirr")}
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition"
+                  >
+                    Pay with Telebirr
+                  </button>
+                  <button
+                    onClick={() => processPayment("cbe")}
+                    className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg transition"
+                  >
+                    Pay with CBE Birr
+                  </button>
+                  <button
+                    onClick={() => processPayment("chapa")}
+                    className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-lg transition"
+                  >
+                    Pay with Chapa
+                  </button>
+                </div>
+                <button
+                  onClick={() => setShowPaymentModal(false)}
+                  className="w-full mt-4 text-zinc-400 text-sm hover:text-white transition"
+                >
+                  Cancel
+                </button>
+              </>
+            ) : (
+              <>
+                <h3 className="text-xl font-bold text-green-400 mb-2">✓ Payment Successful!</h3>
+                <p className="text-zinc-300 text-sm mb-4">
+                  Seller contact information for "{selectedListingForContact.title}":
+                </p>
+                <div className="bg-zinc-900 p-4 rounded-lg mb-4">
+                  <p className="text-white font-mono text-sm">{sellerContact}</p>
+                </div>
+                <button
+                  onClick={() => setShowPaymentModal(false)}
+                  className="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 rounded-lg transition"
+                >
+                  Close
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </section>
   );
 }

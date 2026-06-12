@@ -12,7 +12,7 @@ export type Language =
 const dictionaries = {
   en,
   am,
-  om, // Aligned to 'or'
+  or: om, // Aligned to 'or'
   ti,
 };
 

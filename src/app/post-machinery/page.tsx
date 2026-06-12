@@ -134,7 +134,7 @@ export default function PostMachineryPage() {
           is_rental_only: isRentalOnly,
           location: finalLocation,
           image_url: uploadedUrl || null,
-          status: "verified_available"
+          status: "pending_review"
         }
       ]);
 

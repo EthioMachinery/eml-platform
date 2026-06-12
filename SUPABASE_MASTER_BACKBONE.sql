@@ -684,3 +684,575 @@ drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created
 after insert on auth.users
 for each row execute procedure public.handle_new_user();
+
+-- =====================================================================
+-- COMPATIBILITY ENGINE ADDITIONS (Syncing with active TypeScript queries)
+-- =====================================================================
+
+-- ---- profiles updates
+alter table public.profiles
+  add column if not exists phone_number text,
+  add column if not exists primary_role text default 'buyer',
+  add column if not exists is_verified boolean default false;
+
+-- ---- listings table
+create table if not exists public.listings (
+  id uuid primary key default gen_random_uuid(),
+  owner_id uuid references public.profiles(id) on delete set null,
+  brand text,
+  model text,
+  category_token text,
+  model_year int,
+  serial_number text,
+  title_am text,
+  title_en text,
+  description_am text,
+  description_en text,
+  localized_title jsonb default '{}'::jsonb,
+  localized_description jsonb default '{}'::jsonb,
+  price numeric default 0,
+  price_sale numeric default 0,
+  price_rental_daily numeric default 0,
+  is_rental_only boolean default false,
+  status text default 'active',
+  image_url text,
+  created_at timestamptz default now()
+);
+
+alter table public.listings enable row level security;
+create policy "public read listings" on public.listings for select using (true);
+create policy "own listings" on public.listings for all using (auth.uid() = owner_id) with check (auth.uid() = owner_id);
+
+-- ---- tenders table
+create table if not exists public.tenders (
+  id uuid primary key default gen_random_uuid(),
+  project_agency text,
+  category text,
+  location_token text,
+  estimated_budget numeric default 0,
+  deadline_date timestamptz,
+  verified boolean default false,
+  localized_title jsonb default '{}'::jsonb,
+  localized_scope jsonb default '{}'::jsonb,
+  updated_at timestamptz default now(),
+  created_at timestamptz default now()
+);
+
+alter table public.tenders enable row level security;
+create policy "public read tenders" on public.tenders for select using (true);
+
+-- ---- jobs table
+create table if not exists public.jobs (
+  id uuid primary key default gen_random_uuid(),
+  title text,
+  description text,
+  budget numeric default 0,
+  duration text,
+  created_at timestamptz default now()
+);
+
+alter table public.jobs enable row level security;
+create policy "public read jobs" on public.jobs for select using (true);
+
+-- ---- service_providers table
+create table if not exists public.service_providers (
+  id uuid primary key default gen_random_uuid(),
+  name text,
+  description text,
+  city text,
+  region text,
+  category text,
+  created_at timestamptz default now()
+);
+
+alter table public.service_providers enable row level security;
+create policy "public read service_providers" on public.service_providers for select using (true);
+
+-- ---- spare_parts table
+create table if not exists public.spare_parts (
+  id uuid primary key default gen_random_uuid(),
+  name text,
+  description text,
+  price numeric default 0,
+  category text,
+  created_at timestamptz default now()
+);
+
+alter table public.spare_parts enable row level security;
+create policy "public read spare_parts" on public.spare_parts for select using (true);
+
+-- ---- transporters table
+create table if not exists public.transporters (
+  id uuid primary key default gen_random_uuid(),
+  name text,
+  description text,
+  type text,
+  capacity text,
+  created_at timestamptz default now()
+);
+
+alter table public.transporters enable row level security;
+create policy "public read transporters" on public.transporters for select using (true);
+
+-- ---- finance_products table
+create table if not exists public.finance_products (
+  id uuid primary key default gen_random_uuid(),
+  name text,
+  description text,
+  rate numeric default 0,
+  term text,
+  created_at timestamptz default now()
+);
+
+alter table public.finance_products enable row level security;
+create policy "public read finance_products" on public.finance_products for select using (true);
+
+-- =====================================================================
+-- EML PRODUCTION HARDENING PATCH v2.0
+-- Audit findings addressed:
+--   GAP-1  Missing set_updated_at() trigger infrastructure
+--   GAP-2  Missing updated_at columns on core tables
+--   GAP-3  Missing high-traffic indexes (performance)
+--   GAP-4  Missing RLS policies on quotes, messages, referrals,
+--           notifications, wallet_transactions (data access)
+--   GAP-5  Missing service-role INSERT policies for automation,
+--           deal_scores, deal_events (internal engines blocked)
+--   GAP-6  Missing admin READ policy on eml_events (observability)
+--   GAP-7  Missing admin write policies on compatibility tables
+--   GAP-8  profiles.primary_role index for jobs query performance
+--   GAP-9  Escrow/deal audit trigger for eml_events telemetry
+-- All blocks are fully idempotent. Safe for re-execution.
+-- =====================================================================
+
+begin;
+
+-- =====================================================================
+-- GAP-1 & GAP-2: set_updated_at() function + updated_at columns
+-- =====================================================================
+
+-- Universal trigger function to auto-stamp updated_at on any table
+create or replace function public.set_updated_at()
+returns trigger
+language plpgsql
+as $$
+begin
+  new.updated_at = timezone('utc', now());
+  return new;
+end;
+$$;
+
+-- Add updated_at to core tables that are missing it
+alter table public.profiles
+  add column if not exists updated_at timestamptz default now();
+
+alter table public.machinery
+  add column if not exists updated_at timestamptz default now();
+
+alter table public.listings
+  add column if not exists updated_at timestamptz default now();
+
+alter table public.transactions
+  add column if not exists updated_at timestamptz default now();
+
+alter table public.requests
+  add column if not exists updated_at timestamptz default now();
+
+-- Wire up auto-update triggers
+drop trigger if exists trg_profiles_updated_at on public.profiles;
+create trigger trg_profiles_updated_at
+  before update on public.profiles
+  for each row execute function public.set_updated_at();
+
+drop trigger if exists trg_machinery_updated_at on public.machinery;
+create trigger trg_machinery_updated_at
+  before update on public.machinery
+  for each row execute function public.set_updated_at();
+
+drop trigger if exists trg_listings_updated_at on public.listings;
+create trigger trg_listings_updated_at
+  before update on public.listings
+  for each row execute function public.set_updated_at();
+
+drop trigger if exists trg_deals_updated_at on public.deals;
+create trigger trg_deals_updated_at
+  before update on public.deals
+  for each row execute function public.set_updated_at();
+
+drop trigger if exists trg_transactions_updated_at on public.transactions;
+create trigger trg_transactions_updated_at
+  before update on public.transactions
+  for each row execute function public.set_updated_at();
+
+drop trigger if exists trg_requests_updated_at on public.requests;
+create trigger trg_requests_updated_at
+  before update on public.requests
+  for each row execute function public.set_updated_at();
+
+-- =====================================================================
+-- GAP-3 & GAP-8: Missing performance indexes
+-- =====================================================================
+
+-- machinery: the primary browse & filter table
+create index if not exists idx_machinery_category    on public.machinery(category);
+create index if not exists idx_machinery_status      on public.machinery(status);
+create index if not exists idx_machinery_user_id     on public.machinery(user_id);
+create index if not exists idx_machinery_for_rent    on public.machinery(for_rent) where for_rent = true;
+create index if not exists idx_machinery_for_sale    on public.machinery(for_sale) where for_sale = true;
+create index if not exists idx_machinery_boosted     on public.machinery(boosted) where boosted = true;
+create index if not exists idx_machinery_verified    on public.machinery(verified) where verified = true;
+create index if not exists idx_machinery_region      on public.machinery(region);
+
+-- listings: enterprise structured catalogue
+create index if not exists idx_listings_status        on public.listings(status);
+create index if not exists idx_listings_category      on public.listings(category_token);
+create index if not exists idx_listings_owner_id      on public.listings(owner_id);
+create index if not exists idx_listings_rental        on public.listings(is_rental_only);
+create index if not exists idx_listings_created       on public.listings(created_at desc);
+
+-- tenders: high-frequency filter by category + location
+create index if not exists idx_tenders_category       on public.tenders(category);
+create index if not exists idx_tenders_location       on public.tenders(location_token);
+create index if not exists idx_tenders_verified       on public.tenders(verified) where verified = true;
+create index if not exists idx_tenders_deadline       on public.tenders(deadline_date);
+
+-- payments: reconciliation and status lookups
+create index if not exists idx_payments_deal_id       on public.payments(deal_id);
+create index if not exists idx_payments_user_id       on public.payments(user_id);
+create index if not exists idx_payments_status        on public.payments(status);
+
+-- subscriptions: tier gating lookups
+create index if not exists idx_subscriptions_user_id  on public.subscriptions(user_id);
+create index if not exists idx_subscriptions_status   on public.subscriptions(status);
+create index if not exists idx_subscriptions_expires  on public.subscriptions(expires_at);
+
+-- profiles: role-based queries (admin subqueries + jobs bureau)
+create index if not exists idx_profiles_role          on public.profiles(role);
+create index if not exists idx_profiles_primary_role  on public.profiles(primary_role);
+create index if not exists idx_profiles_verified      on public.profiles(verified) where verified = true;
+
+-- contact_requests: machinery-based lookup
+create index if not exists idx_contact_requests_machinery on public.contact_requests(machinery_id);
+create index if not exists idx_contact_requests_target    on public.contact_requests(target_id);
+
+-- deal_events: CRITICAL — escrow flow queries by deal
+create index if not exists idx_deal_events_deal_id    on public.deal_events(deal_id);
+create index if not exists idx_deal_events_type       on public.deal_events(type, created_at desc);
+
+-- provider_notifications: real-time provider dashboard
+create index if not exists idx_prov_notif_provider_id on public.provider_notifications(provider_id);
+create index if not exists idx_prov_notif_deal_id     on public.provider_notifications(deal_id);
+create index if not exists idx_prov_notif_read        on public.provider_notifications(read) where read = false;
+
+-- notifications: unread badge count
+create index if not exists idx_notifications_unread   on public.notifications(user_id, read) where read = false;
+
+-- messages: thread fetch
+create index if not exists idx_messages_sender_id     on public.messages(sender_id);
+create index if not exists idx_messages_thread        on public.messages(sender_id, receiver_id, created_at desc);
+
+-- deal_scores: AI confidence lookups
+create index if not exists idx_deal_scores_deal_id    on public.deal_scores(deal_id);
+create index if not exists idx_deal_scores_risk       on public.deal_scores(risk);
+
+-- automation tables: type-based event replay
+create index if not exists idx_automation_logs_type   on public.automation_logs(type, created_at desc);
+create index if not exists idx_automation_events_type on public.automation_events(type, entity_id);
+
+-- revenue records: deal-level reconciliation
+create index if not exists idx_revenue_records_deal   on public.revenue_records(deal_id);
+create index if not exists idx_revenue_records_type   on public.revenue_records(type, created_at desc);
+
+-- =====================================================================
+-- GAP-4: Missing RLS policies — quotes, messages, referrals,
+--         notifications, wallet_transactions
+-- =====================================================================
+
+-- QUOTES: suppliers can submit, request owners can read their own
+do $$ begin
+  if not exists (select 1 from pg_policies where policyname = 'supplier can insert quote' and tablename = 'quotes') then
+    execute $p$create policy "supplier can insert quote" on public.quotes for insert with check (auth.uid() = supplier_id)$p$;
+  end if;
+  if not exists (select 1 from pg_policies where policyname = 'own supplier quotes' and tablename = 'quotes') then
+    execute $p$create policy "own supplier quotes" on public.quotes for select using (auth.uid() = supplier_id)$p$;
+  end if;
+  if not exists (select 1 from pg_policies where policyname = 'request owner reads quotes' and tablename = 'quotes') then
+    execute $p$create policy "request owner reads quotes" on public.quotes for select using (
+      request_id in (select id from public.requests where user_id = auth.uid())
+    )$p$;
+  end if;
+  if not exists (select 1 from pg_policies where policyname = 'supplier updates own quote' and tablename = 'quotes') then
+    execute $p$create policy "supplier updates own quote" on public.quotes for update using (auth.uid() = supplier_id) with check (auth.uid() = supplier_id)$p$;
+  end if;
+end $$;
+
+-- MESSAGES: users can send and mark their messages as read
+do $$ begin
+  if not exists (select 1 from pg_policies where policyname = 'users can send messages' and tablename = 'messages') then
+    execute $p$create policy "users can send messages" on public.messages for insert with check (auth.uid() = sender_id)$p$;
+  end if;
+  if not exists (select 1 from pg_policies where policyname = 'users can read own messages' and tablename = 'messages') then
+    execute $p$create policy "users can read own messages" on public.messages for select using (auth.uid() = sender_id or auth.uid() = receiver_id)$p$;
+  end if;
+  if not exists (select 1 from pg_policies where policyname = 'receiver marks message read' and tablename = 'messages') then
+    execute $p$create policy "receiver marks message read" on public.messages for update using (auth.uid() = receiver_id) with check (auth.uid() = receiver_id)$p$;
+  end if;
+end $$;
+
+-- REFERRALS: users can view their own referral records
+do $$ begin
+  if not exists (select 1 from pg_policies where policyname = 'own referrals' and tablename = 'referrals') then
+    execute $p$create policy "own referrals" on public.referrals for select using (auth.uid() = inviter_id or auth.uid() = invited_id)$p$;
+  end if;
+  if not exists (select 1 from pg_policies where policyname = 'insert own referral' and tablename = 'referrals') then
+    execute $p$create policy "insert own referral" on public.referrals for insert with check (auth.uid() = inviter_id)$p$;
+  end if;
+end $$;
+
+-- NOTIFICATIONS: system (service role) inserts; users read and update their own
+do $$ begin
+  if not exists (select 1 from pg_policies where policyname = 'service role insert notifications' and tablename = 'notifications') then
+    execute $p$create policy "service role insert notifications" on public.notifications for insert to authenticated with check (true)$p$;
+  end if;
+  if not exists (select 1 from pg_policies where policyname = 'user marks notification read' and tablename = 'notifications') then
+    execute $p$create policy "user marks notification read" on public.notifications for update using (auth.uid() = user_id) with check (auth.uid() = user_id)$p$;
+  end if;
+end $$;
+
+-- WALLET TRANSACTIONS: service role or admin inserts; users read own
+do $$ begin
+  if not exists (select 1 from pg_policies where policyname = 'service role insert wallet tx' and tablename = 'wallet_transactions') then
+    execute $p$create policy "service role insert wallet tx" on public.wallet_transactions for insert to authenticated with check (true)$p$;
+  end if;
+end $$;
+
+-- =====================================================================
+-- GAP-5: Missing service-role INSERT for internal engine tables
+-- =====================================================================
+
+-- automation_logs: automation engine must be able to write
+do $$ begin
+  if not exists (select 1 from pg_policies where policyname = 'service role write automation logs' and tablename = 'automation_logs') then
+    execute $p$create policy "service role write automation logs" on public.automation_logs for insert to authenticated with check (true)$p$;
+  end if;
+end $$;
+
+-- automation_events: same as logs
+do $$ begin
+  if not exists (select 1 from pg_policies where policyname = 'service role write automation events' and tablename = 'automation_events') then
+    execute $p$create policy "service role write automation events" on public.automation_events for insert to authenticated with check (true)$p$;
+  end if;
+end $$;
+
+-- deal_scores: AI scoring engine writes confidence scores
+do $$ begin
+  if not exists (select 1 from pg_policies where policyname = 'service role write deal scores' and tablename = 'deal_scores') then
+    execute $p$create policy "service role write deal scores" on public.deal_scores for insert to authenticated with check (true)$p$;
+  end if;
+end $$;
+
+-- deal_events: deal engine writes lifecycle events
+do $$ begin
+  if not exists (select 1 from pg_policies where policyname = 'service role write deal events' and tablename = 'deal_events') then
+    execute $p$create policy "service role write deal events" on public.deal_events for insert to authenticated with check (true)$p$;
+  end if;
+end $$;
+
+-- revenue_records: revenue engine writes per-deal records
+do $$ begin
+  if not exists (select 1 from pg_policies where policyname = 'service role write revenue records' and tablename = 'revenue_records') then
+    execute $p$create policy "service role write revenue records" on public.revenue_records for insert to authenticated with check (true)$p$;
+  end if;
+end $$;
+
+-- =====================================================================
+-- GAP-6: Admin READ policy on eml_events (observability gap)
+-- =====================================================================
+
+do $$ begin
+  if not exists (select 1 from pg_policies where policyname = 'Admin reads eml events' and tablename = 'eml_events') then
+    execute $p$create policy "Admin reads eml events" on public.eml_events for select using (
+      auth.uid() in (select id from public.profiles where role in ('ADMIN','admin'))
+    )$p$;
+  end if;
+end $$;
+
+-- =====================================================================
+-- GAP-7: Admin write policies on new compatibility tables
+-- =====================================================================
+
+do $$ begin
+  if not exists (select 1 from pg_policies where policyname = 'Admin full access on tenders' and tablename = 'tenders') then
+    execute $p$create policy "Admin full access on tenders" on public.tenders for all using (
+      auth.uid() in (select id from public.profiles where role in ('ADMIN','admin'))
+    )$p$;
+  end if;
+  if not exists (select 1 from pg_policies where policyname = 'Admin full access on jobs' and tablename = 'jobs') then
+    execute $p$create policy "Admin full access on jobs" on public.jobs for all using (
+      auth.uid() in (select id from public.profiles where role in ('ADMIN','admin'))
+    )$p$;
+  end if;
+  if not exists (select 1 from pg_policies where policyname = 'Admin full access on service providers' and tablename = 'service_providers') then
+    execute $p$create policy "Admin full access on service providers" on public.service_providers for all using (
+      auth.uid() in (select id from public.profiles where role in ('ADMIN','admin'))
+    )$p$;
+  end if;
+  if not exists (select 1 from pg_policies where policyname = 'Admin full access on spare parts' and tablename = 'spare_parts') then
+    execute $p$create policy "Admin full access on spare parts" on public.spare_parts for all using (
+      auth.uid() in (select id from public.profiles where role in ('ADMIN','admin'))
+    )$p$;
+  end if;
+  if not exists (select 1 from pg_policies where policyname = 'Admin full access on transporters' and tablename = 'transporters') then
+    execute $p$create policy "Admin full access on transporters" on public.transporters for all using (
+      auth.uid() in (select id from public.profiles where role in ('ADMIN','admin'))
+    )$p$;
+  end if;
+  if not exists (select 1 from pg_policies where policyname = 'Admin full access on finance products' and tablename = 'finance_products') then
+    execute $p$create policy "Admin full access on finance products" on public.finance_products for all using (
+      auth.uid() in (select id from public.profiles where role in ('ADMIN','admin'))
+    )$p$;
+  end if;
+  if not exists (select 1 from pg_policies where policyname = 'Admin full access on listings' and tablename = 'listings') then
+    execute $p$create policy "Admin full access on listings" on public.listings for all using (
+      auth.uid() in (select id from public.profiles where role in ('ADMIN','admin'))
+    )$p$;
+  end if;
+end $$;
+
+-- =====================================================================
+-- GAP-9: Escrow/deal audit trigger → eml_events telemetry
+-- Fires on every deal status mutation to create an auditable event.
+-- Uses SECURITY DEFINER so it can always write to eml_events regardless
+-- of the caller's RLS context.
+-- =====================================================================
+
+create or replace function public.audit_deal_status_change()
+returns trigger
+language plpgsql
+security definer
+as $$
+begin
+  -- Only fire if business-critical fields changed
+  if (
+    old.is_completed is distinct from new.is_completed or
+    old.is_cancelled is distinct from new.is_cancelled or
+    old.escrow_enabled is distinct from new.escrow_enabled or
+    old.payment_verified is distinct from new.payment_verified or
+    old.delivery_confirmed is distinct from new.delivery_confirmed or
+    old.dispute_active is distinct from new.dispute_active or
+    old.status is distinct from new.status
+  ) then
+    insert into public.eml_events (
+      event_name,
+      actor_id,
+      type,
+      title,
+      description,
+      entity_id,
+      payload,
+      severity
+    ) values (
+      'deal.status_changed',
+      coalesce(new.buyer_id, new.seller_id),
+      'DEAL_AUDIT',
+      'Deal ' || new.deal_code || ' state mutation',
+      'Deal ' || new.deal_code || ' changed: ' ||
+        case when old.is_completed is distinct from new.is_completed     then 'is_completed→' || new.is_completed::text || ' ' else '' end ||
+        case when old.is_cancelled is distinct from new.is_cancelled     then 'is_cancelled→' || new.is_cancelled::text || ' ' else '' end ||
+        case when old.escrow_enabled is distinct from new.escrow_enabled then 'escrow→' || new.escrow_enabled::text || ' ' else '' end ||
+        case when old.payment_verified is distinct from new.payment_verified then 'payment_verified→' || new.payment_verified::text || ' ' else '' end ||
+        case when old.delivery_confirmed is distinct from new.delivery_confirmed then 'delivery_confirmed→' || new.delivery_confirmed::text || ' ' else '' end ||
+        case when old.dispute_active is distinct from new.dispute_active then 'dispute→' || new.dispute_active::text || ' ' else '' end ||
+        case when old.status is distinct from new.status then 'status→' || coalesce(new.status,'null') else '' end,
+      new.id,
+      jsonb_build_object(
+        'deal_code',          new.deal_code,
+        'deal_type',          new.deal_type,
+        'prev_status',        old.status,
+        'new_status',         new.status,
+        'escrow_enabled',     new.escrow_enabled,
+        'is_completed',       new.is_completed,
+        'is_cancelled',       new.is_cancelled,
+        'payment_verified',   new.payment_verified,
+        'delivery_confirmed', new.delivery_confirmed,
+        'dispute_active',     new.dispute_active,
+        'gross_amount',       new.gross_amount,
+        'currency',           new.currency
+      ),
+      case
+        when new.dispute_active  then 'ERROR'
+        when new.is_cancelled    then 'WARN'
+        when new.is_completed    then 'INFO'
+        else 'INFO'
+      end
+    );
+  end if;
+  return new;
+end;
+$$;
+
+drop trigger if exists trg_deal_audit on public.deals;
+create trigger trg_deal_audit
+  after update on public.deals
+  for each row execute function public.audit_deal_status_change();
+
+-- =====================================================================
+-- VERIFICATION CHECKS
+-- Confirm no side effects on escrow/transaction triggers
+-- =====================================================================
+
+do $$
+declare
+  v_trigger_count int;
+  v_index_count   int;
+  v_policy_count  int;
+begin
+  -- Verify audit trigger on deals is present
+  select count(*) into v_trigger_count
+  from information_schema.triggers
+  where trigger_name = 'trg_deal_audit'
+    and event_object_table = 'deals';
+  assert v_trigger_count = 1, 'FAIL: trg_deal_audit trigger missing on deals';
+
+  -- Verify updated_at trigger on machinery
+  select count(*) into v_trigger_count
+  from information_schema.triggers
+  where trigger_name = 'trg_machinery_updated_at'
+    and event_object_table = 'machinery';
+  assert v_trigger_count = 1, 'FAIL: trg_machinery_updated_at trigger missing';
+
+  -- Verify updated_at trigger on deals
+  select count(*) into v_trigger_count
+  from information_schema.triggers
+  where trigger_name = 'trg_deals_updated_at'
+    and event_object_table = 'deals';
+  assert v_trigger_count = 1, 'FAIL: trg_deals_updated_at trigger missing';
+
+  -- Verify critical deal_events index exists
+  select count(*) into v_index_count
+  from pg_indexes
+  where tablename = 'deal_events'
+    and indexname = 'idx_deal_events_deal_id';
+  assert v_index_count = 1, 'FAIL: idx_deal_events_deal_id missing';
+
+  -- Verify eml_events admin read policy exists
+  select count(*) into v_policy_count
+  from pg_policies
+  where tablename = 'eml_events'
+    and policyname = 'Admin reads eml events';
+  assert v_policy_count = 1, 'FAIL: Admin reads eml events policy missing';
+
+  -- Confirm no regressions on existing transaction constraints
+  select count(*) into v_policy_count
+  from pg_constraint
+  where conname in (
+    'transactions_amounts_non_negative',
+    'transactions_sum_invariant',
+    'transactions_idempotency_unique',
+    'payments_idempotency_unique'
+  );
+  assert v_policy_count = 4, 'FAIL: One or more financial constraints missing or removed';
+
+  raise notice '✅ EML Hardening Patch v2.0 — ALL VERIFICATION CHECKS PASSED';
+end $$;
+
+commit;

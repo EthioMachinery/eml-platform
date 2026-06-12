@@ -1,20 +1,32 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useTransition } from "react";
 import { useTranslate } from "@/hooks/useTranslate";
+import { useLanguage } from "@/context/LanguageContext";
+import { fetchLocalizedProfessionals, LocalizedProfessional } from "@/lib/db/jobs/query";
+import {
+  Bell,
+  Brain,
+  Truck,
+  Wallet,
+  ShieldCheck,
+  BriefcaseBusiness,
+  FileText,
+  Sparkles,
+  CheckCircle2,
+  AlertTriangle,
+  Clock3,
+  ArrowUpRight,
+  Radio,
+  Bot,
+  Star,
+  User,
+  MapPin,
+  Briefcase,
+  Phone
+} from "lucide-react";
 
-interface ProfessionalProfile {
-  id: string;
-  fullName: string;
-  roleToken: "certified_operator" | "equipment_mechanic" | "logistics_transporter";
-  specialtyTokens: string[]; // Token list for dynamic lookup
-  experienceYears: number;
-  locationToken: string;
-  phone: string;
-  verified: boolean;
-  dailyRate: number;
-}
-
+// Localized geographic markers
 const localizedLocations: Record<string, Record<string, string>> = {
   "addis_ababa": { en: "Addis Ababa", am: "አዲስ አበባ", om: "Finfinnee", ti: "ኣዲስ ኣበባ" },
   "hawassa": { en: "Hawassa", am: "ሀዋሳ", om: "Hawaas", ti: "ሃዋሳ" },
@@ -23,82 +35,44 @@ const localizedLocations: Record<string, Record<string, string>> = {
   "bahir_dar": { en: "Bahir Dar", am: "ባህር ዳር", om: "Baahir Daar", ti: "ባህር ዳር" }
 };
 
-// Vetted talent records synced cleanly with the translation contract
-const initialProfessionals: ProfessionalProfile[] = [
-  {
-    id: "prof-1",
-    fullName: "Bekele Gizaw",
-    roleToken: "certified_operator",
-    specialtyTokens: ["categories.excavator", "categories.dozer"],
-    experienceYears: 8,
-    locationToken: "addis_ababa",
-    phone: "0911123456",
-    verified: true,
-    dailyRate: 1500
-  },
-  {
-    id: "prof-2",
-    fullName: "Tolosa Dibaba",
-    roleToken: "certified_operator",
-    specialtyTokens: ["categories.loader", "categories.grader"],
-    experienceYears: 5,
-    locationToken: "adama",
-    phone: "0912345678",
-    verified: true,
-    dailyRate: 1200
-  },
-  {
-    id: "prof-3",
-    fullName: "Gebremariam Kahsay",
-    roleToken: "equipment_mechanic",
-    specialtyTokens: ["jobs.hydraulics", "jobs.catEngines"],
-    experienceYears: 12,
-    locationToken: "mekelle",
-    phone: "0913456789",
-    verified: true,
-    dailyRate: 2000
-  },
-  {
-    id: "prof-4",
-    fullName: "Yonas Assefa",
-    roleToken: "logistics_transporter",
-    specialtyTokens: ["jobs.lowbed", "jobs.hauler"],
-    experienceYears: 6,
-    locationToken: "bahir_dar",
-    phone: "0914567890",
-    verified: false,
-    dailyRate: 4500
-  }
-];
-
 export default function JobsPage() {
   const { t, currentLanguage } = useTranslate();
+  const { language } = useLanguage();
+  const [isPending, startTransition] = useTransition();
   
+  // Database States
+  const [professionals, setProfessionals] = useState<LocalizedProfessional[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Filtering States
   const [selectedRole, setSelectedRole] = useState<"all" | "operator" | "mechanic">("all");
   const [selectedLocation, setSelectedLocation] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
 
-  const filteredProfessionals = initialProfessionals.filter((item) => {
-    let matchesRole = true;
-    if (selectedRole === "operator") matchesRole = item.roleToken === "certified_operator";
-    if (selectedRole === "mechanic") matchesRole = item.roleToken === "equipment_mechanic";
+  // Fetch live profiles on filter update
+  useEffect(() => {
+    async function loadData() {
+      setIsLoading(true);
+      const data = await fetchLocalizedProfessionals(
+        currentLanguage,
+        selectedRole,
+        selectedLocation || undefined,
+        searchTerm || undefined
+      );
+      setProfessionals(data);
+      setIsLoading(false);
+    }
 
-    const matchesLocation = selectedLocation ? item.locationToken === selectedLocation : true;
-
-    // Direct dynamic translation of name and specialties search matching
-    const translatedRole = item.roleToken === "certified_operator" ? t("stakeholders.operators") : t("stakeholders.mechanics");
-    const matchesKeyword = item.fullName.toLowerCase().includes(searchTerm.toLowerCase()) || 
-      item.specialtyTokens.some(tok => t(tok as any).toLowerCase().includes(searchTerm.toLowerCase())) ||
-      translatedRole.toLowerCase().includes(searchTerm.toLowerCase());
-
-    return matchesRole && matchesLocation && matchesKeyword;
-  });
+    startTransition(() => {
+      loadData();
+    });
+  }, [currentLanguage, selectedRole, selectedLocation, searchTerm]);
 
   return (
     <div className="bg-black min-h-screen text-white py-12 px-4 sm:px-6 lg:px-8" id="eml-jobs-portal">
       <div className="max-w-7xl mx-auto space-y-10">
         
-        {/* Portal Header */}
+        {/* Page Header */}
         <header className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 pb-6 border-b border-zinc-900">
           <div className="space-y-1">
             <span className="text-xs font-bold text-amber-500 bg-amber-500/10 px-3 py-1 rounded-full uppercase tracking-widest border border-amber-500/20">
@@ -176,7 +150,11 @@ export default function JobsPage() {
 
           {/* Directory Listings Grid */}
           <main className="lg:col-span-3">
-            {filteredProfessionals.length === 0 ? (
+            {isLoading ? (
+              <div className="flex justify-center items-center py-20">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500" />
+              </div>
+            ) : professionals.length === 0 ? (
               <div className="flex flex-col items-center justify-center p-12 border-2 border-dashed border-zinc-900 rounded-xl bg-zinc-950/20">
                 <p className="text-zinc-400 text-sm font-semibold">
                   No active professionals found matching your selected criteria.
@@ -184,7 +162,7 @@ export default function JobsPage() {
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {filteredProfessionals.map((item) => {
+                {professionals.map((item) => {
                   const localizedCity = localizedLocations[item.locationToken]?.[currentLanguage] || localizedLocations[item.locationToken]?.["en"];
                   const currencyFormatter = new Intl.NumberFormat("en-US", { style: "decimal" });
 
