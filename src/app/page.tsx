@@ -24,27 +24,29 @@ export default function HomePage() {
   
   // Carousel state
   const [currentSlide, setCurrentSlide] = useState(0);
+  
+  // Define carousel slides using translation keys
   const carouselSlides = [
     {
-      title: "Browse Verified Machinery",
-      description: "Explore hundreds of heavy equipment listings from verified sellers across Ethiopia.",
-      cta: "Browse Now",
+      titleKey: "carousel.slide1.title",
+      descKey: "carousel.slide1.desc",
+      ctaKey: "carousel.slide1.cta",
       link: "/browse",
       bgGradient: "from-amber-900/40 to-amber-800/20",
       icon: "🔧"
     },
     {
-      title: "Secure Escrow Protection",
-      description: "Optional payment protection – funds released only after your inspection and approval.",
-      cta: "Learn More",
+      titleKey: "carousel.slide2.title",
+      descKey: "carousel.slide2.desc",
+      ctaKey: "carousel.slide2.cta",
       link: "/escrow",
       bgGradient: "from-blue-900/40 to-blue-800/20",
       icon: "🛡️"
     },
     {
-      title: "Unlock \"ኢትዮ ማሽነሪ አገናኝ-Ethio Machinery Link (EML)\" Room Contact – ETB 1000",
-      description: "Until an agreement is reached, no direct contact is allowed. All communication goes through the EML platform.",
-      cta: "Learn More",
+      titleKey: "carousel.slide3.title",
+      descKey: "carousel.slide3.desc",
+      ctaKey: "carousel.slide3.cta",
       link: "/faq#communication-policy",
       bgGradient: "from-green-900/40 to-green-800/20",
       icon: "🔓"
@@ -93,21 +95,21 @@ export default function HomePage() {
   return (
     <div className="bg-black min-h-screen text-white">
       
-      {/* Hero Section with Updated Headline */}
+      {/* Hero Section */}
       <section className="relative overflow-hidden py-24 px-4 sm:px-6 lg:px-8 border-b border-zinc-900">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-amber-500/10 via-transparent to-transparent pointer-events-none" />
         
         <div className="max-w-5xl mx-auto text-center relative z-10 space-y-8">
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 text-amber-500 text-xs font-bold uppercase tracking-widest border border-amber-500/20">
-            {"\u{1F1EA}\u{1F1F9}"} Ethiopia's Premier Machinery Hub
+            {"\u{1F1EA}\u{1F1F9}"} {t("home.badge")}
           </span>
           
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-none text-white max-w-4xl mx-auto">
-            Ethiopia's Verified Heavy Machinery Marketplace
+            {t("home.headline")}
           </h1>
           
           <p className="text-base sm:text-lg text-zinc-400 max-w-2xl mx-auto font-normal leading-relaxed">
-            Connect with trusted sellers, secure every transaction, and access real‑time market insights – all in one place.
+            {t("home.subheadline")}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-md mx-auto pt-4">
@@ -143,13 +145,13 @@ export default function HomePage() {
               >
                 <div className={`w-full h-full bg-gradient-to-r ${slide.bgGradient} flex flex-col justify-center px-8 md:px-16`}>
                   <div className="text-5xl mb-4">{slide.icon}</div>
-                  <h3 className="text-2xl md:text-3xl font-black text-white mb-2">{slide.title}</h3>
-                  <p className="text-sm text-zinc-300 max-w-lg mb-6">{slide.description}</p>
+                  <h3 className="text-2xl md:text-3xl font-black text-white mb-2">{t(slide.titleKey)}</h3>
+                  <p className="text-sm text-zinc-300 max-w-lg mb-6">{t(slide.descKey)}</p>
                   <Link
                     href={slide.link}
                     className="inline-flex w-fit px-6 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-xs font-bold uppercase tracking-wider transition-all"
                   >
-                    {slide.cta} →
+                    {t(slide.ctaKey)} →
                   </Link>
                 </div>
               </div>
@@ -159,14 +161,14 @@ export default function HomePage() {
           <button
             onClick={prevSlide}
             className="absolute left-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 backdrop-blur-sm transition-all"
-            aria-label="Previous slide"
+            aria-label={t("carousel.prev")}
           >
             ❮
           </button>
           <button
             onClick={nextSlide}
             className="absolute right-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 backdrop-blur-sm transition-all"
-            aria-label="Next slide"
+            aria-label={t("carousel.next")}
           >
             ❯
           </button>
@@ -179,14 +181,14 @@ export default function HomePage() {
                 className={`w-2 h-2 rounded-full transition-all ${
                   idx === currentSlide ? "bg-amber-500 w-4" : "bg-zinc-500 hover:bg-zinc-400"
                 }`}
-                aria-label={`Go to slide ${idx + 1}`}
+                aria-label={`${t("carousel.goToSlide")} ${idx + 1}`}
               />
             ))}
           </div>
         </div>
       </section>
 
-      {/* Stakeholders Section */}
+      {/* Stakeholders Section (unchanged, uses existing translation keys) */}
       <section className="max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8 border-b border-zinc-900">
         <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-12">
           <div className="text-center md:text-left space-y-1">
@@ -257,7 +259,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Escrow Banner */}
+      {/* Escrow Banner (unchanged) */}
       <section className="max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8 border-b border-zinc-900">
         <div className="bg-zinc-950 border border-zinc-900 rounded-2xl p-8 sm:p-12 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8">
           <div className="space-y-4 max-w-xl relative z-10 text-center md:text-left">
@@ -282,7 +284,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Revenue Sourcing */}
+      {/* Revenue Sourcing (unchanged) */}
       <section className="max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8 border-b border-zinc-900">
         <div className="space-y-3 text-center mb-12">
           <span className="text-xs font-bold text-amber-500 uppercase tracking-widest">
