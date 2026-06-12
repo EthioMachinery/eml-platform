@@ -8,8 +8,21 @@ export interface TranslationSchema {
     escrow: string;
     admin: string;
     login: string;
-    about: string; // Added
-    contact: string; // Added
+    about: string;
+    contact: string;
+  };
+  home: {
+    badge: string;
+    headline: string;
+    subheadline: string;
+  };
+  carousel: {
+    slide1: { title: string; desc: string; cta: string };
+    slide2: { title: string; desc: string; cta: string };
+    slide3: { title: string; desc: string; cta: string };
+    prev: string;
+    next: string;
+    goToSlide: string;
   };
   categories: {
     excavator: string;
@@ -102,7 +115,6 @@ export interface TranslationSchema {
     insurers: string;
     parts: string;
     fuel: string;
-    
     owners_desc: string;
     renters_desc: string;
     contractors_desc: string;
@@ -135,7 +147,6 @@ export interface TranslationSchema {
     specialties: string;
     baseDailyRate: string;
     bookStaff: string;
-    
     hydraulics: string;
     catEngines: string;
     lowbed: string;
