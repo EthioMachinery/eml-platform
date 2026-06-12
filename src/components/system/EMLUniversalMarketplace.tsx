@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect, useTransition } from "react";
 import { useTranslate } from "@/hooks/useTranslate";
-import { fetchLocalizedListings, LocalizedListing } from "@/lib/db/machinery/search";
+import { fetchLocalizedListings } from "@/lib/db/machinery/search";
+import type { LocalizedListing } from "@/types";
 import TranslatedInput from "@/components/ui/TranslatedInput";
 import TranslatedSelect from "@/components/ui/TranslatedSelect";
 
