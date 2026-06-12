@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { useTranslate } from "@/hooks/useTranslate";
+import { useTranslate, TranslationPath } from "@/hooks/useTranslate";
 import PushNotificationEngine from "@/components/PushNotificationEngine";
 
 interface StakeholderItem {
@@ -18,15 +18,24 @@ interface RevenueModule {
   link: string;
 }
 
+interface CarouselSlide {
+  titleKey: TranslationPath;
+  descKey: TranslationPath;
+  ctaKey: TranslationPath;
+  link: string;
+  bgGradient: string;
+  icon: string;
+}
+
 export default function HomePage() {
   const { t } = useTranslate();
   const [activeTab, setActiveTab] = useState<"all" | "supply" | "demand">("all");
-  
+
   // Carousel state
   const [currentSlide, setCurrentSlide] = useState(0);
-  
+
   // Define carousel slides using translation keys
-  const carouselSlides = [
+  const carouselSlides: CarouselSlide[] = [
     {
       titleKey: "carousel.slide1.title",
       descKey: "carousel.slide1.desc",
@@ -94,20 +103,20 @@ export default function HomePage() {
 
   return (
     <div className="bg-black min-h-screen text-white">
-      
+
       {/* Hero Section */}
       <section className="relative overflow-hidden py-24 px-4 sm:px-6 lg:px-8 border-b border-zinc-900">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-amber-500/10 via-transparent to-transparent pointer-events-none" />
-        
+
         <div className="max-w-5xl mx-auto text-center relative z-10 space-y-8">
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 text-amber-500 text-xs font-bold uppercase tracking-widest border border-amber-500/20">
             {"\u{1F1EA}\u{1F1F9}"} {t("home.badge")}
           </span>
-          
+
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-none text-white max-w-4xl mx-auto">
             {t("home.headline")}
           </h1>
-          
+
           <p className="text-base sm:text-lg text-zinc-400 max-w-2xl mx-auto font-normal leading-relaxed">
             {t("home.subheadline")}
           </p>
@@ -188,7 +197,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Stakeholders Section (unchanged, uses existing translation keys) */}
+      {/* Stakeholders Section */}
       <section className="max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8 border-b border-zinc-900">
         <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-12">
           <div className="text-center md:text-left space-y-1">
@@ -259,7 +268,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Escrow Banner (unchanged) */}
+      {/* Escrow Banner */}
       <section className="max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8 border-b border-zinc-900">
         <div className="bg-zinc-950 border border-zinc-900 rounded-2xl p-8 sm:p-12 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8">
           <div className="space-y-4 max-w-xl relative z-10 text-center md:text-left">
@@ -284,7 +293,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Revenue Sourcing (unchanged) */}
+      {/* Revenue Sourcing */}
       <section className="max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8 border-b border-zinc-900">
         <div className="space-y-3 text-center mb-12">
           <span className="text-xs font-bold text-amber-500 uppercase tracking-widest">
