@@ -16,15 +16,14 @@ export default function Navbar() {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Added About and Contact links to the primary menu array
   const navigationItems: NavItem[] = [
     { token: "nav.home", href: "/" },
     { token: "nav.browse", href: "/browse" },
     { token: "nav.postMachinery", href: "/post-machinery" },
     { token: "nav.postRequest", href: "/post-request" },
     { token: "nav.escrow", href: "/escrow" },
-    { token: "nav.about", href: "/about" },   // Added
-    { token: "nav.contact", href: "/contact" }, // Added
+    { token: "nav.about", href: "/about" },
+    { token: "nav.contact", href: "/contact" },
     { token: "nav.dashboard", href: "/dashboard" },
   ];
 
@@ -36,17 +35,15 @@ export default function Navbar() {
     <nav className="bg-black border-b border-zinc-900 sticky top-0 z-50 w-full" id="eml-global-nav">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
-          
-          {/* Logo & Stacked Brand Name - Amharic on Top, English below */}
+
+          {/* Logo */}
           <div className="flex items-center">
             <Link href="/" className="flex items-center gap-3 select-none">
               <img
                 src="/logo.png"
                 alt="EML Logo"
                 className="h-10 w-auto object-contain rounded-md"
-                onError={(e) => {
-                  e.currentTarget.style.display = 'none';
-                }}
+                onError={(e) => { e.currentTarget.style.display = 'none'; }}
               />
               <div className="flex flex-col">
                 <span className="text-amber-500 text-sm font-black leading-tight tracking-wide">
@@ -79,19 +76,24 @@ export default function Navbar() {
             })}
           </div>
 
-          {/* Right Action Elements */}
-          <div className="hidden lg:flex items-center gap-4">
+          {/* Desktop Right Actions */}
+          <div className="hidden lg:flex items-center gap-3">
             <LanguageSwitcher />
-            
             <Link
               href="/login"
               className="px-4 py-2.5 rounded-lg border border-zinc-800 text-zinc-300 hover:text-white hover:bg-zinc-950 text-xs font-bold uppercase tracking-wider transition-all"
             >
               {t("nav.login")}
             </Link>
+            <Link
+              href="/register"
+              className="px-4 py-2.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold uppercase tracking-wider transition-all shadow-lg shadow-amber-500/20"
+            >
+              Sign Up
+            </Link>
           </div>
 
-          {/* Mobile Menu Actions */}
+          {/* Mobile Menu Toggle */}
           <div className="lg:hidden flex items-center gap-3">
             <LanguageSwitcher />
             <button
@@ -103,25 +105,11 @@ export default function Navbar() {
             >
               <span className="sr-only">Toggle Main Menu</span>
               {isMobileMenuOpen ? (
-                <svg
-                  className="block h-6 w-6"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  aria-hidden="true"
-                >
+                <svg className="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               ) : (
-                <svg
-                  className="block h-6 w-6"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  aria-hidden="true"
-                >
+                <svg className="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
               )}
@@ -131,7 +119,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Slide-out Mobile Navigation Drawer */}
+      {/* Mobile Drawer */}
       <div
         className={`lg:hidden transition-all duration-200 ease-in-out ${
           isMobileMenuOpen ? "max-h-screen opacity-100 visible" : "max-h-0 opacity-0 invisible overflow-hidden"
@@ -157,13 +145,20 @@ export default function Navbar() {
             );
           })}
 
-          <div className="pt-4 mt-4 border-t border-zinc-900 px-4">
+          <div className="pt-4 mt-4 border-t border-zinc-900 px-4 flex flex-col gap-3">
             <Link
               href="/login"
               onClick={() => setIsMobileMenuOpen(false)}
               className="block w-full text-center px-4 py-3 rounded-lg bg-zinc-950 border border-zinc-800 text-zinc-300 hover:text-white text-sm font-bold uppercase tracking-wider transition-all"
             >
               {t("nav.login")}
+            </Link>
+            <Link
+              href="/register"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="block w-full text-center px-4 py-3 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-sm font-bold uppercase tracking-wider transition-all"
+            >
+              Sign Up
             </Link>
           </div>
         </div>
