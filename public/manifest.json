@@ -1,23 +1,59 @@
 {
   "short_name": "EML",
-  "name": "Ethio Machinery Link",
-  "description": "Ethiopia's trusted heavy machinery marketplace and industrial ecosystem.",
+  "name": "ኢትዮ ማሽነሪ አገናኝ — Ethio Machinery Link",
+  "description": "Ethiopia's trusted heavy machinery marketplace. Buy, rent, sell, and escrow excavators, loaders, cranes, and more.",
   "icons": [
+    {
+      "src": "/favicon-16x16.png",
+      "type": "image/png",
+      "sizes": "16x16"
+    },
+    {
+      "src": "/favicon-32x32.png",
+      "type": "image/png",
+      "sizes": "32x32"
+    },
     {
       "src": "/icon-192.png",
       "type": "image/png",
-      "sizes": "192x192"
+      "sizes": "192x192",
+      "purpose": "any maskable"
     },
     {
       "src": "/icon-512.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "type": "image/png",
+      "sizes": "180x180"
     }
   ],
   "start_url": "/",
   "background_color": "#000000",
-  "theme_color": "#000000",
+  "theme_color": "#F59E0B",
   "display": "standalone",
   "orientation": "portrait",
-  "scope": "/"
+  "scope": "/",
+  "categories": ["business", "productivity", "utilities"],
+  "lang": "en",
+  "prefer_related_applications": false,
+  "shortcuts": [
+    {
+      "name": "Browse Machinery",
+      "short_name": "Browse",
+      "description": "Search and browse heavy machinery listings",
+      "url": "/browse",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "List Machinery",
+      "short_name": "List",
+      "description": "Post your machinery for rent or sale",
+      "url": "/post-machinery",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
 }
