@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabaseClient";
-import { SupportedLanguage, LocalizedListing } from "@/types"; 
+import { SupportedLanguage, LocalizedListing } from "@/types";
 
 export async function fetchLocalizedListings(
   lang: SupportedLanguage,
@@ -11,26 +11,6 @@ export async function fetchLocalizedListings(
   }
 ): Promise<LocalizedListing[]> {
   try {
-    const { data: { user } } = await supabase.auth.getUser();
-    let isPremiumUser = false;
-
-    if (user) {
-      const { data: subData, error: subError } = await supabase
-        .from('subscriptions')
-        .select('tier, active')
-        .eq('user_id', user.id)
-        .eq('active', true)
-        .maybeSingle();
-
-      if (subError) {
-        console.warn("Could not resolve subscription tier:", subError.message);
-      } else if (subData && subData.tier !== 'free') {
-        isPremiumUser = true;
-      }
-    }
-
-    // Corrected: Removed the pipe (|) operator to ensure build compatibility.
-    // Ensure every 'listings' row has a valid 'owner_id' to avoid filtering.
     let query = supabase
       .from('listings')
       .select(`
@@ -52,11 +32,7 @@ export async function fetchLocalizedListings(
         is_rental_only,
         status,
         image_url,
-        location,
-        owner:profiles!owner_id (
-          full_name,
-          phone_number
-        )
+        location
       `)
       .eq('status', 'verified_available');
 
@@ -93,19 +69,13 @@ export async function fetchLocalizedListings(
           : (item.description_en || item.description_am || description);
       }
 
-      const ownerInfo = Array.isArray(item.owner) ? item.owner[0] : item.owner;
-      
-      const ownerName = isPremiumUser ? (ownerInfo?.full_name || "Supplier") : "Verified EML Supplier";
-      const ownerPhone = isPremiumUser ? (ownerInfo?.phone_number || "Contact via EML") : "Upgrade to view phone";
-      const serialNumber = isPremiumUser ? (item.serial_number || "N/A") : "Vetted & Hidden";
-
       return {
         id: item.id,
         brand: item.brand || "Unknown",
         model: item.model || "Unknown",
         categoryToken: item.category_token || "machinery",
         modelYear: item.model_year || 2020,
-        serialNumber,
+        serialNumber: "Vetted & Hidden",
         title,
         description,
         priceSale: item.price_sale ? Number(item.price_sale) : (item.price ? Number(item.price) : null),
@@ -116,15 +86,15 @@ export async function fetchLocalizedListings(
         locationToken: item.location || "addis_ababa",
         verified: true,
         imageUrl: item.image_url || null,
-        ownerName,
-        ownerPhone
+        ownerName: "EML Verified Supplier",
+        ownerPhone: "Contact via EML"
       };
     });
   } catch (err) {
     const message = err instanceof Error
       ? err.message
       : JSON.stringify(err, Object.getOwnPropertyNames(err));
-    console.error("Failed to fetch machinery listings from database:", message);
+    console.error("Failed to fetch machinery listings:", message);
     return [];
   }
 }
