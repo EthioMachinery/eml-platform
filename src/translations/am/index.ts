@@ -1,153 +1,90 @@
-import { TranslationKey }
-  from "@/translations/keys";
-
 const am: Record<string, any> = {
-  // NAVIGATION
-
-  dashboard: "ዳሽቦርድ",
-
-  browse: "ገበያ",
-
-  upload: "አስገባ",
-
+  dashboard: "መቆጣጠሪያ",
+  browse: "ይፈልጉ",
+  upload: "አስገቡ",
   fleet: "ፍሊት",
-
   operators: "ኦፕሬተሮች",
-
   jobs: "ስራዎች",
-
-  mechanics: "መካኒኮች",
-
+  mechanics: "ሜካኒኮች",
   transport: "ትራንስፖርት",
-
   finance: "ፋይናንስ",
-
   insurance: "ኢንሹራንስ",
-
   fuel: "ነዳጅ",
-
   enterprise: "ኢንተርፕራይዝ",
-
-  notifications:
-    "ማሳወቂያዎች",
-
+  notifications: "ማሳወቂያዎች",
   settings: "ቅንብሮች",
-
   languages: "ቋንቋዎች",
-
-  // HERO
-
-  heroTitle:
-    "ይግዙ። ይከራዩ። ያጓጉዙ። ይጠግኑ። ያስተዳድሩ።",
-
-  heroSubtitle:
-    "ማሽነሪ የሚያስፈልገው ሁሉ — በአንድ ስርዓት።",
-
-  heroDescription:
-    "EML የማሽነሪ ባለቤቶችን፣ ኮንትራክተሮችን፣ አጓጓዦችን፣ ኦፕሬተሮችን፣ መካኒኮችን፣ ኢንሹራንስ ተቋማትን እና የመለዋወጫ እቃ አቅራቢዎችን በአንድ የተረጋገጠ ባለብዙ ቋንቋ ስርዓት ያገናኛል።",
-
-  // CTA
-
-  findMachinery:
-    "ማሽነሪ ያግኙ",
-
-  listMachinery:
-    "ማሽነሪ ይለጥፉ",
-
-  openDashboard:
-    "ዳሽቦርድ ይክፈቱ",
-
-  // STATS
-
-  machineryListings:
-    "የማሽነሪ ዝርዝሮች",
-
-  industrialUsers:
-    "የኢንዱስትሪ ተጠቃሚዎች",
-
-  trustEcosystem:
-    "የእምነት ስርዓት",
-
-  rentalListings:
-    "የኪራይ ዝርዝሮች",
-
-  // TRUST
-
-  verifiedSellers:
-    "የተረጋገጡ ሻጮች",
-
-  secureTransactions:
-    "ደህንነቱ የተጠበቀ ክፍያ",
-
-  industrialEcosystem:
-    "የኢንዱስትሪ ስርዓት",
-
-  bilingualPlatform:
-    "ባለብዙ ቋንቋ ስርዓት",
-
-  // ECOSYSTEM
-
-  ecosystem:
-    "የEML ስርዓት",
-
-  everythingIndustrialBusinessesNeed:
-    "የኢንዱስትሪ ቢዝነሶች የሚያስፈልጋቸው ሁሉ",
-
-  ecosystemDescription:
-    "EML ማሽነሪ፣ ትራንስፖርት፣ ኦፕሬተሮች፣ መካኒኮች፣ ፋይናንስ እና የኢንዱስትሪ አገልግሎቶችን የሚያገናኝ የኢትዮጵያ ዲጂታል የኢንዱስትሪ መሠረተ ልማት እየገነባ ነው።",
-
-  machineryMarketplace:
-    "የማሽነሪ ገበያ",
-
-  machineryMarketplaceDesc:
-    "ኤክስካቫተር፣ ሎደር፣ ትራክና ኢንዱስትሪ ማሽነሪዎችን ይግዙ፣ ይሽጡ እና ይከራዩ።",
-
-  transportLogistics:
-    "ትራንስፖርት እና ሎጂስቲክስ",
-
-  transportLogisticsDesc:
-    "ዝቅተኛ መኪና፣ ከፍተኛ መኪና እና ከባድ ጭነት ሎጂስቲክስ።",
-
-  operatorsJobs:
-    "ኦፕሬተሮች እና ስራዎች",
-
-  operatorsJobsDesc:
-    "ኦፕሬተሮችን፣ ሾፌሮችን እና የኢንዱስትሪ ሰራተኞችን ያገናኙ።",
-
-  mechanicsWorkshops:
-    "መካኒኮች እና ጋራጆች",
-
-  mechanicsWorkshopsDesc:
-    "የጥገና ቡድኖች፣ ዲያግኖስቲክስ እና የኢንዱስትሪ ጥገና አገልግሎቶች።",
-
-  spareParts:
-    "የመለዋወጫ እቃ ስርዓት",
-
-  sparePartsDesc:
-    "OEM እቃዎች፣ ጎማዎች፣ ሀይድሮሊክ ስርዓቶች እና አቅራቢዎች።",
-
-  financeInsurance:
-    "ፋይናንስ እና ኢንሹራንስ",
-
-  financeInsuranceDesc:
-    "የማሽነሪ ብድር፣ ሊዝ፣ escrow እና ኢንሹራንስ አገልግሎቶች።",
-
-  // COMMON
-  explore: "ይመልከቱ",
-
+  heroTitle: "ይግዙ። ይከራዩ። ያጓጉዙ። ይጠግኑ። ያንቀሳቅሱ።",
+  heroSubtitle: "ማሽነሪ የሚፈልገው ሁሉ — በአንድ ስርዓት።",
+  heroDescription: "EML የማሽነሪ ባለቤቶች፣ ኮንትራክተሮች፣ የትራንስፖርት አቅራቢዎች፣ ኦፕሬተሮች፣ ሜካኒኮች፣ ኢንሹሮች፣ የዕቃ አቅራቢዎች እና የኢንዱስትሪ ንግዶችን በአንድ የተሻሻለ ሁለት ቋንቋ ሥርዓት ያገናኛል።",
+  findMachinery: "ማሽነሪ ፈልግ",
+  listMachinery: "ማሽነሪዎን ይዘርዝሩ",
+  openDashboard: "መቆጣጠሪያ ይክፈቱ",
+  machineryListings: "የማሽነሪ ዝርዝሮች",
+  industrialUsers: "የኢንዱስትሪ ተጠቃሚዎች",
+  trustEcosystem: "የአደራ ስርዓት",
+  rentalListings: "የኪራይ ዝርዝሮች",
+  verifiedSellers: "የተረጋገጡ ሻጮች",
+  secureTransactions: "ደህንነቱ የተጠበቀ ግብይቶች",
+  industrialEcosystem: "የኢንዱስትሪ ስርዓት",
+  bilingualPlatform: "ሁለገብ ቋንቋ መድረክ",
+  ecosystem: "EML ስርዓት",
+  everythingIndustrialBusinessesNeed: "የኢንዱስትሪ ንግዶች የሚፈልጉት ሁሉ",
+  ecosystemDescription: "EML የኢትዮጵያ ኢንዱስትሪ ዲጂታል ፕላትፎርም ሲሆን ማሽነሪ፣ ትራንስፖርት፣ ኦፕሬተሮች፣ ሜካኒኮች፣ ፋይናንስ እና የኢንዱስትሪ አገልግሎቶችን ያገናኛል።",
+  machineryMarketplace: "የማሽነሪ ገበያ",
+  machineryMarketplaceDesc: "ኤክስካቫተሮችን፣ ሎደሮችን፣ ትራኮችን እና የኢንዱስትሪ ማሽነሪዎችን ይግዙ፣ ይሽጡ እና ይከራዩ።",
+  transportLogistics: "ትራንስፖርት እና ሎጂስቲክስ",
+  transportLogisticsDesc: "ሎው-ቤድ፣ ሃይ-ቤድ እና ከባድ ጭነት የሎጂስቲክስ ስርዓት።",
+  operatorsJobs: "ኦፕሬተሮች እና ስራዎች",
+  operatorsJobsDesc: "ኦፕሬተሮችን፣ አሽከርካሪዎችን እና የኢንዱስትሪ ሰራተኞችን ያገናኙ።",
+  mechanicsWorkshops: "ሜካኒኮች እና ወርክሾፖች",
+  mechanicsWorkshopsDesc: "የጥገና ቡድኖች፣ ምርመራ እና የኢንዱስትሪ የጥገና አገልግሎቶች።",
+  spareParts: "የተለዋዋጭ ዕቃዎች ስርዓት",
+  sparePartsDesc: "OEM ዕቃዎች፣ ጎማዎች፣ ሃይድሮሊክ ስርዓቶች እና የኢንዱስትሪ አቅራቢዎች።",
+  financeInsurance: "ፋይናንስ እና ኢንሹራንስ",
+  financeInsuranceDesc: "የማሽነሪ ብድሮች፣ ሊዝ፣ ኤስክሮ እና የኢንሹራንስ አገልግሎቶች።",
+  footerDescription: "ታማኝ የኢትዮጵያ ከባድ ማሽነሪዎች መገበያያ።",
+  explore: "ያስሱ",
+  getStarted: "ይጀምሩ",
+  startSelling: "መሸጥ ይጀምሩ",
+  browseMarketplace: "ገበያ ይዘዋወሩ",
+  loading: "እየጫነ ነው...",
+  submit: "ያስገቡ",
+  cancel: "ሰርዝ",
+  available: "ይገኛል",
+  rented: "ተከራይቷል",
+  sold: "ተሽጧል",
   common: {
     select: "አማራጭ ይምረጡ",
     other: "ሌላ",
-    specify: "እባክዎ ያስገቡ",
+    specify: "እባክዎ ይግለጹ",
   },
-
   forms: {
     name: "ሙሉ ስም",
-    email: "ኢሜይል",
-    phone: "ስልክ ቁጥር",
-    region: "ክልል",
-    selectRegion: "ክልሉን ይምረጡ",
+    email: "ኢሜል አድራሻ",
+    phone: "የሞባይል ስልክ ቁጥር",
+    password: "የይለፍ ቃል",
+    region: "ክልል / የሰፈር ዞን",
+    selectRegion: "ክልል ይምረጡ",
+    userType: "የተጠቃሚ አይነት",
+    selectUserType: "የተጠቃሚ አይነት ይምረጡ",
+  },
+  auth: {
+    signIn: "ግባ",
+    signUp: "ተመዝገብ",
+    createAccount: "ኢንተርፕራይዝ ማንነት ፍጠር",
+    alreadyHaveAccount: "አስቀድሞ መለያ አለዎት?",
+    login: "ግባ",
+    register: "ተመዝገብ",
+  },
+  register: {
+    step1: "የግል መረጃ",
+    step2: "ቦታ እና ሚና",
+    next: "ቀጣይ →",
+    back: "← ተመለስ",
+    submit: "ኢንተርፕራይዝ ማንነት ፍጠር",
+    title: "ዲጂታል የኢንዱስትሪ ማንነትዎን ይገንቡ",
+    subtitle: "የኢትዮጵያ ሉዓላዊ የኢንዱስትሪ ስርዓት ይቀላቀሉ",
   },
 };
-
 export default am;

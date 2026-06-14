@@ -1,95 +1,90 @@
 const ti: Record<string, any> = {
-  // NAVIGATION
-  dashboard: "ዳሽቦርድ",
-  browse: "ዳስስ",
-  upload: "ጽዓን",
+  dashboard: "መቆጻጸሪ",
+  browse: "ድለይ",
+  upload: "ጻዓን",
   fleet: "ፍሊት",
-  operators: "ኦፐሬተርታት",
-  jobs: "ስራሓት",
+  operators: "ኦፕሬተራት",
+  jobs: "ስራሕቲ",
   mechanics: "መካኒካት",
-  transport: "መጓዓዝያ",
+  transport: "መጓዓዝቲ",
   finance: "ፋይናንስ",
   insurance: "ኢንሹራንስ",
   fuel: "ነዳዲ",
   enterprise: "ትካል",
-  notifications: "ምልክታት",
-  settings: "ምምሕዳር",
+  notifications: "ምስክርነታት",
+  settings: "ቅጥዒታት",
   languages: "ቋንቋታት",
-
-  // HERO
-  heroTitle: "ዕደጎ። ተኻረ። ጓዓዝ። ኣዕርዮ። ስርሓ።",
-  heroSubtitle: "ማሽነሪ ዘድልዮ ኹሉ — ኣብ ሓደ ስርዓት።",
-  heroDescription:
-    "EML ናይ ማሽነሪ ውላዳት፣ ኮንትራክተርታት፣ ናይ መጓዓዝያ ሰዓቦ፣ ኦፐሬተርታት፣ መካኒካት፣ ኢንሹራንስን ናይ ኢንዱስትሪ ንግዳዊ ትካላትን ናብ ሓደ ዝተኣመነ ብዙሕ ቋንቋ ዘለዎ ስርዓት ይጥርንፍ።",
-
-  // CTA
-  findMachinery: "ማሽነሪ ድለ",
-  listMachinery: "ማሽነሪኻ ምዝገብ",
-  openDashboard: "ዳሽቦርድ ክፈት",
-
-  // STATS
+  heroTitle: "ዓድጎ። ተኻረዮ። ጸዓን። ጽገና ግበር። ኣንቀሳቕስ።",
+  heroSubtitle: "ማሽነሪ ዘድልዮ ዅሉ — ኣብ ሓደ ስርዓት።",
+  heroDescription: "EML ናይ ማሽነሪ ዋናታት፣ ኮንትራክተራት፣ ናይ መጓዓዝቲ ኣቕረብቲ፣ ኦፕሬተራት፣ መካኒካት፣ ኢንሹሮ፣ ናይ መተካእታ ኣቕረብቲን ናይ ኢንዱስትሪ ዕዮዎትን ኣብ ሓደ ስርዓት የጣምር።",
+  findMachinery: "ማሽነሪ ድለይ",
+  listMachinery: "ማሽነርካ ዝርዝር",
+  openDashboard: "መቆጻጸሪ ክፈት",
   machineryListings: "ዝርዝር ማሽነሪ",
   industrialUsers: "ናይ ኢንዱስትሪ ተጠቀምቲ",
-  trustEcosystem: "ናይ ምትእምማን ስርዓት",
+  trustEcosystem: "ናይ እምነት ስርዓት",
   rentalListings: "ዝርዝር ምክራይ",
-
-  // TRUST
-  verifiedSellers: "ዝተረጋገጹ ሸያጦ",
-  secureTransactions: "ውሑስ ዕቤት",
+  verifiedSellers: "ዝተረጋገጹ ሻጦ",
+  secureTransactions: "ውሑስ ዓወደ-ንግዲ",
   industrialEcosystem: "ናይ ኢንዱስትሪ ስርዓት",
-  bilingualPlatform: "ብዙሕ ቋንቋ ፕላትፎርም",
-
-  // ECOSYSTEM
+  bilingualPlatform: "ብዙሕ-ቋንቋ መድረኽ",
   ecosystem: "ናይ EML ስርዓት",
-  everythingIndustrialBusinessesNeed:
-    "ናይ ኢንዱስትሪ ንግዳዊ ትካላት ዘድልዮ ኹሉ",
-  ecosystemDescription:
-    "EML ናይ ኢትዮጵያ ናይ ኢንዱስትሪ ዲጂታል ኢንፍራስትራክቸር ይሃንጽ ኣሎ — ማሽነሪ፣ መጓዓዝያ፣ ኦፐሬተርታት፣ መካኒካት፣ ፋይናንስ ን ናይ ኢንዱስትሪ ኣገልግሎታት ይጥርንፍ።",
-
-  // ECOSYSTEM CARDS
+  everythingIndustrialBusinessesNeed: "ናይ ኢንዱስትሪ ዕዮዎት ዘድልዮ ዅሉ",
+  ecosystemDescription: "EML ናይ ኢትዮጵያ ኢንዱስትሪ ዲጂታላዊ ፕላትፎርም ክህነጽ ኣሎ — ማሽነሪ፣ መጓዓዝቲ፣ ኦፕሬተራት፣ መካኒካት፣ ፋይናንስን ናይ ኢንዱስትሪ ኣገልግሎታትን የጣምር።",
   machineryMarketplace: "ናይ ማሽነሪ ዕዳጋ",
-  machineryMarketplaceDesc:
-    "ኤክስካቫተርታት፣ ሎደርታት፣ ትራክታት ን ናይ ኢንዱስትሪ መሳርሒታት ዕደጎ፣ ሽይጦ ወይ ተኻርዮ።",
-  transportLogistics: "መጓዓዝያን ሎጂስቲክስን",
-  transportLogisticsDesc:
-    "ናይ low-bed፣ high-bed ን ከቢድ ጽዕነት ሎጂስቲክስ ስርዓት።",
-  operatorsJobs: "ኦፐሬተርታትን ስራሓትን",
-  operatorsJobsDesc:
-    "ኦፐሬተርታት፣ ዳርቨርታት ን ናይ ኢንዱስትሪ ሰራሕተኛታት ኣራኽቦ።",
-  mechanicsWorkshops: "መካኒካትን ወርክሾፓትን",
-  mechanicsWorkshopsDesc:
-    "ናይ ጽገና ጉጅለታት፣ ምርመራ ን ናይ ኢንዱስትሪ ናይ ጽገና ኣገልግሎት።",
-  spareParts: "ናይ መካየዲ ቅድሚት ስርዓት",
-  sparePartsDesc:
-    "OEM ቅድሚት፣ ታይርታት፣ ናይ ሃይድሮሊክ ስርዓት ን ናይ ኢንዱስትሪ ሰዓቦ።",
+  machineryMarketplaceDesc: "ኤክስካቫተራት፣ ሎደራት፣ ትራካትን ናይ ኢንዱስትሪ ማሽነሪታትን ዓድጎ፣ ሽጥ፣ ተኻረዮ።",
+  transportLogistics: "መጓዓዝቲን ሎጂስቲክስን",
+  transportLogisticsDesc: "ናይ low-bed፣ high-bed ከቢድ ሎጂስቲክስ ስርዓት።",
+  operatorsJobs: "ኦፕሬተራትን ስራሕቲን",
+  operatorsJobsDesc: "ኦፕሬተራት፣ ናይ መካይን ወነንቲ፣ ናይ ኢንዱስትሪ ሰራሕተኛታት ወሃብ።",
+  mechanicsWorkshops: "መካኒካትን ወርክሾፕን",
+  mechanicsWorkshopsDesc: "ናይ ጽገና ጋንታ፣ ምርመራ፣ ናይ ኢንዱስትሪ ጽገና ኣገልግሎታት።",
+  spareParts: "ናይ መተካእታ ኣቕሑ ስርዓት",
+  sparePartsDesc: "OEM ቅንጥቦ፣ ጎማታት፣ ናይ ሃይድሮሊክ ስርዓታትን ናይ ኢንዱስትሪ ኣቕረብቲን።",
   financeInsurance: "ፋይናንስን ኢንሹራንስን",
-  financeInsuranceDesc:
-    "ናይ ማሽነሪ ልቓሕ፣ ምክራይ፣ ኤስክሮ ን ናይ ኢንሹራንስ ኣገልግሎት።",
-
-  // COMMON
-  explore: "መርምር",
+  financeInsuranceDesc: "ናይ ማሽነሪ ልቓሕ፣ ምምሕልላፍ፣ ኤስክሮ፣ ናይ ኢንሹራንስ ኣገልግሎታት።",
+  footerDescription: "እሙን ናይ ኢትዮጵያ ከበድቲ ማሽነሪ ዕዳጋ።",
+  explore: "ኣስስ",
   getStarted: "ጀምር",
-  startSelling: "ሽያጥ ጀምር",
-  browseMarketplace: "ዕዳጋ ዳስስ",
-  loading: "ይጽዓን ኣሎ...",
+  startSelling: "ምሻጥ ጀምር",
+  browseMarketplace: "ዕዳጋ ሰስስ",
+  loading: "ይጻዓን ኣሎ...",
   submit: "ኣቕርብ",
   cancel: "ሰርዝ",
   available: "ኣሎ",
   rented: "ተኻሪዩ",
-  sold: "ተሸይጡ",
-
+  sold: "ተሸጢዑ",
   common: {
     select: "ምረጽ",
     other: "ካልእ",
-    specify: "በጃኻ ሓብር",
+    specify: "በጃኻ ግለጽ",
   },
   forms: {
-    name: "ምሉእ ሽም",
-    email: "ናይ ኢሜይል ኣድራሻ",
-    phone: "ቁጽሪ ስልኪ",
-    region: "ዞባ",
-    selectRegion: "ዞባ ምረጽ",
+    name: "ምሉእ ስም",
+    email: "ኢሜይል ኣድራሻ",
+    phone: "ቁጽሪ ሞባይል",
+    password: "ምስጢራዊ ቃል",
+    region: "ክልል / ዞን",
+    selectRegion: "ክልል ምረጽ",
+    userType: "ዓይነት ተጠቃሚ",
+    selectUserType: "ዓይነት ተጠቃሚ ምረጽ",
+  },
+  auth: {
+    signIn: "እተው",
+    signUp: "ተመዝገብ",
+    createAccount: "ናይ ትካል መንነት ፍጠር",
+    alreadyHaveAccount: "ኣካውንት ኣለካ?",
+    login: "እተው",
+    register: "ተመዝገብ",
+  },
+  register: {
+    step1: "ናይ ውልቂ ሓበሬታ",
+    step2: "ቦታን ተራን",
+    next: "ቀጺሉ →",
+    back: "← ተመለስ",
+    submit: "ናይ ትካል መንነት ፍጠር",
+    title: "ዲጂታላዊ ናይ ኢንዱስትሪ መንነትካ ህነጽ",
+    subtitle: "ናይ ኢትዮጵያ ልዑላዊ ናይ ኢንዱስትሪ ስርዓት ተሳተፍ",
   },
 };
-
 export default ti;

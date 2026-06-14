@@ -62,10 +62,29 @@ const en: Record<string, any> = {
   forms: {
     name: "Full Name",
     email: "Email Address",
-    phone: "Phone Number",
-    region: "Region",
+    phone: "Mobile Phone Number",
+    password: "Password",
+    region: "Region / Deploy Zone",
     selectRegion: "Select Region",
+    userType: "User Type",
+    selectUserType: "Select User Type",
+  },
+  auth: {
+    signIn: "Sign In",
+    signUp: "Sign Up",
+    createAccount: "Create Enterprise Identity",
+    alreadyHaveAccount: "Already have an account?",
+    login: "Login",
+    register: "Register",
+  },
+  register: {
+    step1: "Personal Info",
+    step2: "Location & Role",
+    next: "Next →",
+    back: "← Back",
+    submit: "Create Enterprise Identity",
+    title: "Build Your Digital Industrial Identity",
+    subtitle: "Join Ethiopia's sovereign industrial ecosystem",
   },
 };
-
 export default en;

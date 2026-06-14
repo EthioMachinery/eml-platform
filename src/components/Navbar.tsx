@@ -27,9 +27,7 @@ export default function Navbar() {
     { token: "nav.dashboard", href: "/dashboard" },
   ];
 
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen((prev) => !prev);
-  };
+  const toggleMobileMenu = () => setIsMobileMenuOpen((prev) => !prev);
 
   return (
     <nav className="bg-black border-b border-zinc-900 sticky top-0 z-50 w-full" id="eml-global-nav">
@@ -89,7 +87,7 @@ export default function Navbar() {
               href="/register"
               className="px-4 py-2.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold uppercase tracking-wider transition-all shadow-lg shadow-amber-500/20"
             >
-              Sign Up
+              {t("nav.login") === "Sign In" ? "Sign Up" : t("nav.login") === "ግባ" ? "ተመዝገብ" : t("nav.login") === "Seeni" ? "Galmeeffadhu" : "ተመዝገብ"}
             </Link>
           </div>
 
@@ -105,11 +103,11 @@ export default function Navbar() {
             >
               <span className="sr-only">Toggle Main Menu</span>
               {isMobileMenuOpen ? (
-                <svg className="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                <svg className="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               ) : (
-                <svg className="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                <svg className="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
               )}
@@ -158,7 +156,7 @@ export default function Navbar() {
               onClick={() => setIsMobileMenuOpen(false)}
               className="block w-full text-center px-4 py-3 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-sm font-bold uppercase tracking-wider transition-all"
             >
-              Sign Up
+              {t("nav.login") === "Sign In" ? "Sign Up" : t("nav.login") === "ግባ" ? "ተመዝገብ" : t("nav.login") === "Seeni" ? "Galmeeffadhu" : "ተመዝገብ"}
             </Link>
           </div>
         </div>

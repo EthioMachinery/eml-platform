@@ -1,5 +1,4 @@
 const or: Record<string, any> = {
-  // NAVIGATION
   dashboard: "Daashboordii",
   browse: "Gabaa",
   upload: "Olkaa'i",
@@ -15,57 +14,36 @@ const or: Record<string, any> = {
   notifications: "Beeksisa",
   settings: "Qindaa'ina",
   languages: "Afaanota",
-
-  // HERO
   heroTitle: "Bitaa. Kireeffadhu. Geejji. Suphii. Hojjedhu.",
   heroSubtitle: "Waan Maashiniin Barbaadu Hunda — Iddoo Tokkotti.",
-  heroDescription:
-    "EML abbootii maashinii, contracterottaa, dhiyeessitota geejjibaa, oopireetarrota, makaanikota, inshuraansii fi daldaltoota industirii tokkotti walitti fidda.",
-
-  // CTA
+  heroDescription: "EML abbootii maashinii, contracterottaa, dhiyeessitota geejjibaa, oopireetarrota, makaanikota, inshuraansii fi daldaltoota industirii tokkotti walitti fidda.",
   findMachinery: "Maashinii Barbaadhuu",
   listMachinery: "Maashinii Kee Galmeessi",
   openDashboard: "Daashboordii Bani",
-
-  // STATS
   machineryListings: "Tarreessa Maashinii",
   industrialUsers: "Fayyadamtoota Industirii",
   trustEcosystem: "Amantaa Sirna",
   rentalListings: "Tarreessa Kireeffannaa",
-
-  // TRUST
   verifiedSellers: "Gurgurtootaa Mirkaneeffame",
   secureTransactions: "Daldalaa Nageenya",
   industrialEcosystem: "Sirna Industirii",
   bilingualPlatform: "Platform Afaan Baay'ee",
-
-  // ECOSYSTEM
   ecosystem: "SIRNA EML",
   everythingIndustrialBusinessesNeed: "Waan Hundi Daldalli Industirii Barbaadu",
-  ecosystemDescription:
-    "EML infaraastrakchara dijitaalaa industirii Itoophiyaa ijaaraa jira — maashinii, geejjiba, oopireetarrota, makaanikota, faayinaansii fi tajaajila industirii walitti hidha.",
-
-  // ECOSYSTEM CARDS
+  ecosystemDescription: "EML infaraastrakchara dijitaalaa industirii Itoophiyaa ijaaraa jira — maashinii, geejjiba, oopireetarrota, makaanikota, faayinaansii fi tajaajila industirii walitti hidha.",
   machineryMarketplace: "Gabaa Maashinootaa",
-  machineryMarketplaceDesc:
-    "Ekskaaveetara, loadera, tirakkii fi meeshaalee industirii bitaa, gurgurii fi kireeffadhaa.",
+  machineryMarketplaceDesc: "Ekskaaveetara, loadera, tirakkii fi meeshaalee industirii bitaa, gurgurii fi kireeffadhaa.",
   transportLogistics: "Geejjibaa fi Loogistikii",
-  transportLogisticsDesc:
-    "Sirna loogistikii low-bed, high-bed fi haulage ulfaataa.",
+  transportLogisticsDesc: "Sirna loogistikii low-bed, high-bed fi haulage ulfaataa.",
   operatorsJobs: "Oopireetarrota fi Hojii",
-  operatorsJobsDesc:
-    "Oopireetarrota, diraayiveroota fi hojjettootaa industirii walitti fidaa.",
+  operatorsJobsDesc: "Oopireetarrota, diraayiveroota fi hojjettootaa industirii walitti fidaa.",
   mechanicsWorkshops: "Makaanikota fi Gareewwan",
-  mechanicsWorkshopsDesc:
-    "Garee suphii, qorannoo fi tajaajila suphii industirii.",
+  mechanicsWorkshopsDesc: "Garee suphii, qorannoo fi tajaajila suphii industirii.",
   spareParts: "Sirna Spare Parts",
-  sparePartsDesc:
-    "Qooda OEM, taayirota, siistama haaydiroliksii fi dhiyeessitota industirii.",
+  sparePartsDesc: "Qooda OEM, taayirota, siistama haaydiroliksii fi dhiyeessitota industirii.",
   financeInsurance: "Faayinaansii fi Inshuraansii",
-  financeInsuranceDesc:
-    "Liqii maashinii, kireeffannaa, eskiro fi tajaajila inshuraansii.",
-
-  // COMMON
+  financeInsuranceDesc: "Liqii maashinii, kireeffannaa, eskiro fi tajaajila inshuraansii.",
+  footerDescription: "Gabaa maashinarii ulfaataa Itoophiyaa amanamaa.",
   explore: "Qoradhu",
   getStarted: "Jalqabi",
   startSelling: "Gurguruu Jalqabi",
@@ -76,7 +54,6 @@ const or: Record<string, any> = {
   available: "Ni Jira",
   rented: "Kireeffameera",
   sold: "Gurgurameera",
-
   common: {
     select: "Filadhu",
     other: "Kan Biraa",
@@ -86,9 +63,28 @@ const or: Record<string, any> = {
     name: "Maqaa Guutuu",
     email: "Teessoo Email",
     phone: "Lakkoofsa Bilbilaa",
-    region: "Godinaa",
+    password: "Jecha Darbii",
+    region: "Godinaa / Naannoo",
     selectRegion: "Godinaa Filadhu",
+    userType: "Gosa Fayyadamaa",
+    selectUserType: "Gosa Fayyadamaa Filadhu",
+  },
+  auth: {
+    signIn: "Seeni",
+    signUp: "Galmeeffadhu",
+    createAccount: "Eenyummaa Dhaabbataa Uumi",
+    alreadyHaveAccount: "Herreega qabdaa?",
+    login: "Seeni",
+    register: "Galmeeffadhu",
+  },
+  register: {
+    step1: "Odeeffannoo Dhuunfaa",
+    step2: "Bakka fi Gahee",
+    next: "Itti Aanaa →",
+    back: "← Deebi'i",
+    submit: "Eenyummaa Dhaabbataa Uumi",
+    title: "Eenyummaa Dijitaalaa Industirii Kee Ijaaruu",
+    subtitle: "Sirna Industirii Itoophiyaa Irratti Makamaa",
   },
 };
-
 export default or;
