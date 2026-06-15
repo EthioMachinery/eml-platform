@@ -1,10 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useTranslate, TranslationPath } from "@/hooks/useTranslate";
+import { useLanguage } from "@/context/LanguageContext";
+import { translate } from "@/lib/i18n";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { supabase } from "@/lib/supabaseClient";
 
 interface NavItem {
   token: TranslationPath;
@@ -13,8 +16,37 @@ interface NavItem {
 
 export default function Navbar() {
   const { t } = useTranslate();
+  const { language } = useLanguage();
   const pathname = usePathname();
+  const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userEmail, setUserEmail] = useState("");
+
+  useEffect(() => {
+    // Check current session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setIsLoggedIn(!!session);
+      setUserEmail(session?.user?.email || "");
+    });
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsLoggedIn(!!session);
+      setUserEmail(session?.user?.email || "");
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setIsLoggedIn(false);
+    setUserEmail("");
+    router.push("/");
+  };
+
+  const tr = (key: string) => translate(key, language);
 
   const navigationItems: NavItem[] = [
     { token: "nav.home", href: "/" },
@@ -24,7 +56,6 @@ export default function Navbar() {
     { token: "nav.escrow", href: "/escrow" },
     { token: "nav.about", href: "/about" },
     { token: "nav.contact", href: "/contact" },
-    { token: "nav.dashboard", href: "/dashboard" },
   ];
 
   const toggleMobileMenu = () => setIsMobileMenuOpen((prev) => !prev);
@@ -77,18 +108,41 @@ export default function Navbar() {
           {/* Desktop Right Actions */}
           <div className="hidden lg:flex items-center gap-3">
             <LanguageSwitcher />
-            <Link
-              href="/login"
-              className="px-4 py-2.5 rounded-lg border border-zinc-800 text-zinc-300 hover:text-white hover:bg-zinc-950 text-xs font-bold uppercase tracking-wider transition-all"
-            >
-              {t("nav.login")}
-            </Link>
-            <Link
-              href="/register"
-              className="px-4 py-2.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold uppercase tracking-wider transition-all shadow-lg shadow-amber-500/20"
-            >
-              {t("nav.login") === "Sign In" ? "Sign Up" : t("nav.login") === "ግባ" ? "ተመዝገብ" : t("nav.login") === "Seeni" ? "Galmeeffadhu" : "ተመዝገብ"}
-            </Link>
+            {isLoggedIn ? (
+              <>
+                <Link
+                  href="/dashboard"
+                  className={`px-4 py-2.5 rounded-lg border text-xs font-bold uppercase tracking-wider transition-all ${
+                    pathname === "/dashboard"
+                      ? "bg-amber-500 text-white border-amber-500"
+                      : "border-zinc-800 text-zinc-300 hover:text-white hover:bg-zinc-950"
+                  }`}
+                >
+                  {t("nav.dashboard")}
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="px-4 py-2.5 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-bold uppercase tracking-wider transition-all"
+                >
+                  {tr("auth.signIn") === "Sign In" ? "Sign Out" : tr("auth.signIn") === "ግባ" ? "ውጣ" : tr("auth.signIn") === "Seeni" ? "Ba'i" : "ውጻእ"}
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className="px-4 py-2.5 rounded-lg border border-zinc-800 text-zinc-300 hover:text-white hover:bg-zinc-950 text-xs font-bold uppercase tracking-wider transition-all"
+                >
+                  {tr("auth.signIn")}
+                </Link>
+                <Link
+                  href="/register"
+                  className="px-4 py-2.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold uppercase tracking-wider transition-all shadow-lg shadow-amber-500/20"
+                >
+                  {tr("auth.signUp")}
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Toggle */}
@@ -144,20 +198,43 @@ export default function Navbar() {
           })}
 
           <div className="pt-4 mt-4 border-t border-zinc-900 px-4 flex flex-col gap-3">
-            <Link
-              href="/login"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="block w-full text-center px-4 py-3 rounded-lg bg-zinc-950 border border-zinc-800 text-zinc-300 hover:text-white text-sm font-bold uppercase tracking-wider transition-all"
-            >
-              {t("nav.login")}
-            </Link>
-            <Link
-              href="/register"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="block w-full text-center px-4 py-3 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-sm font-bold uppercase tracking-wider transition-all"
-            >
-              {t("nav.login") === "Sign In" ? "Sign Up" : t("nav.login") === "ግባ" ? "ተመዝገብ" : t("nav.login") === "Seeni" ? "Galmeeffadhu" : "ተመዝገብ"}
-            </Link>
+            {isLoggedIn ? (
+              <>
+                {userEmail && (
+                  <p className="text-zinc-500 text-xs text-center truncate">{userEmail}</p>
+                )}
+                <Link
+                  href="/dashboard"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="block w-full text-center px-4 py-3 rounded-lg bg-zinc-950 border border-zinc-800 text-zinc-300 hover:text-white text-sm font-bold uppercase tracking-wider transition-all"
+                >
+                  {t("nav.dashboard")}
+                </Link>
+                <button
+                  onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }}
+                  className="w-full text-center px-4 py-3 rounded-lg bg-red-600 hover:bg-red-700 text-white text-sm font-bold uppercase tracking-wider transition-all"
+                >
+                  {tr("auth.signIn") === "Sign In" ? "Sign Out" : tr("auth.signIn") === "ግባ" ? "ውጣ" : tr("auth.signIn") === "Seeni" ? "Ba'i" : "ውጻእ"}
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="block w-full text-center px-4 py-3 rounded-lg bg-zinc-950 border border-zinc-800 text-zinc-300 hover:text-white text-sm font-bold uppercase tracking-wider transition-all"
+                >
+                  {tr("auth.signIn")}
+                </Link>
+                <Link
+                  href="/register"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="block w-full text-center px-4 py-3 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-sm font-bold uppercase tracking-wider transition-all"
+                >
+                  {tr("auth.signUp")}
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>
