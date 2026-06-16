@@ -79,6 +79,9 @@ export default function ContactUsPage() {
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
 
+  const mailtoHref = "mailto:" + COMPANY_CONFIG.supportEmail;
+  const telHref = "tel:" + COMPANY_CONFIG.supportPhone;
+
   const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
@@ -135,7 +138,7 @@ export default function ContactUsPage() {
                 EML Direct Email Support
               </span>
               
-                href={`mailto:${COMPANY_CONFIG.supportEmail}`}
+                href={mailtoHref}
                 className="text-sm font-bold text-amber-500 hover:text-amber-400 font-mono transition-colors"
               >
                 {COMPANY_CONFIG.supportEmail}
@@ -147,7 +150,7 @@ export default function ContactUsPage() {
                 EML Direct Mobile Hotline
               </span>
               
-                href={`tel:${COMPANY_CONFIG.supportPhone}`}
+                href={telHref}
                 className="text-sm font-bold text-amber-500 hover:text-amber-400 font-mono transition-colors"
               >
                 {COMPANY_CONFIG.supportPhone} ({COMPANY_CONFIG.supportPhoneDomestic})
