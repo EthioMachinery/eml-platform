@@ -138,7 +138,7 @@ export default function ContactUsPage() {
                 EML Direct Email Support
               </span>
               
-                href={mailtoHref}
+                <a href={mailtoHref}
                 className="text-sm font-bold text-amber-500 hover:text-amber-400 font-mono transition-colors"
               >
                 {COMPANY_CONFIG.supportEmail}
@@ -150,7 +150,7 @@ export default function ContactUsPage() {
                 EML Direct Mobile Hotline
               </span>
               
-                href={telHref}
+                <a href={telHref}
                 className="text-sm font-bold text-amber-500 hover:text-amber-400 font-mono transition-colors"
               >
                 {COMPANY_CONFIG.supportPhone} ({COMPANY_CONFIG.supportPhoneDomestic})
@@ -162,7 +162,7 @@ export default function ContactUsPage() {
                 Connect on WhatsApp
               </span>
               
-                href={COMPANY_CONFIG.whatsappUrl}
+                <a href={COMPANY_CONFIG.whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-xs font-bold text-green-400 hover:underline"
@@ -176,7 +176,7 @@ export default function ContactUsPage() {
                 Telegram Channel
               </span>
               
-                href={COMPANY_CONFIG.socials.telegram}
+                <a href={COMPANY_CONFIG.socials.telegram}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-xs font-bold text-blue-400 hover:underline"
