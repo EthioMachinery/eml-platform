@@ -1,41 +1,42 @@
 "use client";
 
-import {
-  useEffect,
-  useState,
-} from "react";
-
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
-
-import {
-  Pencil,
-  Trash2,
-  Crown,
-  Eye,
-} from "lucide-react";
-
+import { Pencil, Trash2, Eye } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 
-type Machinery = {
+type Listing = {
   id: string;
-  title: string;
-  price: string;
-  image_url: string;
+  brand: string;
+  model: string;
+  title_en: string;
   location: string;
+  city: string;
+  image_url: string;
+  status: string;
+  price_sale: number;
+  price_rental_daily: number;
+  is_rental_only: boolean;
   created_at: string;
-  views: number;
-  is_boosted: boolean;
-  boost_level: number;
-  boost_expires_at: string;
 };
 
-export default function ListingsPage() {
-  const [listings, setListings] =
-    useState<Machinery[]>([]);
+function StatusBadge({ status }: { status: string }) {
+  const colors: Record<string, string> = {
+    pending_review: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
+    verified_available: "bg-green-500/20 text-green-400 border-green-500/30",
+    rejected: "bg-red-500/20 text-red-400 border-red-500/30",
+    suspended: "bg-orange-500/20 text-orange-400 border-orange-500/30",
+  };
+  return (
+    <span className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase border ${colors[status] || "bg-zinc-800 text-zinc-400 border-zinc-700"}`}>
+      {status?.replace(/_/g, " ")}
+    </span>
+  );
+}
 
-  const [loading, setLoading] =
-    useState(true);
+export default function ListingsPage() {
+  const [listings, setListings] = useState<Listing[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     loadListings();
@@ -44,289 +45,112 @@ export default function ListingsPage() {
   async function loadListings() {
     setLoading(true);
 
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
+    const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
       setLoading(false);
       return;
     }
 
     const { data } = await supabase
-      .from("machinery")
-      .select("*")
-      .eq("user_id", user.id)
-      .order("created_at", {
-        ascending: false,
-      });
+      .from("listings")
+      .select("id, brand, model, title_en, location, city, image_url, status, price_sale, price_rental_daily, is_rental_only, created_at")
+      .eq("owner_id", user.id)
+      .order("created_at", { ascending: false });
 
     setListings(data || []);
-
     setLoading(false);
   }
 
-  async function deleteListing(
-    id: string
-  ) {
-    const confirmDelete =
-      confirm(
-        "Delete this listing?"
-      );
-
+  async function deleteListing(id: string) {
+    const confirmDelete = confirm("Delete this listing? This cannot be undone.");
     if (!confirmDelete) return;
 
-    const { error } = await supabase
-      .from("machinery")
-      .delete()
-      .eq("id", id);
+    const { error } = await supabase.from("listings").delete().eq("id", id);
 
     if (!error) {
-      setListings((prev) =>
-        prev.filter(
-          (item) =>
-            item.id !== id
-        )
-      );
-    }
-  }
-
-  async function boostListing(
-    id: string
-  ) {
-    const expiryDate =
-      new Date();
-
-    expiryDate.setDate(
-      expiryDate.getDate() + 7
-    );
-
-    const { error } = await supabase
-      .from("machinery")
-      .update({
-        is_boosted: true,
-        boost_level: 1,
-        boost_expires_at:
-          expiryDate.toISOString(),
-      })
-      .eq("id", id);
-
-    if (error) {
-      console.error(error);
-      alert(error.message);
+      setListings((prev) => prev.filter((item) => item.id !== id));
     } else {
-      alert(
-        "Listing boosted successfully for 7 days."
-      );
-
-      loadListings();
+      alert("Failed to delete listing: " + error.message);
     }
   }
+
+  const formatter = new Intl.NumberFormat("en-US", { style: "decimal" });
 
   return (
-    <main className="min-h-screen bg-slate-50 p-6">
-
+    <main className="min-h-screen bg-black p-6 text-white">
       <div className="max-w-7xl mx-auto">
 
-        {/* HEADER */}
-
         <div className="flex flex-wrap gap-4 items-center justify-between mb-10">
-
           <div>
-
-            <h1 className="text-5xl font-black text-slate-900">
-              My Listings
-            </h1>
-
-            <p className="text-gray-500 mt-2">
-              Manage your machinery marketplace listings
-            </p>
-
+            <h1 className="text-4xl font-black text-white">My Listings</h1>
+            <p className="text-zinc-500 mt-2">Manage your machinery marketplace listings</p>
           </div>
 
           <Link
-            href="/upload"
-            className="px-8 h-14 rounded-2xl bg-blue-700 hover:bg-blue-800 text-white font-black inline-flex items-center"
+            href="/post-machinery"
+            className="px-6 h-12 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-black inline-flex items-center text-sm uppercase tracking-wider transition-all"
           >
             Upload Machinery
           </Link>
-
         </div>
 
-        {/* CONTENT */}
-
         {loading ? (
-          <div className="text-2xl font-black text-blue-700">
-            Loading listings...
-          </div>
+          <div className="text-zinc-500 font-bold">Loading listings...</div>
         ) : listings.length === 0 ? (
-          <div className="bg-white rounded-3xl border p-16 text-center">
-
-            <h2 className="text-3xl font-black">
-              No Listings Yet
-            </h2>
-
-            <p className="text-gray-500 mt-4">
-              Upload your first machinery listing.
-            </p>
-
+          <div className="bg-zinc-950 border border-dashed border-zinc-800 rounded-3xl p-16 text-center">
+            <h2 className="text-2xl font-black text-white">No Listings Yet</h2>
+            <p className="text-zinc-500 mt-3">Upload your first machinery listing to get started.</p>
           </div>
         ) : (
-          <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-8">
-
+          <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
             {listings.map((item) => (
-              <div
-                key={item.id}
-                className={`bg-white rounded-3xl border overflow-hidden shadow-sm ${
-                  item.is_boosted
-                    ? "border-yellow-400 shadow-yellow-100 shadow-2xl"
-                    : ""
-                }`}
-              >
+              <div key={item.id} className="bg-zinc-950 border border-zinc-900 rounded-2xl overflow-hidden">
 
-                {/* IMAGE */}
-
-                <div className="h-56 bg-slate-100 relative overflow-hidden">
-
+                <div className="h-48 bg-zinc-900 relative overflow-hidden flex items-center justify-center">
                   {item.image_url ? (
-                    <Image
-                      src={item.image_url}
-                      alt={item.title}
-                      width={700}
-                      height={500}
-                      className="w-full h-full object-cover"
-                      unoptimized
-                    />
+                    <img src={item.image_url} alt={item.title_en || item.brand} className="w-full h-full object-cover" />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-7xl">
-                      🚜
-                    </div>
+                    <div className="text-6xl">🚜</div>
                   )}
-
-                  {/* BOOSTED */}
-
-                  {item.is_boosted && (
-                    <div className="absolute top-4 left-4 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-400 text-black text-xs font-black shadow-xl">
-
-                      <Crown size={14} />
-
-                      BOOSTED
-
-                    </div>
-                  )}
-
                 </div>
 
-                {/* CONTENT */}
-
-                <div className="p-6">
-
-                  <h2 className="text-2xl font-black leading-snug">
-                    {item.title}
-                  </h2>
-
-                  <div className="mt-4 text-3xl font-black text-blue-700">
-                    {item.price}
+                <div className="p-5">
+                  <div className="flex items-center gap-2 mb-2">
+                    <h2 className="text-lg font-black text-white">{item.brand} {item.model}</h2>
+                    <StatusBadge status={item.status} />
                   </div>
 
-                  <div className="mt-4 text-gray-500">
-                    📍 {item.location}
+                  <div className="text-xl font-black text-amber-500">
+                    ETB {item.is_rental_only
+                      ? `${formatter.format(item.price_rental_daily || 0)}/day`
+                      : formatter.format(item.price_sale || 0)}
                   </div>
 
-                  {/* STATS */}
-
-                  <div className="mt-6 flex items-center gap-4 text-gray-500">
-
-                    <div className="inline-flex items-center gap-2">
-
-                      <Eye size={18} />
-
-                      {item.views || 0}
-
-                    </div>
-
+                  <div className="mt-2 text-zinc-500 text-sm">
+                    📍 {item.city || item.location || "Location not set"}
                   </div>
 
-                  {/* ACTIONS */}
-
-                  <div className="mt-8 grid grid-cols-3 gap-3">
-
-                    {/* EDIT */}
-
+                  <div className="mt-4 grid grid-cols-2 gap-3">
                     <Link
                       href={`/dashboard/edit/${item.id}`}
-                      className="h-12 rounded-2xl bg-blue-700 hover:bg-blue-800 text-white flex items-center justify-center"
+                      className="h-11 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-white flex items-center justify-center gap-2 text-xs font-bold uppercase transition-all"
                     >
-
-                      <Pencil size={18} />
-
+                      <Pencil size={14} /> Edit
                     </Link>
 
-                    {/* DELETE */}
-
                     <button
-                      onClick={() =>
-                        deleteListing(
-                          item.id
-                        )
-                      }
-                      className="h-12 rounded-2xl bg-red-600 hover:bg-red-700 text-white flex items-center justify-center"
+                      onClick={() => deleteListing(item.id)}
+                      className="h-11 rounded-xl bg-red-600 hover:bg-red-700 text-white flex items-center justify-center gap-2 text-xs font-bold uppercase transition-all"
                     >
-
-                      <Trash2
-                        size={18}
-                      />
-
+                      <Trash2 size={14} /> Delete
                     </button>
-
-                    {/* BOOST */}
-
-                    <button
-                      onClick={() =>
-                        boostListing(
-                          item.id
-                        )
-                      }
-                      className={`h-12 rounded-2xl flex items-center justify-center ${
-                        item.is_boosted
-                          ? "bg-yellow-400 text-black"
-                          : "bg-slate-900 text-white hover:bg-black"
-                      }`}
-                    >
-
-                      <Crown
-                        size={18}
-                      />
-
-                    </button>
-
                   </div>
-
-                  {/* BOOST STATUS */}
-
-                  {item.is_boosted &&
-                    item.boost_expires_at && (
-                      <div className="mt-5 text-sm text-yellow-700 font-bold">
-
-                        Boost expires:{" "}
-
-                        {new Date(
-                          item.boost_expires_at
-                        ).toLocaleDateString()}
-
-                      </div>
-                    )}
-
                 </div>
-
               </div>
             ))}
-
           </div>
         )}
-
       </div>
-
     </main>
   );
 }
