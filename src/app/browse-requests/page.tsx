@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
 
 export default function BrowseRequestsPage() {
-  redirect("/request");
+  redirect("/post-request");
 }
