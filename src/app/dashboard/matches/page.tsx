@@ -586,7 +586,7 @@ function UnlockPanel({
           <button
             onClick={onSubmit}
             disabled={submitting}
-            className="flex-1 bg-yellow-500 hover:bg-yellow-600 text-black py-3 rounded-xl font-bold disabled:opacity-50"
+            className="flex-1 bg-yellow-500 hover:bg-yellow-600 text-black px-5 py-2 rounded-xl font-bold disabled:opacity-50"
           >
             {submitting ? "..." : isAm ? "ለግምገማ ላክ" : "Submit for Review"}
           </button>
