@@ -4,13 +4,12 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 
 type PendingUnlock = {
-  id: string; // lead_unlocks.id
+  id: string;
   lead_id: string;
   buyer_id: string;
   payment_id: string | null;
   status: string;
   created_at: string;
-  // joined data
   lead_title: string | null;
   buyer_name: string | null;
   buyer_phone: string | null;
@@ -85,9 +84,6 @@ export default function AdminLeadUnlocksPage() {
       return;
     }
 
-    // Fetch related lead, buyer profile, and payment data for each row.
-    // Done as separate lookups (not a PostgREST embed) since there's no
-    // guaranteed FK from lead_unlocks -> leads/profiles/payments yet.
     const enriched: PendingUnlock[] = await Promise.all(
       unlockRows.map(async (row) => {
         let leadTitle: string | null = null;
@@ -147,7 +143,6 @@ export default function AdminLeadUnlocksPage() {
 
     setUnlocks(enriched);
 
-    // Generate signed URLs for receipts (bucket is private)
     const urlEntries = await Promise.all(
       enriched
         .filter((u) => !!u.payment_receipt_path)
@@ -310,14 +305,7 @@ export default function AdminLeadUnlocksPage() {
                 </div>
 
                 {receiptUrls[u.id] && (
-                  
-                    href={receiptUrls[u.id]}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-block mb-4 text-blue-400 underline text-sm"
-                  >
-                    View receipt
-                  </a>
+                  <a href={receiptUrls[u.id]} target="_blank" rel="noopener noreferrer" className="inline-block mb-4 text-blue-400 underline text-sm">View receipt</a>
                 )}
 
                 {u.status === "pending_review" && (
