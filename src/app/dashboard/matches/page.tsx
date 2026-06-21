@@ -191,11 +191,11 @@ export default function MatchCenterPage() {
     if (!userId || !activeLead) return;
 
     if (!reference.trim()) {
-      setSubmitError(isAm ? "\u12A5\u1263\u12AD\u12CE \u12E8\u12AD\u134D\u12EB \u121B\u1228\u130B\u1308\u132B \u1241\u1325\u122D \u12EB\u1235\u130D\u1261\u1362" : "Please enter a payment reference number.");
+      setSubmitError(isAm ? "\u12A5\u1263\u12AD\u12CE \u12E8\u12AD\u134D\u12EB \u121B\u122B\u130B\u130C\u127B \u1241\u132D\u122D \u12EB\u1235\u1308\u1261\u1361" : "Please enter a payment reference number.");
       return;
     }
     if (!receiptFile) {
-      setSubmitError(isAm ? "\u12A5\u1263\u12AD\u12CE \u12E8\u12AD\u134D\u12EB \u12F0\u122D\u1230\u129D \u12ED\u1235\u1240\u1209\u1362" : "Please upload your payment receipt.");
+      setSubmitError(isAm ? "\u12A5\u1263\u12AD\u12CE \u12E8\u12AD\u134D\u12EB \u12F0\u1228\u1295 \u12ED\u1235\u1241\u1209\u1361" : "Please upload your payment receipt.");
       return;
     }
 
@@ -290,15 +290,10 @@ export default function MatchCenterPage() {
           </h1>
           <p className="text-zinc-400 mb-6">
             {isAm
-              ? "\u12E8\u130D\u1325\u121A\u12EB \u121B\u12D5\u12A8\u120D\u1295 \u1208\u1218\u1218\u120D\u12A8\u1275 \u12A5\uና \u12A8\u1308\u12A2\u12CE\u127D \u12A5\u1293 \u123B\u1326\u127D \u130B\u122D \u1208\u1218\u130B\u1290\u129B\u1275 \u12ED\u130D\u1261\u1362"
+              ? "\u12E8\u130D\u1325\u121A\u12EB \u121B\u12D5\u12A8\u120D\u1295 \u1208\u1218\u1218\u120D\u12A8\u1275 \u12A5\u1293 \u12A8\u1308\u12DA\u12CE\u127D \u12A5\u1293 \u123B\u1320\u127D \u130B\u122D \u1208\u1218\u130D\u1293\u129B\u1275 \u12ED\u130D\u1261\u1361"
               : "Sign in to view the Match Center and connect with buyers and sellers."}
           </p>
-          
-            href="/login"
-            className="inline-block bg-gradient-to-r from-green-400 to-blue-500 text-black px-8 py-3 rounded-xl font-bold"
-          >
-            {isAm ? "\u12ED\u130D\u1261" : "Sign In"}
-          </a>
+          <a href="/login" className="inline-block bg-gradient-to-r from-green-400 to-blue-500 text-black px-8 py-3 rounded-xl font-bold">{isAm ? "\u12ED\u130D\u1261" : "Sign In"}</a>
         </div>
       </main>
     );
@@ -312,17 +307,17 @@ export default function MatchCenterPage() {
         </h1>
         <p className="text-zinc-400 mb-10">
           {isAm
-            ? "\u12E8\u1308\u12DA \u1325\u12EB\u1244\u12CE\u127D\u1295 \u12A5\uና \u1270\u1218\u1323\u1323\u129D \u121B\u123D\u290A\u122E\u127D\u1295 \u12ED\u121D\u120D\u12A8\u1271\u1362 \u12AD\u134D\u12EB \u12A8\u1270\u1228\u130B\u1308\u1320 \u1260\u128B\u120B \u12E8\u12A5\u12CD\u1242\u12EB \u1218\u1228\u127B \u12ED\u12A8\u134D\u1270\u120D\u1362"
+            ? "\u12E8\u1308\u12DA \u1325\u12EB\u1244\u12CE\u127D\u1295 \u12A5\u1293 \u1270\u1218\u1323\u1323\u129D \u121B\u123D\u1290\u122A\u12CE\u127D\u1295 \u12ED\u1218\u120D\u12A8\u1271\u1361 \u12AD\u134D\u12EB \u12A8\u1270\u122B\u130B\u1308\u1320 \u1260\u1213\u120B \u12E8\u12A5\u12CD\u1245\u12EB \u1218\u1228\u1303 \u12ED\u12A8\u134D\u1273\u120D\u1361"
             : "Browse buyer requests and matching machinery. Unlock contact details after a quick payment review."}
         </p>
 
         <section className="mb-14">
           <h2 className="text-3xl font-bold mb-6 text-green-400">
-            {isAm ? "\u12EB\u1209 \u121B\u123D\u290A\u122E\u127D" : "Available Machinery"}
+            {isAm ? "\u12EB\u1209 \u121B\u123D\u1290\u122A\u12CE\u127D" : "Available Machinery"}
           </h2>
 
           {listings.length === 0 ? (
-            <p className="text-zinc-500">{isAm ? "\u1260\u12A0\u1201\u኷ \u130A\u12DC \u121D\u295D\u121D \u12DD\u122D\u12DD\u122E\u127D \u12E8\u1209\u121D\u1362" : "No listings available right now."}</p>
+            <p className="text-zinc-500">{isAm ? "\u1260\u12A0\u1201\u1291 \u1303\u12DC \u121D\u1295\u121D \u12DD\u122D\u12DD\u122E\u127D \u12E8\u1209\u121D\u1361" : "No listings available right now."}</p>
           ) : (
             <div className="grid md:grid-cols-2 gap-6">
               {listings.map((item) => {
@@ -346,21 +341,18 @@ export default function MatchCenterPage() {
 
         <section>
           <h2 className="text-3xl font-bold mb-6 text-yellow-400">
-            {isAm ? "\u12E8\u130D\u12DA \u1325\u12EB\u1244\u12CE\u127D" : "Buyer Requests"}
+            {isAm ? "\u12E8\u1308\u12DA \u1325\u12EB\u1244\u12CE\u127D" : "Buyer Requests"}
           </h2>
 
           {requests.length === 0 ? (
-            <p className="text-zinc-500">{isAm ? "\u1260\u12A0\u1201\u኷ \u130A\u12DC \u121D\u295D\u121D \u12E8\u130D\u12DA \u1325\u12EB\u1244\u12CE\u127D \u12E8\u1209\u121D\u1362" : "No buyer requests right now."}</p>
+            <p className="text-zinc-500">{isAm ? "\u1260\u12A0\u1201\u1291 \u1303\u12DC \u121D\u1295\u121D \u12E8\u1308\u12DA \u1325\u12EB\u1244\u12CE\u127D \u12E8\u1209\u121D\u1361" : "No buyer requests right now."}</p>
           ) : (
             <div className="grid md:grid-cols-2 gap-6">
               {requests.map((item) => (
-                <div
-                  key={item.id}
-                  className="bg-zinc-900 p-6 rounded-3xl border border-zinc-800"
-                >
+                <div key={item.id} className="bg-zinc-900 p-6 rounded-3xl border border-zinc-800">
                   <h3 className="text-2xl font-bold mb-3">{item.title}</h3>
-                  <p className="text-zinc-400 mb-2">{"\u{1F4CD}"} {item.city}</p>
-                  <p className="text-zinc-400">{"\u{1F4B0}"} {item.budget}</p>
+                  <p className="text-zinc-400 mb-2">{item.city}</p>
+                  <p className="text-zinc-400">{item.budget}</p>
                 </div>
               ))}
             </div>
@@ -411,53 +403,40 @@ function ListingCard({
   return (
     <div className="bg-zinc-900 p-6 rounded-3xl border border-zinc-800">
       <h3 className="text-2xl font-bold mb-3">{title}</h3>
-      <p className="text-zinc-400 mb-2">{"\u{1F4CD}"} {item.city || item.location}</p>
-      {price ? <p className="text-zinc-400 mb-4">{"\u{1F4B0}"} {price} ETB</p> : null}
+      <p className="text-zinc-400 mb-2">{item.city || item.location}</p>
+      {price ? <p className="text-zinc-400 mb-4">{price} ETB</p> : null}
 
       {!lead && (
-        <button
-          onClick={onExpressInterest}
-          className="w-full bg-blue-500 hover:bg-blue-600 py-3 rounded-xl font-bold"
-        >
-          {isAm ? "\u134D\u120B\u1308\u1275 \u12A0\u1208\u129D" : "I'm Interested"}
+        <button onClick={onExpressInterest} className="w-full bg-blue-500 hover:bg-blue-600 py-3 rounded-xl font-bold">
+          {isAm ? "\u134D\u120B\u1308\u1275 \u12A0\u120D\u129D" : "I'm Interested"}
         </button>
       )}
 
       {lead && !unlock && (
-        <button
-          onClick={onUnlock}
-          className="w-full bg-yellow-500 hover:bg-yellow-600 text-black py-3 rounded-xl font-bold"
-        >
-          {"\u{1F512}"} {isAm ? "\u12A5\u12CD\u1242\u12EB \u12AD\u134D\u275A 100 \u1265\u122D" : "Unlock Contact — 100 ETB"}
+        <button onClick={onUnlock} className="w-full bg-yellow-500 hover:bg-yellow-600 text-black py-3 rounded-xl font-bold">
+          {isAm ? "\u12A5\u12CD\u1245\u12EB \u12AD\u1348\u1275 \u2014 100 \u1265\u122D" : "Unlock Contact \u2014 100 ETB"}
         </button>
       )}
 
       {lead && unlock && unlock.status === "pending_review" && (
         <p className="text-center text-yellow-400 font-semibold py-3">
-          {isAm ? "\u12AD\u134D\u12EB \u1260\u130D\u121D\u130D\u121B \u120B\u12ED..." : "Payment under review..."}
+          {isAm ? "\u12AD\u134D\u12EB \u1260\u130D\u121D\u1308\u121B \u120B\u12ED..." : "Payment under review..."}
         </p>
       )}
 
       {lead && unlock && unlock.status === "rejected" && (
         <p className="text-center text-red-400 font-semibold py-3">
-          {isAm ? "\u12AD\u134D\u12EB\u12CD \u12A0\u120D\u133D\u12F0\u1240\u121D\u1362 \u12F5\u130B\u134D\u295D \u12EB\u130D\u1295\u1362" : "Payment was not approved. Contact support."}
+          {isAm ? "\u12AD\u134D\u12EB\u12CD \u12A0\u120D\u133D\u12F0\u1240\u121D\u1361 \u12F5\u130D\u134D\u1295 \u12EB\u130D\u1129\u1361" : "Payment was not approved. Contact support."}
         </p>
       )}
 
       {lead && unlock && unlock.status === "approved" && (
         <>
           <p className="mb-3 text-green-400 font-bold">
-            {"\u{1F4DE}"} {lead.seller_phone || "Contact pending — message support"}
+            {lead.seller_phone || "Contact pending \u2014 message support"}
           </p>
           {lead.seller_phone && (
-            
-              href={"https://wa.me/" + lead.seller_phone.replace(/[^0-9]/g, "")}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block text-center bg-green-500 hover:bg-green-600 py-3 rounded-xl font-bold"
-            >
-              WhatsApp
-            </a>
+            <a href={"https://wa.me/" + lead.seller_phone.replace(/[^0-9]/g, "")} target="_blank" rel="noopener noreferrer" className="block text-center bg-green-500 hover:bg-green-600 py-3 rounded-xl font-bold">WhatsApp</a>
           )}
         </>
       )}
@@ -500,7 +479,7 @@ function UnlockPanel({
     <div className="fixed inset-0 bg-black/80 flex items-center justify-center px-4 z-50">
       <div className="bg-zinc-900 border border-zinc-800 rounded-3xl max-w-lg w-full p-8 max-h-[90vh] overflow-y-auto">
         <h2 className="text-2xl font-bold mb-2">
-          {isAm ? "\u12A5\u12CD\u1242\u12EB \u12AD\u134D\u1275" : "Unlock Contact"}
+          {isAm ? "\u12A5\u12CD\u1245\u12EB \u12AD\u1348\u1275" : "Unlock Contact"}
         </h2>
         <p className="text-zinc-400 mb-6">
           {lead.machine_title}
@@ -508,24 +487,20 @@ function UnlockPanel({
 
         <div className="bg-zinc-800 rounded-2xl p-4 mb-6 text-sm text-zinc-300">
           <p className="mb-2 font-semibold text-white">
-            {isAm ? "\u12F0\u1228\u1303 1\u1361 \u1260\u127A\u1209\u130D\u122B\u121D \u12EB\u130D\u1295" : "Step 1: Message us on Telegram"}
+            {isAm ? "\u12F0\u1228\u1303 1\u1361 \u1260\u1304\u120C\u130D\u122B\u121D \u12EB\u130D\u1129\u1295" : "Step 1: Message us on Telegram"}
           </p>
           <p>
             {isAm
-              ? "\u12E8\u12AD\u134D\u12EB \u12DE\u12F4\u12CE\u295D \u12DD\u122D\u12DD\u122D \u1218\u1228\u1303 \u1208\u121B\u130D\u1290\u275A \u1260\u127A\u1209\u130D\u122B\u121D " + ADMIN_PHONE + " \u120B\u12ED \u12EB\u130D\u1295\u1361 \u12A8\u12DB\u12EB \u12AD\u134D\u12EB\u12CD\u295D \u12ED\u120B\u1261\u1362"
+              ? "\u12E8\u12AD\u134D\u12EB \u12DC\u12F4\u12CE\u1295 \u12DD\u122D\u12DD\u122D \u1218\u1228\u1303 \u1208\u121B\u130D\u129B\u1275 \u1260\u1304\u120C\u130D\u122B\u121D 0911404186 \u120B\u12ED \u12EB\u130D\u1129\u129D\u1363 \u12A8\u12DB \u12AD\u134D\u12EB\u12CD\u1295 \u12ED\u120B\u12A9\u1361"
               : "Contact us on Telegram at " + ADMIN_PHONE + " to get the payment details for your chosen method below, then send the payment."}
           </p>
         </div>
 
         <div className="mb-4">
           <label className="block text-sm text-zinc-400 mb-2">
-            {isAm ? "\u12E8\u12AD\u134D\u12EB \u12DE\u12F4" : "Payment Method"}
+            {isAm ? "\u12E8\u12AD\u134D\u12EB \u12DC\u12F4" : "Payment Method"}
           </label>
-          <select
-            value={method}
-            onChange={(e) => setMethod(e.target.value)}
-            className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 text-white"
-          >
+          <select value={method} onChange={(e) => setMethod(e.target.value)} className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 text-white">
             <option value="Telebirr">Telebirr</option>
             <option value="Bank Transfer">Bank Transfer</option>
             <option value="Mobile Banking">Mobile Banking</option>
@@ -535,17 +510,11 @@ function UnlockPanel({
         {method === "Bank Transfer" && (
           <div className="mb-4">
             <label className="block text-sm text-zinc-400 mb-2">
-              {isAm ? "\u1263\u295D\u12AD" : "Bank"}
+              {isAm ? "\u1263\u1295\u12AD" : "Bank"}
             </label>
-            <select
-              value={bank}
-              onChange={(e) => setBank(e.target.value)}
-              className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 text-white"
-            >
+            <select value={bank} onChange={(e) => setBank(e.target.value)} className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 text-white">
               {BANKS.map((b) => (
-                <option key={b} value={b}>
-                  {b}
-                </option>
+                <option key={b} value={b}>{b}</option>
               ))}
             </select>
           </div>
@@ -553,20 +522,20 @@ function UnlockPanel({
 
         <div className="mb-4">
           <label className="block text-sm text-zinc-400 mb-2">
-            {isAm ? "\u12E8\u12AD\u134D\u12EB \u121B\u1228\u130B\u1308\u132B \u1241\u1325\u122D" : "Payment Reference Number"}
+            {isAm ? "\u12E8\u12AD\u134D\u12EB \u121B\u1228\u130B\u130C\u127B \u1241\u132D\u122D" : "Payment Reference Number"}
           </label>
           <input
             type="text"
             value={reference}
             onChange={(e) => setReference(e.target.value)}
-            placeholder={isAm ? "\u1208\u121D\u233D\u120C \u12A8\u12F0\u122D\u1230\u129D\u12CE \u120B\u12ED \u12EB\u1208\u12CD \u12E8\u130D\u1265\u12ED\u275A \u1218\u120D\u12EB \u1241\u1325\u122D" : "e.g. transaction ID from your receipt"}
+            placeholder={isAm ? "\u1208\u121D\u233B\u120C \u12A8\u12F0\u1228\u1230\u129D\u12CE \u120B\u12ED \u12EB\u1208\u12CD \u12E8\u130D\u1265\u12ED\u1275 \u1218\u1208\u12EB \u1241\u132D\u122D" : "e.g. transaction ID from your receipt"}
             className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 text-white"
           />
         </div>
 
         <div className="mb-6">
           <label className="block text-sm text-zinc-400 mb-2">
-            {isAm ? "\u12E8\u12AD\u134D\u12EB \u12F0\u122D\u1230\u129D \u12ED\u1235\u1240\u1209" : "Upload Payment Receipt"}
+            {isAm ? "\u12E8\u12AD\u134D\u12EB \u12F0\u122D\u1230\u129D \u12ED\u1235\u1241\u1209" : "Upload Payment Receipt"}
           </label>
           <input
             type="file"
@@ -581,19 +550,11 @@ function UnlockPanel({
         )}
 
         <div className="flex gap-3">
-          <button
-            onClick={onClose}
-            disabled={submitting}
-            className="flex-1 bg-zinc-800 hover:bg-zinc-700 py-3 rounded-xl font-bold"
-          >
-            {isAm ? "\u12ED\u1241\u122D" : "Cancel"}
+          <button onClick={onClose} disabled={submitting} className="flex-1 bg-zinc-800 hover:bg-zinc-700 py-3 rounded-xl font-bold">
+            {isAm ? "\u12ED\u1245\u122D" : "Cancel"}
           </button>
-          <button
-            onClick={onSubmit}
-            disabled={submitting}
-            className="flex-1 bg-yellow-500 hover:bg-yellow-600 text-black py-3 rounded-xl font-bold disabled:opacity-50"
-          >
-            {submitting ? "..." : isAm ? "\u1208\u130D\u121D\u130D\u121B \u120B\u12AD" : "Submit for Review"}
+          <button onClick={onSubmit} disabled={submitting} className="flex-1 bg-yellow-500 hover:bg-yellow-600 text-black py-3 rounded-xl font-bold disabled:opacity-50">
+            {submitting ? "..." : isAm ? "\u1208\u130D\u121D\u130C\u121B \u120B\u12AD" : "Submit for Review"}
           </button>
         </div>
       </div>
