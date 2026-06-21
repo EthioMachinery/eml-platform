@@ -126,11 +126,8 @@ export default function AdminControlCenter() {
     async function checkAuth() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) { router.push("/founder-login"); return; }
-      const isFounder = user.email === "machinerymatchmaker@gmail.com" || user.phone === "+251911404186";
-      if (!isFounder) {
-        const { data } = await supabase.from("users").select("is_admin").eq("id", user.id).maybeSingle();
-        if (!data?.is_admin) { router.push("/"); return; }
-      }
+      const { data } = await supabase.from("users").select("is_admin").eq("id", user.id).maybeSingle();
+      if (!data?.is_admin) { router.push("/"); return; }
       setAdminId(user.id);
       setAdminEmail(user.email || "");
       setAuthorized(true);
