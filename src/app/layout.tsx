@@ -3,34 +3,50 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { LanguageProvider } from "@/context/LanguageContext";
-import HardcodedTextScanner from "@/components/HardcodedTextScanner";
+import PWAInstallPrompt from "@/components/PWAInstallPrompt";
 
-// Advanced Multilingual SEO Metadata with dynamic Google Search Console verification key
 export const metadata: Metadata = {
   title: {
     default: "ኢትዮ ማሽነሪ አገናኝ | Ethio Machinery Link (EML)",
     template: "%s | EML"
   },
-  description: "ኢትዮ ማሽነሪ አገናኝ (EML) - የከባድ ማሽነሪዎች መገበያያ በኢትዮጵያ። Ethiopia's premier heavy machinery marketplace. Buy, sell, rent, and escrow heavy construction equipment securely.",
+  description: "ኢትዮ ማሽነሪ አገናኝ (EML) — Ethiopia's #1 heavy machinery marketplace. Buy, sell, rent excavators, loaders, cranes, bulldozers & more. Secure escrow. Verified listings. Addis Ababa & all regions.",
   keywords: [
     "ኢትዮ ማሽነሪ አገናኝ",
-    "ኢትዮ ማሽነሪ", 
-    "የከባድ ማሽነሪ", 
-    "ማሽነሪ ኪራይ", 
-    "ኮንትራክተር", 
-    "ኦፕሬተር",
-    "Ethio Machinery Link", 
+    "ከባድ ማሽነሪ",
+    "ማሽነሪ ኪራይ",
+    "ኤክስካቫተር ኪራይ",
+    "ቡልዶዘር ሽያጭ",
+    "ክሬን ኪራይ አዲስ አበባ",
+    "የግንባታ ማሽነሪ",
+    "ማሽነሪ ሽያጭ ኢትዮጵያ",
+    "Maashinarii Itoophiyaa",
+    "Eskavaatarii kiraa",
+    "Maashinarii ulfaatoo",
+    "Gabaa maashinarii",
+    "ማሽነሪ ኢትዮጵያ",
+    "ከበድቲ ማሽነሪታት",
+    "ኤክስካቫተር ምክራይ",
+    "Ethio Machinery Link",
+    "EML",
     "EML Marketplace",
-    "EML", 
-    "heavy machinery Ethiopia", 
-    "excavator rental Addis Ababa", 
-    "construction equipment rent",
-    "escrow machinery sales",
-    "Machinery rental Ethiopia",
-    "Heavy equipment sales Addis Ababa",
-    "የኮንስትራክشون ማሽነሪዎች",
-    "ትራክተሮች እና የግብርና መሣሪያዎች",
-    "Spare parts supply Ethiopia"
+    "heavy machinery Ethiopia",
+    "excavator rental Ethiopia",
+    "excavator rental Addis Ababa",
+    "bulldozer for rent Ethiopia",
+    "crane hire Ethiopia",
+    "wheel loader rental",
+    "dump truck Ethiopia",
+    "construction equipment Ethiopia",
+    "heavy equipment marketplace Africa",
+    "machinery escrow Ethiopia",
+    "buy excavator Ethiopia",
+    "sell heavy machinery Ethiopia",
+    "machinery operators Ethiopia",
+    "spare parts heavy equipment Ethiopia",
+    "lowbed transport Ethiopia",
+    "construction tenders Ethiopia",
+    "industrial machinery East Africa"
   ],
   metadataBase: new URL("https://ethiomachinery.vercel.app"),
   alternates: {
@@ -45,18 +61,40 @@ export const metadata: Metadata = {
   verification: {
     google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || "5GQa2rRrEiIn-xt_rPKBVGe8iJfDFPsXUPt0yY3Sdcc"
   },
+  icons: {
+    icon: [
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon-48x48.png", sizes: "48x48", type: "image/png" },
+      { url: "/favicon.ico" },
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+    other: [
+      { rel: "mask-icon", url: "/icon-512.png" },
+    ],
+  },
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "EML",
+  },
   openGraph: {
     title: "ኢትዮ ማሽነሪ አገናኝ | Ethio Machinery Link (EML)",
-    description: "የከባድ ማሽነሪዎች መገበያያ በኢትዮጵያ። Rent, buy, or sell verified heavy construction equipment with secure escrow guarantees.",
+    description: "Ethiopia's #1 heavy machinery marketplace. Buy, sell, rent excavators, loaders, cranes & more with secure escrow.",
     url: "https://ethiomachinery.vercel.app",
     siteName: "Ethio Machinery Link",
+    images: [{ url: "/icon-512.png", width: 512, height: 512, alt: "Ethio Machinery Link Logo" }],
     locale: "en_US",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
     title: "ኢትዮ ማሽነሪ አገናኝ | Ethio Machinery Link (EML)",
-    description: "የከባድ ማሽነሪዎች መገበያያ በኢትዮጵያ። Rent, buy, or sell verified heavy construction equipment with secure escrow guarantees.",
+    description: "Ethiopia's #1 heavy machinery marketplace. Buy, sell, rent excavators, loaders, cranes & more.",
+    images: ["/icon-512.png"],
   },
   robots: {
     index: true,
@@ -79,36 +117,58 @@ export default function RootLayout({
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "AutoRental",
-    "name": "Ethio Machinery Link (EML) | ኢትዮ ማሽነሪ አገናኝ",
-    "url": "https://ethiomachinery.vercel.app",
-    "logo": "https://ethiomachinery.vercel.app/logo.png",
-    "description": "Ethiopia's premier heavy machinery marketplace and digital economic infrastructure. Buy, rent, transport, and repair excavators, loaders, dozers, and agricultural tools.",
+    "name": "Ethio Machinery Link (EML)",
     "alternateName": [
       "ኢትዮ ማሽነሪ አገናኝ",
       "EML Marketplace",
-      "የኮንስትራክشون ማሽነሪዎች",
-      "ትራክተሮች እና የግብርና መሣሪያዎች"
+      "Maashinarii Itoophiyaa",
+      "ከበድቲ ማሽነሪታት ኢትዮጵያ"
     ],
+    "url": "https://ethiomachinery.vercel.app",
+    "logo": "https://ethiomachinery.vercel.app/logo.png",
+    "image": "https://ethiomachinery.vercel.app/icon-512.png",
+    "description": "Ethiopia's premier heavy machinery marketplace and digital economic infrastructure. Buy, rent, transport, and repair excavators, loaders, dozers, cranes, and agricultural tools.",
+    "foundingLocation": {
+      "@type": "Place",
+      "name": "Addis Ababa, Ethiopia"
+    },
     "contactPoint": {
       "@type": "ContactPoint",
       "email": "machinerymatchmaker@gmail.com",
       "contactType": "customer service",
-      "availableLanguage": ["en", "am", "or", "ti"]
+      "availableLanguage": ["English", "Amharic", "Afaan Oromo", "Tigrinya"]
     },
     "areaServed": {
       "@type": "Country",
       "name": "Ethiopia"
     },
     "knowsAbout": [
-      "Machinery rental Ethiopia",
-      "Heavy equipment sales Addis Ababa",
-      "Spare parts supply Ethiopia"
+      "Excavator rental Ethiopia",
+      "Heavy machinery sales Addis Ababa",
+      "Construction equipment marketplace Africa",
+      "Bulldozer hire Ethiopia",
+      "Crane rental Ethiopia",
+      "Machinery escrow service",
+      "Heavy equipment operators Ethiopia",
+      "Spare parts supply Ethiopia",
+      "Lowbed transport Ethiopia"
+    ],
+    "sameAs": [
+      "https://ethiomachinery.vercel.app"
     ]
   };
 
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <meta name="theme-color" content="#F59E0B" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-title" content="EML" />
+        <meta name="application-name" content="Ethio Machinery Link" />
+        <meta name="msapplication-TileColor" content="#F59E0B" />
+        <meta name="msapplication-TileImage" content="/icon-192.png" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -116,19 +176,12 @@ export default function RootLayout({
       </head>
       <body className="bg-black text-white antialiased min-h-screen flex flex-col">
         <LanguageProvider>
-          {/* GLOBAL NAVBAR */}
           <Navbar />
-
-          {/* MAIN APP */}
           <main className="flex-grow">
             {children}
           </main>
-
-          {/* GLOBAL FOOTER */}
           <Footer />
-
-          {/* DEVELOPMENT TOOLS — all disabled in production */}
-          <HardcodedTextScanner />
+          <PWAInstallPrompt />
         </LanguageProvider>
       </body>
     </html>
