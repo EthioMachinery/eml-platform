@@ -1,37 +1,22 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
-
-import { supabase } from "@/lib/supabase";
-import LanguageSwitcher from "@/components/LanguageSwitcher";
-import { useLanguage } from "@/context/LanguageContext";
+import { supabase } from "@/lib/supabaseClient";
 
 type Inquiry = {
   id: string;
   message: string;
   created_at: string;
-
-  machinery: {
-    id: string;
-    title: string;
-  };
-
-  sender: {
-    email: string;
-  };
+  machinery_id: string | null;
+  sender_id: string | null;
+  listing_title: string | null;
+  sender_email: string | null;
 };
 
 export default function DashboardInquiriesPage() {
-  const { language } = useLanguage();
-
-  // Local helper to translate dual-strings without contract lookup errors
-  const t = (en: string, am: string): string => {
-    return language === "am" ? am : en;
-  };
-
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchInquiries();
@@ -45,88 +30,105 @@ export default function DashboardInquiriesPage() {
     } = await supabase.auth.getUser();
 
     if (!user) {
+      setUserId(null);
       setLoading(false);
       return;
     }
 
+    setUserId(user.id);
+
     const { data, error } = await supabase
       .from("inquiries")
-      .select(`
-        id,
-        message,
-        created_at,
-
-        machinery:machinery_id (
-          id,
-          title
-        ),
-
-        sender:sender_id (
-          email
-        )
-      `)
+      .select("id, message, created_at, machinery_id, sender_id, owner_id")
       .eq("owner_id", user.id)
-      .order("created_at", {
-        ascending: false,
-      });
+      .order("created_at", { ascending: false });
 
     if (error) {
-      console.error(error);
-    } else {
-      setInquiries((data as any) || []);
+      console.error("inquiries fetch error:", error);
+      setLoading(false);
+      return;
     }
 
+    const rows = data || [];
+
+    // Enrich each inquiry with listing title and sender info separately,
+    // since inquiries has no direct FK embed to profiles or auth.users.
+    const enriched: Inquiry[] = await Promise.all(
+      rows.map(async (row) => {
+        let listing_title: string | null = null;
+        let sender_email: string | null = null;
+
+        if (row.machinery_id) {
+          const { data: listing } = await supabase
+            .from("listings")
+            .select("title, title_en")
+            .eq("id", row.machinery_id)
+            .maybeSingle();
+          if (listing) {
+            listing_title = listing.title_en || listing.title || null;
+          }
+        }
+
+        if (row.sender_id) {
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select("full_name, phone_number, phone")
+            .eq("id", row.sender_id)
+            .maybeSingle();
+          if (profile) {
+            sender_email = profile.full_name || profile.phone_number || profile.phone || "Unknown sender";
+          }
+        }
+
+        return {
+          id: row.id,
+          message: row.message,
+          created_at: row.created_at,
+          machinery_id: row.machinery_id,
+          sender_id: row.sender_id,
+          listing_title,
+          sender_email,
+        };
+      })
+    );
+
+    setInquiries(enriched);
     setLoading(false);
+  }
+
+  if (!userId && !loading) {
+    return (
+      <main className="min-h-screen bg-zinc-950 text-white flex items-center justify-center px-6">
+        <div className="text-center">
+          <h1 className="text-3xl font-bold mb-4">Please sign in</h1>
+          <p className="text-zinc-400 mb-6">
+            Sign in to view inquiries about your machinery listings.
+          </p>
+          <a href="/login" className="inline-block bg-gradient-to-r from-green-400 to-blue-500 text-black px-8 py-3 rounded-xl font-bold">Sign In</a>
+        </div>
+      </main>
+    );
   }
 
   return (
     <div className="min-h-screen bg-zinc-950 text-white">
-
-      {/* HEADER */}
-      <div className="border-b border-zinc-800 p-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-4xl font-bold">
-            {t(
-              "Inquiry Dashboard",
-              "የጥያቄዎች ዳሽቦርድ"
-            )}
-          </h1>
-
-          <p className="text-zinc-400 mt-2">
-            {t(
-              "Manage customer inquiries for your machinery listings",
-              "ለማሽኖችዎ የተላኩ ጥያቄዎችን ያስተዳድሩ"
-            )}
-          </p>
-        </div>
-
-        <LanguageSwitcher />
+      <div className="border-b border-zinc-800 p-6">
+        <h1 className="text-4xl font-bold">Inquiry Dashboard</h1>
+        <p className="text-zinc-400 mt-2">
+          Manage customer inquiries for your machinery listings.
+        </p>
       </div>
 
-      {/* CONTENT */}
       <div className="max-w-6xl mx-auto p-6">
-
         {loading ? (
           <div className="text-center py-20 text-zinc-400">
-            {t(
-              "Loading inquiries...",
-              "ጥያቄዎች በመጫን ላይ..."
-            )}
+            Loading inquiries...
           </div>
         ) : inquiries.length === 0 ? (
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-12 text-center">
-            <h2 className="text-2xl font-bold mb-4">
-              {t(
-                "No inquiries yet",
-                "እስካሁን ጥያቄ የለም"
-              )}
-            </h2>
-
+            <h2 className="text-2xl font-bold mb-4">No inquiries yet</h2>
             <p className="text-zinc-400">
-              {t(
-                "When customers contact you about your machinery, inquiries will appear here.",
-                "ደንበኞች ስለ ማሽኖችዎ ሲጠይቁ ጥያቄዎች እዚህ ይታያሉ።"
-              )}
+              When customers contact you about your machinery, inquiries will appear here.
             </p>
           </div>
         ) : (
@@ -136,48 +138,35 @@ export default function DashboardInquiriesPage() {
                 key={inquiry.id}
                 className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6"
               >
-                {/* TOP */}
                 <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                   <div>
                     <h2 className="text-2xl font-bold">
-                      <Link
-                        href={`/machinery/${inquiry.machinery?.id}`}
-                        className="hover:text-yellow-400 transition"
-                      >
-                        {inquiry.machinery?.title}
-                      </Link>
-                    </h2>
-
-                    <p className="text-zinc-400 mt-1">
-                      {t(
-                        "Inquiry received on",
-                        "ጥያቄ የተላከበት"
-                      )}{" "}
-                      {new Date(inquiry.created_at).toLocaleString()}
-                    </p>
-                  </div>
-
-                  <div className="bg-zinc-950 border border-zinc-700 rounded-xl px-4 py-3">
-                    <p className="text-zinc-400 text-sm">
-                      {t(
-                        "Customer Email",
-                        "የደንበኛ ኢሜይል"
+                      {inquiry.machinery_id ? (
+                        
+                          href={"/machinery/" + inquiry.machinery_id}
+                          className="hover:text-yellow-400 transition"
+                        >
+                          {inquiry.listing_title || "Untitled listing"}
+                        </a>
+                      ) : (
+                        <span className="text-zinc-400">Listing unavailable</span>
                       )}
-                    </p>
-                    <p className="font-bold">
-                      {inquiry.sender?.email}
+                    </h2>
+                    <p className="text-zinc-400 mt-1">
+                      Received on {new Date(inquiry.created_at).toLocaleString()}
                     </p>
                   </div>
+
+                  {inquiry.sender_email && (
+                    <div className="bg-zinc-950 border border-zinc-700 rounded-xl px-4 py-3">
+                      <p className="text-zinc-400 text-sm">From</p>
+                      <p className="font-bold">{inquiry.sender_email}</p>
+                    </div>
+                  )}
                 </div>
 
-                {/* MESSAGE */}
                 <div className="mt-6 bg-zinc-950 border border-zinc-800 rounded-xl p-5">
-                  <p className="text-zinc-400 text-sm mb-3">
-                    {t(
-                      "Customer Message",
-                      "የደንበኛ መልዕክት"
-                    )}
-                  </p>
+                  <p className="text-zinc-400 text-sm mb-3">Message</p>
                   <p className="text-zinc-200 whitespace-pre-line leading-relaxed">
                     {inquiry.message}
                   </p>
@@ -186,9 +175,7 @@ export default function DashboardInquiriesPage() {
             ))}
           </div>
         )}
-
       </div>
-
     </div>
   );
 }
