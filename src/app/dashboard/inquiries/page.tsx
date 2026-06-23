@@ -142,12 +142,7 @@ export default function DashboardInquiriesPage() {
                   <div>
                     <h2 className="text-2xl font-bold">
                       {inquiry.machinery_id ? (
-                        
-                          href={"/machinery/" + inquiry.machinery_id}
-                          className="hover:text-yellow-400 transition"
-                        >
-                          {inquiry.listing_title || "Untitled listing"}
-                        </a>
+                        <a href={"/machinery/" + inquiry.machinery_id} className="hover:text-yellow-400 transition">{inquiry.listing_title || "Untitled listing"}</a>
                       ) : (
                         <span className="text-zinc-400">Listing unavailable</span>
                       )}
