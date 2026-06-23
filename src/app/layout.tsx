@@ -3,7 +3,6 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { LanguageProvider } from "@/context/LanguageContext";
-import PWAInstallPrompt from "@/components/PWAInstallPrompt";
 
 export const metadata: Metadata = {
   title: {
@@ -181,7 +180,6 @@ export default function RootLayout({
             {children}
           </main>
           <Footer />
-          <PWAInstallPrompt />
         </LanguageProvider>
       </body>
     </html>
