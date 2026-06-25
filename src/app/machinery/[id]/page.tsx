@@ -75,7 +75,7 @@ export default function MachineryDetailPage() {
       .eq("id", id)
       .maybeSingle();
 
-    setListing(data as ListingDetail);
+    setListing(data ? { ...data, profiles: Array.isArray(data.profiles) ? data.profiles[0] ?? null : data.profiles } as ListingDetail : null);
     setLoading(false);
   }
 
