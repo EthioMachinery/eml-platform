@@ -1,64 +1,44 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { useParams } from "next/navigation";
-import {
-  MapPin,
-  Star,
-  Phone,
-  MessageCircle,
-  ShieldCheck,
-  Crown,
-  Building2,
-} from "lucide-react";
-
+import { MapPin, Phone, MessageCircle, ShieldCheck, Building2 } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
-import { useLanguage } from "@/context/LanguageContext";
 
 type Seller = {
   id: string;
-  full_name: string;
-  company_name: string;
-  city: string;
-  region: string;
-  phone: string;
-  bio: string;
-  verified: boolean;
-  premium: boolean;
-  company_account: boolean;
+  full_name: string | null;
+  company_name: string | null;
+  city: string | null;
+  region: string | null;
+  phone: string | null;
+  phone_number: string | null;
+  bio: string | null;
+  verified: boolean | null;
+  is_verified: boolean | null;
   created_at: string;
 };
 
-type Machinery = {
+type ListingItem = {
   id: string;
-  title: string;
-  price: string;
-  image_url: string;
-  location: string;
-  listing_type: string;
-  condition: string;
-  views: number;
+  title: string | null;
+  title_en: string | null;
+  price: number | null;
+  price_sale: number | null;
+  image_url: string | null;
+  city: string | null;
+  category: string | null;
+  is_rental_only: boolean;
 };
 
-export default function SellerPage() {
-  const { language } = useLanguage();
-
-  // Local helper to translate dual-strings without contract lookup errors
-  const t = (en: string, am: string): string => {
-    return language === "am" ? am : en;
-  };
-
+export default function SellerProfilePage() {
   const params = useParams();
-
   const [seller, setSeller] = useState<Seller | null>(null);
-  const [machines, setMachines] = useState<Machinery[]>([]);
+  const [listings, setListings] = useState<ListingItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (params?.id) {
-      loadSeller(params.id as string);
-    }
+    if (params?.id) loadSeller(params.id as string);
   }, [params]);
 
   async function loadSeller(id: string) {
@@ -66,20 +46,21 @@ export default function SellerPage() {
 
     const { data: sellerData } = await supabase
       .from("profiles")
-      .select("*")
+      .select("id, full_name, company_name, city, region, phone, phone_number, bio, verified, is_verified, created_at")
       .eq("id", id)
-      .single();
+      .maybeSingle();
 
     if (sellerData) {
       setSeller(sellerData);
 
-      const { data: machineryData } = await supabase
-        .from("machinery")
-        .select("*")
-        .eq("user_id", id)
+      const { data: listingData } = await supabase
+        .from("listings")
+        .select("id, title, title_en, price, price_sale, image_url, city, category, is_rental_only")
+        .eq("owner_id", id)
+        .eq("status", "verified_available")
         .order("created_at", { ascending: false });
 
-      setMachines(machineryData || []);
+      setListings(listingData || []);
     }
 
     setLoading(false);
@@ -87,271 +68,148 @@ export default function SellerPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="text-2xl font-black text-blue-700">
-          Loading Seller...
-        </div>
+      <main className="min-h-screen bg-zinc-950 text-white flex items-center justify-center">
+        <p className="text-zinc-400">Loading seller profile...</p>
       </main>
     );
   }
 
   if (!seller) {
     return (
-      <main className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-5xl font-black mb-6">
-            Seller Not Found
-          </h1>
-          <Link
-            href="/browse"
-            className="inline-flex px-8 h-14 rounded-2xl bg-blue-700 text-white items-center font-black"
-          >
-            Back to Marketplace
-          </Link>
-        </div>
+      <main className="min-h-screen bg-zinc-950 text-white flex flex-col items-center justify-center gap-6 px-4 text-center">
+        <h1 className="text-4xl font-black">Seller Not Found</h1>
+        <p className="text-zinc-400">This seller profile may have been removed or does not exist.</p>
+        <a href="/browse" className="inline-flex px-8 h-14 rounded-2xl bg-yellow-500 hover:bg-yellow-400 text-black items-center font-black">Back to Marketplace</a>
       </main>
     );
   }
 
   const sellerName = seller.company_name || seller.full_name || "Seller";
-
-  const joinedYear = seller.created_at
-    ? new Date(seller.created_at).getFullYear()
-    : "2024";
-
-  const whatsappNumber = seller.phone?.replace(/\s/g, "")?.replace("+", "") || "";
-
-  const whatsappMessage = encodeURIComponent(
-    `Hello ${sellerName}, I found your company profile on EML and I am interested in your machinery listings.`
-  );
-
-  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${whatsappMessage}`;
-
-  const totalViews = machines.reduce(
-    (sum, item) => sum + (item.views || 0),
-    0
-  );
+  const phone = seller.phone_number || seller.phone || "";
+  const isVerified = seller.is_verified || seller.verified || false;
+  const joinedYear = seller.created_at ? new Date(seller.created_at).getFullYear() : "";
+  const whatsappNumber = phone.replace(/\D/g, "");
+  const whatsappUrl = whatsappNumber
+    ? "https://wa.me/" + whatsappNumber + "?text=" + encodeURIComponent("Hello " + sellerName + ", I found your profile on EML and I am interested in your machinery listings.")
+    : "#";
 
   return (
-    <main className="min-h-screen bg-slate-50 text-gray-900">
+    <main className="min-h-screen bg-zinc-950 text-white">
 
-      {/* HERO */}
-      <section className="bg-gradient-to-r from-slate-950 via-blue-800 to-cyan-600 text-white">
+      <section className="bg-gradient-to-r from-zinc-900 via-zinc-800 to-zinc-900 border-b border-zinc-800">
         <div className="max-w-7xl mx-auto px-4 py-16">
           <div className="grid md:grid-cols-3 gap-8 items-center">
-            
-            {/* AVATAR */}
+
             <div className="flex justify-center md:justify-start">
-              <div className="w-36 h-36 rounded-full bg-white/15 border border-white/20 flex items-center justify-center text-6xl font-black shadow-2xl">
+              <div className="w-36 h-36 rounded-full bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center text-6xl font-black text-yellow-400">
                 {sellerName.charAt(0)}
               </div>
             </div>
 
-            {/* SELLER INFO */}
             <div className="md:col-span-2 text-center md:text-left">
-              
-              {/* BADGES */}
-              <div className="flex flex-wrap gap-3 justify-center md:justify-start">
-                {seller.verified && (
-                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500 text-white text-sm font-black">
-                    <ShieldCheck size={16} />
-                    {t("Verified Seller", "የተረጋገጠ ሻጭ")}
+              <div className="flex flex-wrap gap-3 justify-center md:justify-start mb-5">
+                {isVerified && (
+                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-black">
+                    <ShieldCheck size={16} /> Verified Seller
                   </div>
                 )}
-
-                {seller.premium && (
-                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-400 text-black text-sm font-black">
-                    <Crown size={16} />
-                    {t("Premium Seller", "ፕሪሚየም ሻጭ")}
-                  </div>
-                )}
-
-                {seller.company_account && (
-                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/15 text-white text-sm font-black border border-white/20">
-                    <Building2 size={16} />
-                    {t("Company Account", "የኩባንያ መለያ")}
+                {seller.company_name && (
+                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-800 border border-zinc-700 text-zinc-300 text-sm font-black">
+                    <Building2 size={16} /> Company Account
                   </div>
                 )}
               </div>
 
-              {/* NAME */}
-              <h1 className="text-4xl md:text-6xl font-black mt-5 leading-tight">
-                {sellerName}
-              </h1>
+              <h1 className="text-4xl md:text-5xl font-black leading-tight">{sellerName}</h1>
 
-              {/* LOCATION */}
-              <div className="mt-5 flex flex-wrap gap-5 justify-center md:justify-start text-white/80 text-lg">
-                <div className="flex items-center gap-2">
-                  <MapPin size={18} />
-                  {seller.region || "Ethiopia"}
-                  {seller.city ? `, ${seller.city}` : ""}
-                </div>
-
-                <div>
-                  {t("Joined", "ተቀላቀለ")}{" "}
-                  {joinedYear}
-                </div>
+              <div className="mt-4 flex flex-wrap gap-5 justify-center md:justify-start text-zinc-400 text-lg">
+                {(seller.region || seller.city) && (
+                  <div className="flex items-center gap-2">
+                    <MapPin size={18} />
+                    {seller.region || ""}{seller.city ? (seller.region ? ", " : "") + seller.city : ""}
+                  </div>
+                )}
+                {joinedYear && <div>Member since {joinedYear}</div>}
               </div>
 
-              {/* ACTIONS */}
               <div className="mt-8 flex flex-wrap gap-4 justify-center md:justify-start">
-                {seller.phone && (
-                  <a
-                    href={whatsappUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-8 py-4 rounded-2xl bg-green-600 hover:bg-green-500 text-white font-black inline-flex items-center gap-3 transition"
-                  >
-                    <MessageCircle size={22} />
-                    WhatsApp
-                  </a>
+                {phone && (
+                  <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="px-8 py-4 rounded-2xl bg-green-600 hover:bg-green-500 text-white font-black inline-flex items-center gap-3 transition"><MessageCircle size={22} /> WhatsApp</a>
                 )}
-
-                {seller.phone && (
-                  <a
-                    href={`tel:${seller.phone}`}
-                    className="px-8 py-4 rounded-2xl bg-white text-black font-black inline-flex items-center gap-3"
-                  >
-                    <Phone size={22} />
-                    {t("Call Seller", "ለሻጭ ይደውሉ")}
-                  </a>
+                {phone && (
+                  <a href={"tel:" + phone} className="px-8 py-4 rounded-2xl bg-yellow-500 hover:bg-yellow-400 text-black font-black inline-flex items-center gap-3 transition"><Phone size={22} /> Call Seller</a>
                 )}
-
-                <Link
-                  href="/browse"
-                  className="px-8 py-4 rounded-2xl border border-white/40 font-bold hover:bg-white/10 transition"
-                >
-                  {t("Browse Marketplace", "ገበያውን ይመልከቱ")}
-                </Link>
+                <a href="/browse" className="px-8 py-4 rounded-2xl border border-zinc-700 font-bold hover:bg-zinc-800 transition">Browse Marketplace</a>
               </div>
-
             </div>
-
           </div>
         </div>
       </section>
 
-      {/* STATS */}
-      <section className="max-w-7xl mx-auto px-4 -mt-8 relative z-10">
-        <div className="grid md:grid-cols-4 gap-5">
-          <StatCard value={machines.length} label={t("Listings", "ዝርዝሮች")} />
-          <StatCard value="4.9" label={t("Seller Rating", "የሻጭ ደረጃ")} />
-          <StatCard value={`${totalViews}+`} label={t("Listing Views", "የማሽነሪ እይታዎች")} />
-          <StatCard value="24h" label={t("Avg Response", "አማካይ ምላሽ")} />
+      <section className="max-w-7xl mx-auto px-4 py-8">
+        <div className="grid md:grid-cols-2 gap-5 max-w-md">
+          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 text-center">
+            <div className="text-4xl font-black text-yellow-400">{listings.length}</div>
+            <div className="text-zinc-400 mt-2">Active Listings</div>
+          </div>
+          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 text-center">
+            <div className="text-4xl font-black text-green-400">{isVerified ? "Yes" : "No"}</div>
+            <div className="text-zinc-400 mt-2">Verified</div>
+          </div>
         </div>
       </section>
 
-      {/* ABOUT */}
-      <section className="max-w-7xl mx-auto px-4 py-16">
-        <div className="bg-white rounded-3xl border p-8 shadow-sm">
-          <h2 className="text-3xl font-black">
-            {t("About Seller", "ስለ ሻጭ")}
-          </h2>
+      {seller.bio && (
+        <section className="max-w-7xl mx-auto px-4 pb-10">
+          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8">
+            <h2 className="text-2xl font-black mb-4">About</h2>
+            <p className="text-zinc-300 leading-8 whitespace-pre-line">{seller.bio}</p>
+          </div>
+        </section>
+      )}
 
-          <p className="mt-5 text-gray-600 leading-8 whitespace-pre-line">
-            {seller.bio ||
-              t(
-                "Trusted machinery supplier serving contractors, transport companies and industrial buyers across Ethiopia.",
-                "በመላው ኢትዮጵያ ለኮንትራክተሮች፣ ለትራንስፖርት ኩባንያዎች እና ለኢንዱስትሪ ገዢዎች የሚያገለግል የታመነ የማሽነሪ አቅራቢ።"
-              )}
-          </p>
-        </div>
-      </section>
-
-      {/* LISTINGS */}
       <section className="max-w-7xl mx-auto px-4 pb-20">
-        <div className="flex items-center justify-between mb-8">
-          <h2 className="text-4xl font-black">
-            {t("Seller Listings", "የሻጭ ማሽነሪዎች")}
-          </h2>
-        </div>
+        <h2 className="text-3xl font-black mb-8">Listings by {sellerName}</h2>
 
-        {machines.length === 0 ? (
-          <div className="bg-white rounded-3xl border p-12 text-center text-gray-500">
-            {t("No machinery listings yet.", "እስካሁን ምንም ማሽነሪ አልተጨመረም።")}
+        {listings.length === 0 ? (
+          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-12 text-center text-zinc-500">
+            No active listings at this time.
           </div>
         ) : (
           <div className="grid md:grid-cols-3 gap-6">
-            {machines.map((item) => (
-              <Link
-                key={item.id}
-                href={`/machinery/${item.id}`}
-                className="bg-white rounded-3xl border overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
-              >
-                {/* IMAGE */}
-                <div className="h-56 bg-slate-100 relative overflow-hidden">
-                  {item.image_url ? (
-                    <img
-                      src={item.image_url}
-                      alt={item.title}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-6xl">
-                      🚜
-                    </div>
-                  )}
-                </div>
-
-                {/* CONTENT */}
-                <div className="p-6">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-bold">
-                      <Star size={14} />
-                      VERIFIED
-                    </div>
-
-                    <div className="text-sm text-gray-500">
-                      {item.condition}
-                    </div>
+            {listings.map((item) => {
+              const title = item.title_en || item.title || "Untitled";
+              const price = item.price_sale || item.price;
+              return (
+                <a key={item.id} href={"/machinery/" + item.id} className="bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden hover:border-yellow-500/30 transition-all duration-300">
+                  <div className="h-56 bg-zinc-800 relative overflow-hidden">
+                    {item.image_url ? (
+                      <img src={item.image_url} alt={title} className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-zinc-600 text-4xl">🚜</div>
+                    )}
                   </div>
-
-                  <h3 className="text-2xl font-black mt-3 leading-snug">
-                    {item.title}
-                  </h3>
-
-                  <div className="mt-4 flex items-center justify-between">
-                    <div className="text-3xl font-black text-blue-700">
-                      {item.price}
+                  <div className="p-6">
+                    <div className="flex items-center justify-between mb-3">
+                      {item.category && <span className="text-xs font-bold bg-yellow-500/10 text-yellow-400 px-3 py-1 rounded-full">{item.category}</span>}
+                      <span className="text-xs font-bold text-zinc-400">{item.is_rental_only ? "Rental" : "For Sale"}</span>
                     </div>
-
-                    <div className="text-xs font-bold bg-slate-100 px-3 py-2 rounded-full">
-                      {item.listing_type}
+                    <h3 className="text-xl font-black mt-2 leading-snug">{title}</h3>
+                    <div className="mt-3 text-2xl font-black text-yellow-400">
+                      {price ? "ETB " + price.toLocaleString() : "Contact for price"}
                     </div>
+                    {item.city && (
+                      <div className="flex items-center gap-2 text-zinc-400 mt-3 text-sm">
+                        <MapPin size={14} />{item.city}
+                      </div>
+                    )}
                   </div>
-
-                  <div className="flex items-center gap-2 text-gray-500 mt-5">
-                    <MapPin size={16} />
-                    {item.location || seller.city || "Ethiopia"}
-                  </div>
-                </div>
-
-              </Link>
-            ))}
+                </a>
+              );
+            })}
           </div>
         )}
       </section>
-
     </main>
-  );
-}
-
-function StatCard({
-  value,
-  label,
-}: {
-  value: string | number;
-  label: string;
-}) {
-  return (
-    <div className="bg-white rounded-3xl border shadow-xl p-6 text-center">
-      <div className="text-4xl font-black text-blue-700">
-        {value}
-      </div>
-
-      <div className="text-gray-500 mt-2">
-        {label}
-      </div>
-    </div>
   );
 }
