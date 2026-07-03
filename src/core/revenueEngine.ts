@@ -94,7 +94,7 @@ export const RevenueEngine = {
       activeDeals: deals.length,
       pipelineGrossValue: ranked.reduce((sum, item) => sum + item.grossAmount, 0),
       potentialPlatformRevenue: totalProjectedNet,
-      realisticForecast(totalRAR), // This is what the bank/investors want to see
+      totalRAR, // This is what the bank/investors want to see
       highLiquidityDeals: ranked.filter(d => d.liquidityScore > 75).length,
       topFinancialOpportunities: ranked.slice(0, 5),
     };
