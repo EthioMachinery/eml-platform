@@ -1,80 +1,137 @@
-import { NextRequest, NextResponse } from "next/server";
-import { GoogleGenAI } from "@google/genai";
-import { createClient } from "@supabase/supabase-js";
+import { type NextRequest } from 'next/server';
+import { z } from 'zod';
+import { supabaseAdmin } from '@/lib/supabase/adminClient';
+import { successResponse, errorResponse, internalError } from '@/lib/api/response';
+import { getSession } from '@/lib/auth/getSession';
+import { TMCore } from '@/core/tmCore';
+import { MatchingEngine } from '@/core/matchingEngine';
+import { LearningEngine } from '@/core/learningEngine';
+import { logEvent } from '@/core/logEvent';
 
-// Initialize Gemini SDK
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
+/**
+ * SMART-MATCH PARAMETERS
+ * Strictly typed for industrial precision.
+ */
+const MatchRequestSchema = z.object({
+  category: z.string().min(2),
+  max_budget: z.number().positive(),
+  duration_days: z.number().int().min(1),
+  location_region: z.string().optional(),
+  required_condition: z.enum(['new', 'excellent', 'good', 'fair']).default('good'),
+});
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL || "",
-  process.env.SUPABASE_SERVICE_ROLE_KEY || ""
-);
-
-export async function POST(req: NextRequest) {
+/**
+ * POST /api/smart-match
+ * The "Brain" of the Marketplace.
+ */
+export async function POST(request: NextRequest) {
   try {
-    const { queryText, activeLanguage } = await req.json();
+    const session = getSession(request);
+    const body = await request.json();
+    const validation = MatchRequestSchema.safeParse(body);
 
-    if (!queryText) {
-      return NextResponse.json({ error: "Missing matching query text." }, { status: 400 });
+    if (!validation.success) {
+      return errorResponse(validation.error.errors[0].message, 400, 'INPUT_INVALID');
     }
 
-    // 1. Pull active verified listings directly from Supabase
-    const { data: listings } = await supabaseAdmin
-      .from("listings")
-      .select("id, brand, model, category_token, price, location, model_year")
-      .eq("status", "verified_available");
+    const req = validation.data;
 
-    const databaseContext = JSON.stringify(listings || []);
+    // 1. QUERY: Fetch candidate machines from the fleet
+    // We fetch more than we need to let the AI score them locally
+    let query = supabaseAdmin
+      .from('machinery')
+      .select(`
+        *,
+        profiles(full_name, company_name, trust_score, verified)
+      `)
+      .eq('status', 'active')
+      .eq('category', req.category)
+      .lte('price', req.max_budget);
 
-    // 2. Build the system routing and translation prompt (strictly configured on 'or' standard)
-    const systemPrompt = `
-      You are the EML AI Matchmaking Engine. Your task is to match the user's heavy machinery request with the available assets in the database.
-      Your response must be returned in the selected language: "${activeLanguage}".
+    if (req.location_region) {
+      query = query.eq('region', req.location_region);
+    }
+
+    const { data: candidates, error: dbError } = await query.limit(50);
+
+    if (dbError) return errorResponse(dbError.message, 500, 'FLEET_QUERY_ERROR');
+    if (!candidates || candidates.length === 0) {
+      return successResponse([], 200); // No matches found
+    }
+
+    // 2. SCORING ENGINE: Calculate the "Industrial Compatibility Index" (ICI)
+    const matches = candidates.map(machine => {
+      let matchScore = 100;
+
+      // Deduct for condition mismatch
+      const conditionWeights: Record<string, number> = { 'new': 4, 'excellent': 3, 'good': 2, 'fair': 1 };
+      const reqWeight = conditionWeights[req.required_condition];
+      const actualWeight = conditionWeights[machine.condition] || 2;
       
-      User Request: "${queryText}"
-      Database Listings: ${databaseContext}
+      if (actualWeight < reqWeight) matchScore -= 20;
 
-      System Constraints:
-      - Match using category, capacity, and geographical proximity (e.g. Debre Berhan is near Addis Ababa).
-      - Output a structured list of matching candidates with their IDs, matching scores (0-100%), and a localized explanation of why they fit the request.
-      - Return the result cleanly using markdown. Keep it concise.
-    `;
+      // Boost for Seller Trust (Crucial for Top 10 status)
+      const sellerTrust = machine.profiles?.trust_score || 50;
+      matchScore += (sellerTrust - 50) / 2;
 
-    // 3. Initiate Gemini Response Streaming to prevent Vercel serverless timeouts [1]
-    const responseStream = await ai.models.generateContentStream({
-      model: "gemini-2.5-flash",
-      contents: [
-        { role: "user", parts: [{ text: systemPrompt }] }
-      ]
+      // Price Efficiency Bonus
+      const budgetUtilization = machine.price / req.max_budget;
+      if (budgetUtilization < 0.7) matchScore += 10; // "High Value" match
+
+      // Core AI Verification check
+      const aiAnalysis = TMCore.getScore(machine);
+      if (aiAnalysis.risk === 'DANGEROUS') matchScore = 0;
+
+      return {
+        ...machine,
+        match_score: Math.min(100, Math.round(matchScore)),
+        ai_recommendation: matchScore > 85 ? "PREMIUM_MATCH" : "STANDARD_MATCH",
+        reasoning: matchScore > 85 
+          ? `High trust seller and ${Math.round((1 - budgetUtilization) * 100)}% under budget.`
+          : "Meets basic technical requirements."
+      };
     });
 
-    // 4. Create a streaming response for the browser
-    const encoder = new TextEncoder();
-    const stream = new ReadableStream({
-      async start(controller) {
-        for await (const chunk of responseStream) {
-          const text = chunk.text;
-          if (text) {
-            controller.enqueue(encoder.encode(text));
-          }
-        }
-        controller.close();
+    // 3. SORT & FILTER: Only return high-probability matches
+    const finalResults = matches
+      .filter(m => m.match_score > 40)
+      .sort((a, b) => b.match_score - a.match_score)
+      .slice(0, 10);
+
+    // 4. LEARNING: record match outcome for continuous improvement
+    if (finalResults.length > 0) {
+      await LearningEngine.learnFromDeal(
+        { id: finalResults[0].id, price: finalResults[0].price, category: req.category },
+        "MARKET_AVERAGE",
+        "PENDING"
+      );
+    }
+
+    // 5. TELEMETRY: structured event log (replaces raw insert)
+    await logEvent({
+      id: crypto.randomUUID(),
+      type: "SYSTEM_ALERT",
+      title: "Smart Match Executed",
+      userId: session.userId,
+      metadata: {
+        category: req.category,
+        results_count: finalResults.length,
+        highest_score: finalResults[0]?.match_score || 0,
+        budget: req.max_budget,
+      },
+      timestamp: new Date().toISOString(),
+    });
+
+    return successResponse({
+      matches: finalResults,
+      metadata: {
+        engine_version: "TM-MATCH-AI-V2",
+        timestamp: new Date().toISOString(),
+        total_candidates_analyzed: candidates.length
       }
     });
 
-    return new Response(stream, {
-      headers: {
-        "Content-Type": "text/event-stream; charset=utf-8",
-        "Cache-Control": "no-cache",
-        "Connection": "keep-alive"
-      }
-    });
-
-  } catch (err: any) {
-    console.error("AI Matchmaker Error:", err);
-    return NextResponse.json(
-      { error: err.message || "Internal server error during matchmaking." },
-      { status: 500 }
-    );
+  } catch (err) {
+    return internalError(err, 'POST /api/smart-match');
   }
 }

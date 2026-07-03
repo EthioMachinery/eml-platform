@@ -214,8 +214,8 @@ export default function EastAfricaScalePage() {
 
           <p className="mt-4 text-white/80 max-w-2xl mx-auto">
             {t(
-              "EML can own machinery commerce across East Africa through trust, fintech and marketplace scale.",
-              "EML በእምነት፣ fintech እና marketplace scale የምስራቅ አፍሪካ ማሽነሪ ንግድን ሊመራ ይችላል።"
+              "TM can own machinery commerce across East Africa through trust, fintech and marketplace scale.",
+              "TM በእምነት፣ fintech እና marketplace scale የምስራቅ አፍሪካ ማሽነሪ ንግድን ሊመራ ይችላል።"
             )}
           </p>
 

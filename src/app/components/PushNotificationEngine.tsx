@@ -60,7 +60,7 @@ export default function PushNotificationEngine() {
         "granted"
     ) {
       new Notification(
-        "EML Alert",
+        "TM Alert",
         {
           body: map[type],
         }

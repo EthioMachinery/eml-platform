@@ -89,7 +89,7 @@ export default function DealsDashboardPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
             <KpiCard title="Total Deals" value={String(escrows.length)} icon={Briefcase} />
             <KpiCard title="Gross Revenue" value={"ETB " + formatter.format(totalRevenue)} icon={Banknote} />
-            <KpiCard title="EML Commission" value={"ETB " + formatter.format(totalCommission)} icon={ShieldCheck} />
+            <KpiCard title="TM Commission" value={"ETB " + formatter.format(totalCommission)} icon={ShieldCheck} />
             <KpiCard title="Seller Net" value={"ETB " + formatter.format(totalNet)} icon={CheckCircle2} />
           </div>
         )}

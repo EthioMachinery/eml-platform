@@ -241,7 +241,7 @@ export default function DealActions({
 
       </div>
 
-      {/* EML TRUST */}
+      {/* TM TRUST */}
 
       <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-3xl p-6">
 
@@ -257,16 +257,16 @@ export default function DealActions({
 
             <div className="text-yellow-400 font-black text-lg mb-2">
               {t(
-                "EML Secure Deal Workflow",
-                "የEML ደህንነቱ የተጠበቀ ግብይት"
+                "TM Secure Deal Workflow",
+                "የTM ደህንነቱ የተጠበቀ ግብይት"
               )}
             </div>
 
             <div className="text-zinc-300 leading-7 text-sm">
 
               {t(
-                "EML supports secure Ethiopian payments including Telebirr, bank transfer and mobile banking. Optional escrow protection is available but never mandatory.",
-                "EML ቴሌብር፣ የባንክ ዝውውር እና ሞባይል ባንኪንግን ይደግፋል። ኤስክሮው አማራጭ ነው እንጂ ግዴታ አይደለም።"
+                "TM supports secure Ethiopian payments including Telebirr, bank transfer and mobile banking. Optional escrow protection is available but never mandatory.",
+                "TM ቴሌብር፣ የባንክ ዝውውር እና ሞባይል ባንኪንግን ይደግፋል። ኤስክሮው አማራጭ ነው እንጂ ግዴታ አይደለም።"
               )}
 
             </div>

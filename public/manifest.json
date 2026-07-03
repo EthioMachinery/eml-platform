@@ -1,58 +1,58 @@
 {
-  "short_name": "EML",
-  "name": "ኢትዮ ማሽነሪ አገናኝ — Ethio Machinery Link",
-  "description": "Ethiopia's trusted heavy machinery marketplace. Buy, rent, sell, and escrow excavators, loaders, cranes, and more.",
+  "name": "Trustworthy Machinery (TM) - ታማኝ ማሽነሪ",
+  "short_name": "TM - ታማኝ ማሽነሪ",
+  "description": "Ethiopia's #1 Autonomous Machinery Ecosystem for Sales, Rentals, and Parts.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#050505",
+  "theme_color": "#10b981",
+  "orientation": "portrait",
+  "scope": "/",
   "icons": [
     {
       "src": "/favicon-16x16.png",
-      "type": "image/png",
-      "sizes": "16x16"
+      "sizes": "16x16",
+      "type": "image/png"
     },
     {
       "src": "/favicon-32x32.png",
-      "type": "image/png",
-      "sizes": "32x32"
+      "sizes": "32x32",
+      "type": "image/png"
     },
     {
       "src": "/icon-192.png",
-      "type": "image/png",
       "sizes": "192x192",
-      "purpose": "any maskable"
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/maskable-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
     },
     {
       "src": "/icon-512.png",
-      "type": "image/png",
       "sizes": "512x512",
-      "purpose": "any maskable"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
-      "src": "/apple-touch-icon.png",
+      "src": "/maskable-icon-512.png",
+      "sizes": "512x512",
       "type": "image/png",
-      "sizes": "180x180"
+      "purpose": "maskable"
     }
   ],
-  "start_url": "/",
-  "background_color": "#000000",
-  "theme_color": "#F59E0B",
-  "display": "standalone",
-  "orientation": "portrait",
-  "scope": "/",
-  "categories": ["business", "productivity", "utilities"],
-  "lang": "en",
-  "prefer_related_applications": false,
   "shortcuts": [
     {
       "name": "Browse Machinery",
-      "short_name": "Browse",
-      "description": "Search and browse heavy machinery listings",
       "url": "/browse",
       "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     },
     {
-      "name": "List Machinery",
-      "short_name": "List",
-      "description": "Post your machinery for rent or sale",
-      "url": "/post-machinery",
+      "name": "CEO Dashboard",
+      "url": "/admin/ceo",
       "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     }
   ]

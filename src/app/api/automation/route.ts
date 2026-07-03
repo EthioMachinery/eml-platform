@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabaseClient";
-import { AutomationEngine } from "@/lib/automationEngine";
-import { Deal } from "@/core/emlCore";
+import { AutoTrigger } from "@/core/autoTrigger";
+import { Deal } from "@/core/tmCore";
 
 /**
  * Trigger automation pipeline
@@ -18,7 +18,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const result = await AutomationEngine.processDeal(deal);
+    const result = await AutoTrigger.processDeal(deal);
 
     return NextResponse.json({
       success: true,

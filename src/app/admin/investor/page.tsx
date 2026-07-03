@@ -339,8 +339,8 @@ export default function InvestorMetricsPage() {
 
           <p className="text-zinc-400">
             {isAm
-              ? "EML የእድገት ምልክቶች"
-              : "Growth indicators for EML"}
+              ? "TM የእድገት ምልክቶች"
+              : "Growth indicators for TM"}
           </p>
         </div>
 

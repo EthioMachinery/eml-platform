@@ -9,10 +9,10 @@ import { supabase } from "@/lib/supabaseClient";
 // Localized payment-specific terminology
 const localPaymentTranslations: Record<string, Record<string, string>> = {
   "payment_title": {
-    en: "EML Sourcing Payment Center",
-    am: "የ EML ክፍያ ማስተናገጃ ማዕከል",
-    om: "Kafaltii EML Sourcing Center",
-    ti: "መእከቢ ክፍሊት EML"
+    en: "TM Sourcing Payment Center",
+    am: "የ TM ክፍያ ማስተናገጃ ማዕከል",
+    om: "Kafaltii TM Sourcing Center",
+    ti: "መእከቢ ክፍሊት TM"
   },
   "high_ticket_alert": {
     en: "High-Ticket Transfer: Transactions exceeding daily mobile wallet limits must be processed via Manual Bank Transfer (RTGS/CBE). Please upload your deposit slip below.",
@@ -21,7 +21,7 @@ const localPaymentTranslations: Record<string, Record<string, string>> = {
     ti: "ማተሓሳሰቢ፡ ዓቐን ክፍሊት ዝሓለፉ ዓበይቲ ግብይታት ብባንኪ ክሳለጡ ኣለዎም። እባክኹም ደረሰኝ ክፍሊትኩም ኣብዚ የእትዉ።"
   },
   "upload_slip": { en: "Upload Deposit Slip (Image)", am: "የክፍያ ደረሰኝ ምስል ያስገቡ", om: "Waraqaa Kafaltii Fe'i", ti: "ደረሰኝ ክፍሊት ኣእትው" },
-  "bank_details": { en: "EML Official Corporate Bank Accounts", am: "የ EML ይፋዊ የባንክ አካውንቶች", om: "Herrega Baankii EML", ti: "ናይ EML ወግዓዊ ሕሳብ ባንኪ" },
+  "bank_details": { en: "TM Official Corporate Bank Accounts", am: "የ TM ይፋዊ የባንክ አካውንቶች", om: "Herrega Baankii TM", ti: "ናይ TM ወግዓዊ ሕሳብ ባንኪ" },
   "instant_pay": { en: "Pay via Telebirr / CBE Birr", am: "በቴሌብር / በሲቢኢ ብር ይክፈሉ", om: "Telebirr ykn CBE Birr kaffali", ti: "ብቴሌብር / ሲቢኢ ብር ክፈሉ" },
   "verify_status": { en: "Submit for Verification", am: "ለማረጋገጫ አስገባ", om: "Mirkanneessaaf Ergi", ti: "ንምርግጋጽ ኣእትው" }
 };
@@ -133,7 +133,7 @@ export default function PaymentPage() {
 
       if (insertError) throw insertError;
 
-      setSuccess("Payment details submitted successfully! EML finance audit has been triggered.");
+      setSuccess("Payment details submitted successfully! TM finance audit has been triggered.");
       
       setTimeout(() => {
         router.push("/dashboard/deals");
@@ -223,7 +223,7 @@ export default function PaymentPage() {
               <div className="space-y-6">
                 <div className="space-y-3">
                   <label className="block text-xs font-bold text-zinc-400 uppercase tracking-wider">
-                    Select Target EML Account
+                    Select Target TM Account
                   </label>
                   <select
                     value={selectedBank}
@@ -247,13 +247,13 @@ export default function PaymentPage() {
                   )}
                   {selectedBank === "awash" && (
                     <div className="space-y-1">
-                      <p className="font-bold text-zinc-300">Awash Bank (EML Escrow Account)</p>
+                      <p className="font-bold text-zinc-300">Awash Bank (TM Escrow Account)</p>
                       <p className="text-amber-500 font-mono text-sm font-black">01320492839800</p>
                     </div>
                   )}
                   {selectedBank === "dashen" && (
                     <div className="space-y-1">
-                      <p className="font-bold text-zinc-300">Dashen Bank (EML Corporate)</p>
+                      <p className="font-bold text-zinc-300">Dashen Bank (TM Corporate)</p>
                       <p className="text-amber-500 font-mono text-sm font-black">5092839201928</p>
                     </div>
                   )}

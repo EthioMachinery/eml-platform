@@ -160,7 +160,7 @@ export default function PostMachineryPage() {
             {t("nav.postMachinery")}
           </h1>
           <p className="text-xs text-zinc-400 mt-1">
-            Register your industrial equipment under the EML High-Trust Standard.
+            Register your industrial equipment under the TM High-Trust Standard.
           </p>
         </header>
 
@@ -361,7 +361,7 @@ export default function PostMachineryPage() {
                 <div className="flex flex-col items-center justify-center pt-5 pb-6 text-center px-4">
                   <span className="text-2xl mb-1">📷</span>
                   <p className="text-xs text-zinc-400 font-bold uppercase tracking-wider">
-                    {uploading ? "Uploading to EML Storage..." : "Click to Upload Machinery Image"}
+                    {uploading ? "Uploading to TM Storage..." : "Click to Upload Machinery Image"}
                   </p>
                   <p className="text-[10px] text-zinc-600 mt-1">PNG, JPG, or WEBP (Max 5MB)</p>
                 </div>

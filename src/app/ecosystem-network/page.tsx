@@ -199,7 +199,7 @@ export default function EcosystemNetworkPage() {
 
               <Network size={20} />
 
-              EML ECOSYSTEM NETWORK
+              TM ECOSYSTEM NETWORK
 
             </div>
 
@@ -314,7 +314,7 @@ export default function EcosystemNetworkPage() {
 
               <p className="text-zinc-300 text-lg leading-8">
 
-                EML Ecosystem Network unifies enterprises,
+                TM Ecosystem Network unifies enterprises,
                 infrastructure operators,
                 governments,
                 AI systems,
@@ -614,13 +614,13 @@ export default function EcosystemNetworkPage() {
 
                 <h2 className="text-5xl font-black mb-6 leading-tight">
 
-                  EML Ecosystem Network powers connected industrial civilization
+                  TM Ecosystem Network powers connected industrial civilization
 
                 </h2>
 
                 <p className="text-zinc-300 text-xl leading-9">
 
-                  EML Ecosystem Network transforms EML into a connected industrial civilization network —
+                  TM Ecosystem Network transforms TM into a connected industrial civilization network —
                   enabling industrial relationship intelligence,
                   sovereign coordination,
                   enterprise collaboration,

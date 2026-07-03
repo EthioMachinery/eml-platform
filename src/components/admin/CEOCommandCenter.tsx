@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { EMLKernel } from "@/core/emlKernel";
 import { MarketStream } from "@/core/marketStream";
-import { Deal } from "@/core/emlCore";
+import { Deal } from "@/core/tmCore";
 
 export default function CEOCommandCenter() {
   const [deals, setDeals] =
@@ -29,13 +28,8 @@ export default function CEOCommandCenter() {
 
     await MarketStream.init();
 
-    await EMLKernel.start();
-
-    const kernel =
-      EMLKernel.status();
-
     setStats({
-      kernel,
+      marketStream: { running: true },
     });
   }
 
@@ -62,10 +56,10 @@ export default function CEOCommandCenter() {
           </p>
 
           <p>
-            Kernel Running:{" "}
-            {stats.kernel?.running
-              ? "Yes"
-              : "No"}
+            Market Stream:{" "}
+            {stats.marketStream?.running
+              ? "Active"
+              : "Inactive"}
           </p>
 
         </div>

@@ -183,8 +183,8 @@ export default function EcosystemPage() {
 
             <p className="mt-8 text-xl text-zinc-400 leading-9 max-w-4xl">
               {t(
-                "EML connects machinery owners, buyers, renters, operators, mechanics, transport providers, spare part suppliers, insurers, financiers and construction companies into one trusted bilingual ecosystem.",
-                "EML የማሽነሪ ባለቤቶችን፣ ገዥዎችን፣ ተከራዮችን፣ ኦፕሬተሮችን፣ መካኒኮችን፣ አጓጓዦችን፣ የመለዋወጫ አቅራቢዎችን፣ ኢንሹራንስ እና ፋይናንስ ተቋማትን በአንድ የታመነ ባለ ሁለት ቋንቋ ስርዓት ያገናኛል።"
+                "TM connects machinery owners, buyers, renters, operators, mechanics, transport providers, spare part suppliers, insurers, financiers and construction companies into one trusted bilingual ecosystem.",
+                "TM የማሽነሪ ባለቤቶችን፣ ገዥዎችን፣ ተከራዮችን፣ ኦፕሬተሮችን፣ መካኒኮችን፣ አጓጓዦችን፣ የመለዋወጫ አቅራቢዎችን፣ ኢንሹራንስ እና ፋይናንስ ተቋማትን በአንድ የታመነ ባለ ሁለት ቋንቋ ስርዓት ያገናኛል።"
               )}
             </p>
 
@@ -270,7 +270,7 @@ export default function EcosystemPage() {
       <section className="max-w-7xl mx-auto px-4 pb-24">
         <div className="mb-14">
           <div className="text-yellow-400 font-black tracking-widest mb-4">
-            EML ECOSYSTEM
+            TM ECOSYSTEM
           </div>
           <h2 className="text-5xl font-black">
             {t(
@@ -315,7 +315,7 @@ export default function EcosystemPage() {
         <div className="max-w-7xl mx-auto px-4 py-24">
           <div className="max-w-4xl">
             <div className="text-yellow-400 font-black tracking-widest mb-4">
-              EML BUSINESS ENGINE
+              TM BUSINESS ENGINE
             </div>
             <h2 className="text-5xl font-black leading-tight">
               {t(

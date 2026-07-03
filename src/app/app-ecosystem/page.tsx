@@ -202,7 +202,7 @@ export default function AppEcosystemPage() {
 
               <AppWindow size={20} />
 
-              EML APP ECOSYSTEM
+              TM APP ECOSYSTEM
 
             </div>
 
@@ -318,7 +318,7 @@ export default function AppEcosystemPage() {
 
               <p className="text-zinc-300 text-lg leading-8">
 
-                EML App Ecosystem enables organizations,
+                TM App Ecosystem enables organizations,
                 developers,
                 AI systems,
                 enterprises,
@@ -621,13 +621,13 @@ export default function AppEcosystemPage() {
 
                 <h2 className="text-5xl font-black mb-6 leading-tight">
 
-                  EML App Ecosystem powers industrial extensibility civilization
+                  TM App Ecosystem powers industrial extensibility civilization
 
                 </h2>
 
                 <p className="text-zinc-300 text-xl leading-9">
 
-                  EML App Ecosystem transforms EML into a sovereign industrial operating ecosystem —
+                  TM App Ecosystem transforms TM into a sovereign industrial operating ecosystem —
                   enabling developers,
                   enterprises,
                   AI systems,

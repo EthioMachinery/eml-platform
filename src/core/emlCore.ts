@@ -1,152 +1,181 @@
 import { supabase } from "@/lib/supabaseClient";
 
 /**
- * =========================
- * TYPES (UNIFIED DEAL MODEL)
- * =========================
+ * ============================================================
+ * EML CORE KERNEL — V3.0
+ * The Central Nervous System for Global Machinery Trade.
+ * ============================================================
  */
 
-export type RiskLevel = "SAFE" | "RISKY" | "DANGEROUS";
+export type RiskLevel = "SAFE" | "RISKY" | "DANGEROUS" | "CRITICAL";
 
 export type Deal = {
   id: string;
   title?: string;
   price?: number;
   created_at?: string;
-
-  // marketplace relations
+  category?: string;
+  status?: "PENDING" | "ACTIVE" | "COMPLETED" | "REJECTED";
+  
+  // Intelligence Metrics
   buyer_id?: string;
   seller_id?: string;
-
-  // lifecycle
-  status?: "PENDING" | "ACTIVE" | "COMPLETED" | "REJECTED";
+  seller_trust_score?: number;
+  is_verified?: boolean;
+  views?: number;
+  currency?: string;
 };
 
 /**
  * =========================
- * AI ENGINE LAYER
+ * AI ENGINE LAYER (EML-AI)
  * =========================
  */
-
 const AIEngine = {
-  detectFraud(deal: Deal): RiskLevel {
-    if (!deal) return "SAFE";
+  /**
+   * Advanced Fraud Detection
+   * Evaluates the relationship between price, verification, and history.
+   */
+  detectFraud(deal: Deal): { level: RiskLevel; reason: string } {
+    if (!deal) return { level: "SAFE", reason: "NO_DATA" };
 
-    const price = deal.price || 0;
+    const price = Number(deal.price) || 0;
+    const trust = deal.seller_trust_score ?? 50;
 
-    if (price > 1000000) return "DANGEROUS";
-    if (price > 250000) return "RISKY";
+    // RULE 1: Unverified high-value deals are "Risky"
+    if (price > 2000000 && !deal.is_verified) {
+      return { level: "DANGEROUS", reason: "HIGH_VALUE_UNVERIFIED" };
+    }
 
-    return "SAFE";
+    // RULE 2: Suspiciously low prices (Scam bait)
+    if (price > 0 && price < 50000 && deal.category === 'Excavator') {
+      return { level: "CRITICAL", reason: "ANOMALY_LOW_PRICE" };
+    }
+
+    // RULE 3: Low trust score
+    if (trust < 30) {
+      return { level: "RISKY", reason: "LOW_SELLER_TRUST" };
+    }
+
+    return { level: "SAFE", reason: "VALIDATED" };
   },
 
+  /**
+   * Generates a 0-100 score for a deal's viability.
+   */
   scoreDeal(deal: Deal) {
-    const risk = this.detectFraud(deal);
-
+    const { level, reason } = this.detectFraud(deal);
     let score = 50;
 
-    if (risk === "SAFE") score += 30;
-    if (risk === "RISKY") score += 0;
-    if (risk === "DANGEROUS") score -= 40;
+    // Weighting Logic
+    if (deal.is_verified) score += 25;
+    if ((deal.seller_trust_score || 0) > 80) score += 15;
+    if ((deal.views || 0) > 100) score += 10; // High interest
 
-    if ((deal.price || 0) > 500000) score += 10;
-
-    if (deal.buyer_id && deal.seller_id) score += 10;
+    // Risk Deductions
+    if (level === "DANGEROUS") score -= 40;
+    if (level === "CRITICAL") score = 0;
 
     return {
-      risk,
-      score,
-      isHighValue: (deal.price || 0) > 500000,
+      risk: level,
+      riskReason: reason,
+      score: Math.min(100, Math.max(0, score)),
+      isInstitutionalGrade: score > 85
     };
   },
 
-  analyzeDeals(deals: Deal[]) {
+  /**
+   * Batch Analysis for the CEO Dashboard
+   */
+  analyzeMarketHealth(deals: Deal[]) {
     const total = deals.length;
-
-    const risky = deals.filter(
-      (d) => this.detectFraud(d) !== "SAFE"
-    ).length;
-
+    const scored = deals.map(d => this.scoreDeal(d));
+    
     return {
-      total,
-      risky,
-      safe: total - risky,
+      inventoryVolume: total,
+      riskRatio: (scored.filter(s => s.score < 40).length / total) * 100,
+      verifiedDensity: (deals.filter(d => d.is_verified).length / total) * 100,
+      marketSentiment: total > 0 ? "STABLE" : "LOW_LIQUIDITY"
     };
-  },
-
-  async processDeal(deal: Deal) {
-    const risk = this.detectFraud(deal);
-
-    return {
-      dealId: deal.id,
-      risk,
-      processed: true,
-    };
-  },
+  }
 };
 
 /**
  * =========================
- * CEO LAYER
+ * CEO LAYER (EML-EXECUTIVE)
  * =========================
  */
-
 const CEOLayer = {
+  /**
+   * Measures how "alive" the marketplace is.
+   */
   marketPulse(deals: Deal[]) {
+    const avgPrice = deals.reduce((sum, d) => sum + (Number(d.price) || 0), 0) / (deals.length || 1);
+    const totalViews = deals.reduce((sum, d) => sum + (d.views || 0), 0);
+
     return {
-      totalDeals: deals.length,
-      avgPrice:
-        deals.reduce((sum, d) => sum + (d.price || 0), 0) /
-        (deals.length || 1),
+      averageTransactionValue: avgPrice,
+      platformEngagement: totalViews,
+      growthIndex: (totalViews / (deals.length || 1)).toFixed(2)
     };
   },
 
+  /**
+   * Identifies "Whale" deals that need manual CEO oversight.
+   */
   topDeals(deals: Deal[], limit = 5) {
     return [...deals]
-      .sort((a, b) => (b.price || 0) - (a.price || 0))
+      .sort((a, b) => (Number(b.price) || 0) - (Number(a.price) || 0))
       .slice(0, limit)
-      .map((d) => ({
-        id: d.id,
-        title: d.title,
-        score: AIEngine.scoreDeal(d).score,
-      }));
+      .map((d) => {
+        const ai = AIEngine.scoreDeal(d);
+        return {
+          id: d.id,
+          title: d.title,
+          price: d.price,
+          aiScore: ai.score,
+          risk: ai.risk
+        };
+      });
   },
 
-  opportunities(deals: Deal[]) {
-    return deals
-      .filter((d) => (d.price || 0) < 100000)
-      .slice(0, 5)
-      .map((d) => ({
-        id: d.id,
-        title: d.title,
-        reason: "Low price acquisition opportunity",
-      }));
-  },
+  /**
+   * Predictive Opportunities (Supply vs Demand)
+   */
+  getStrategicInsights(deals: Deal[]) {
+    const categories = deals.map(d => d.category);
+    const demandMap = categories.reduce((acc: any, curr: any) => {
+      acc[curr] = (acc[curr] || 0) + 1;
+      return acc;
+    }, {});
 
-  analyzeRisk(deals: Deal[]) {
-    return AIEngine.analyzeDeals(deals);
-  },
+    return Object.entries(demandMap)
+      .map(([category, count]) => ({
+        category,
+        availability: count,
+        recommendation: (count as number) < 3 ? "URGENT_ACQUISITION" : "MONITOR"
+      }))
+      .sort((a, b) => (a.availability as number) - (b.availability as number));
+  }
 };
 
 /**
- * =========================
- * UNIFIED CORE EXPORT (MAIN SYSTEM API)
- * =========================
+ * ============================================================
+ * UNIFIED SYSTEM EXPORT (THE EML KERNEL)
+ * ============================================================
  */
-
 export const EMLCore = {
+  // Engines
   ai: AIEngine,
   ceo: CEOLayer,
 
-  // AI shortcuts (legacy compatibility)
-  detectFraud: AIEngine.detectFraud,
-  scoreDeal: AIEngine.scoreDeal,
-  analyzeDeals: AIEngine.analyzeDeals,
-  processDeal: AIEngine.processDeal,
-
-  // CEO shortcuts
-  analyzeRisk: CEOLayer.analyzeRisk,
-  marketPulse: CEOLayer.marketPulse,
-  topDeals: CEOLayer.topDeals,
-  opportunities: CEOLayer.opportunities,
+  // Direct High-Performance Accessors
+  getScore: (deal: Deal) => AIEngine.scoreDeal(deal),
+  getMarketHealth: (deals: Deal[]) => AIEngine.analyzeMarketHealth(deals),
+  getPulse: (deals: Deal[]) => CEOLayer.marketPulse(deals),
+  
+  // Global Metadata
+  version: "3.0.4-PRO",
+  node: "EML-ETH-ADDIS",
+  lastHeal: new Date().toISOString()
 };

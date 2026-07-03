@@ -239,7 +239,7 @@ export default function JobsPage() {
                         <button
                           type="button"
                           className="px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-xs font-bold uppercase tracking-wider transition-all shadow-sm"
-                          onClick={() => alert(`Initiating direct booking with ${item.fullName}. EML logistics match active.`)}
+                          onClick={() => alert(`Initiating direct booking with ${item.fullName}. TM logistics match active.`)}
                         >
                           {t("jobs.bookStaff")}
                         </button>

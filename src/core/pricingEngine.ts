@@ -1,4 +1,4 @@
-import { Deal, EMLCore } from "@/core/emlCore";
+import { Deal, TMCore } from "@/core/tmCore";
 import { LearningEngine } from "@/core/learningEngine";
 
 export type PricingDecision = {
@@ -13,7 +13,7 @@ export const PricingEngine = {
     deal: Deal
   ): Promise<PricingDecision> {
     const score =
-      EMLCore.ai.scoreDeal(
+      TMCore.ai.scoreDeal(
         deal
       );
 

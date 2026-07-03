@@ -1,5 +1,5 @@
 // src/lib/api/response.ts
-// EML — Unified API Response Envelope
+// TM — Unified API Response Envelope
 //
 // Every /api/* route handler must return responses through these helpers.
 // This guarantees a consistent shape that the frontend can always rely on:
@@ -34,9 +34,9 @@ export interface ApiErrorBody {
 export type ApiResponseBody<T = unknown> = ApiSuccessBody<T> | ApiErrorBody;
 
 // ---------------------------------------------------------------------------
-// Standard error codes used across all EML routes
+// Standard error codes used across all TM routes
 // ---------------------------------------------------------------------------
-export const EML_ERROR_CODES = {
+export const TM_ERROR_CODES = {
   UNAUTHORIZED:        'UNAUTHORIZED',        // 401 — no session
   FORBIDDEN:           'FORBIDDEN',           // 403 — wrong role
   NOT_FOUND:           'NOT_FOUND',           // 404
@@ -47,7 +47,7 @@ export const EML_ERROR_CODES = {
   STATE_ERROR:         'STATE_ERROR',         // 409 — invalid state transition
 } as const;
 
-export type EmlErrorCode = typeof EML_ERROR_CODES[keyof typeof EML_ERROR_CODES];
+export type TMErrorCode = typeof TM_ERROR_CODES[keyof typeof TM_ERROR_CODES];
 
 // ---------------------------------------------------------------------------
 // Success Response
@@ -79,12 +79,12 @@ export function successResponse<T>(
  *
  * @param message - Human-readable error description.
  * @param status  - HTTP status code (default 500).
- * @param code    - Machine-readable error code from EML_ERROR_CODES.
+ * @param code    - Machine-readable error code from TM_ERROR_CODES.
  */
 export function errorResponse(
   message: string,
   status: number = 500,
-  code?: EmlErrorCode | string
+  code?: TMErrorCode | string
 ): NextResponse<ApiErrorBody> {
   const body: ApiErrorBody = { success: false, error: message };
   if (code) body.code = code;
@@ -114,7 +114,7 @@ export function validateRequired(
     return errorResponse(
       `Missing required fields: ${missing.join(', ')}`,
       400,
-      EML_ERROR_CODES.VALIDATION_ERROR
+      TM_ERROR_CODES.VALIDATION_ERROR
     );
   }
   return null;
@@ -138,6 +138,6 @@ export function internalError(
   context: string
 ): NextResponse<ApiErrorBody> {
   const message = err instanceof Error ? err.message : 'Unexpected server error.';
-  console.error(`[EML] ${context} — Unhandled error:`, message);
-  return errorResponse(message, 500, EML_ERROR_CODES.INTERNAL_ERROR);
+  console.error(`[TM] ${context} — Unhandled error:`, message);
+  return errorResponse(message, 500, TM_ERROR_CODES.INTERNAL_ERROR);
 }

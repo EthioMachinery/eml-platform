@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabaseClient";
+import { emitAutomationEvent } from "@/core/automationEmitter";
+import { logEvent } from "@/core/logEvent";
+import { calculateCommission } from "@/lib/finance/commission";
 
 export async function GET() {
   const { data } = await supabase
@@ -23,11 +26,10 @@ export async function POST(req: Request) {
     const idempotencyKey =
       String(body.idempotency_key || "");
 
-    const commission =
-      Math.round(amount * 0.05 * 100) / 100;
-
-    const providerAmount =
-      amount - commission;
+    // Commission from DB-backed engine (falls back to deal-type defaults if unconfigured)
+    const commissionBreakdown = await calculateCommission(amount, 'PURCHASE');
+    const commission = commissionBreakdown.commission_amount;
+    const providerAmount = commissionBreakdown.seller_receives;
 
     if (!dealId || !payerId || !Number.isFinite(amount) || amount <= 0) {
       return NextResponse.json(
@@ -59,6 +61,24 @@ export async function POST(req: Request) {
         amount
       })
       .eq("id", dealId);
+
+    // Emit automation event and log payment completion
+    await emitAutomationEvent("PAYMENT_COMPLETED", {
+      dealId,
+      payerId,
+      amount,
+      commission,
+    });
+
+    await logEvent({
+      id: crypto.randomUUID(),
+      type: "PAYMENT_COMPLETED",
+      title: "Payment Completed",
+      userId: payerId,
+      entityId: dealId,
+      metadata: { amount, commission, providerAmount },
+      timestamp: new Date().toISOString(),
+    });
 
     return NextResponse.json({
       success: true,

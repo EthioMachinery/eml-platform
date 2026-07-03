@@ -8,10 +8,10 @@ import TranslatedSelect from "@/components/ui/TranslatedSelect";
 // Localized dynamic page terms
 const localValuationTranslations: Record<string, Record<string, string>> = {
   "valuation_title": {
-    en: "EML AI Machinery Valuation Engine",
-    am: "የ EML AI ማሽነሪ ዋጋ መገምገሚያ ስርዓት",
-    or: "Injiini Gamaggama Gatii Maashinarii EML AI",
-    ti: "መገምገሚ ዋጋ ከበድቲ ማሽነሪታት EML AI"
+    en: "TM AI Machinery Valuation Engine",
+    am: "የ TM AI ማሽነሪ ዋጋ መገምገሚያ ስርዓት",
+    or: "Injiini Gamaggama Gatii Maashinarii TM AI",
+    ti: "መገምገሚ ዋጋ ከበድቲ ማሽነሪታት TM AI"
   },
   "valuation_desc": {
     en: "Calculate real-time Fair Market Value (FMV) and recommended daily rental rates based on East African market data, import tax estimates, and engine hours.",
@@ -93,7 +93,7 @@ export default function PricingAiPage() {
         <div className="lg:col-span-2 space-y-6">
           <header className="space-y-2">
             <span className="text-xs font-bold text-amber-500 bg-amber-500/10 px-3 py-1 rounded-full uppercase tracking-widest border border-amber-500/20">
-              📊 EML Intelligence
+              📊 TM Intelligence
             </span>
             <h1 className="text-3xl font-black text-white uppercase tracking-tight">
               {getLocalText("valuation_title")}
@@ -224,7 +224,7 @@ export default function PricingAiPage() {
                 </div>
               ) : (
                 <div className="text-center py-12 text-zinc-600 text-xs">
-                  Fill the technical details and press Calculate to generate EML market intelligence value estimates.
+                  Fill the technical details and press Calculate to generate TM market intelligence value estimates.
                 </div>
               )}
             </div>

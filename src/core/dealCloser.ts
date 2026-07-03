@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabaseClient";
-import { Deal, EMLCore } from "@/core/emlCore";
+import { Deal, TMCore } from "@/core/tmCore";
 import { PricingEngine } from "@/core/pricingEngine";
 import { LearningEngine } from "@/core/learningEngine";
 
@@ -8,7 +8,7 @@ export class DealCloser {
     deal: Deal
   ) {
     const score =
-      EMLCore.ai.scoreDeal(
+      TMCore.ai.scoreDeal(
         deal
       );
 

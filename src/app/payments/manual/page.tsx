@@ -32,7 +32,7 @@ export default function ManualPaymentsPage() {
 
             <div>
               <div className="text-yellow-400 font-black tracking-widest mb-2">
-                ኢትዮ ማሽነሪ አገናኝ
+                ታማኝ ማሽነሪ
               </div>
 
               <h1 className="text-5xl font-black">
@@ -62,7 +62,7 @@ export default function ManualPaymentsPage() {
                   <span className="text-zinc-500">
                     Account:
                   </span>{" "}
-                  EML Official
+                  TM Official
                 </div>
 
                 <div>
@@ -100,7 +100,7 @@ export default function ManualPaymentsPage() {
                   <span className="text-zinc-500">
                     Account:
                   </span>{" "}
-                  EML Machinery
+                  TM Machinery
                 </div>
               </div>
 

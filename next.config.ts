@@ -9,6 +9,10 @@ const nextConfig: NextConfig = {
         hostname: "ncmhztlaogviekbfmufc.supabase.co",
         pathname: "/storage/v1/object/public/**",
       },
+      {
+        protocol: "https",
+        hostname: "trustworthymachinery.vercel.app",
+      },
     ],
     unoptimized: true,
   },

@@ -1,3 +1,4 @@
+import { logEvent } from "@/core/logEvent";
 import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabaseClient";
 
@@ -8,6 +9,9 @@ export async function GET() {
     .order("created_at", { ascending: false });
 
   if (error) {
+    // Structured event log — feeds CEO live stream
+    await logEvent({ id: crypto.randomUUID(), type: 'REQUEST_POSTED', title: 'Provider Lead', timestamp: new Date().toISOString() }).catch(() => {});
+    await logEvent({ id: crypto.randomUUID(), type: "SYSTEM_ALERT", title: "Provider Lead", timestamp: new Date().toISOString() }).catch(() => {});
     return NextResponse.json({
       success: false
     });

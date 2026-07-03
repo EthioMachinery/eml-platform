@@ -224,8 +224,8 @@ export default function AutopilotPage() {
             <div className="inline-flex items-center gap-3 bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 px-5 py-3 rounded-full font-black mb-8">
               <Bot size={20} />
               {t(
-                "EML Enterprise AI Autopilot",
-                "የEML የድርጅት AI አውቶፓይሎት"
+                "TM Enterprise AI Autopilot",
+                "የTM የድርጅት AI አውቶፓይሎት"
               )}
             </div>
             <h1 className="text-5xl md:text-7xl font-black leading-tight">
@@ -236,8 +236,8 @@ export default function AutopilotPage() {
             </h1>
             <p className="mt-8 text-xl text-zinc-400 leading-9 max-w-4xl">
               {t(
-                "This is the autonomous intelligence system powering the entire Ethio Machinery Link ecosystem.",
-                "ይህ መላውን የኢትዮ ማሽነሪ አገናኝ ስርዓት የሚያስኬድ የAI ማዕከል ነው።"
+                "This is the autonomous intelligence system powering the entire Trustworthy Machinery ecosystem.",
+                "ይህ መላውን የታማኝ ማሽነሪ ስርዓት የሚያስኬድ የAI ማዕከል ነው።"
               )}
             </p>
           </div>
@@ -367,8 +367,8 @@ export default function AutopilotPage() {
                 </h2>
                 <p className="text-zinc-300 text-lg leading-8">
                   {t(
-                    "EML autonomous infrastructure is actively monitoring, matching, routing and generating machinery ecosystem opportunities.",
-                    "የEML AI ስርዓት የማሽነሪ እድሎችን በራስ ሰር እያስተዳደረ ነው።"
+                    "TM autonomous infrastructure is actively monitoring, matching, routing and generating machinery ecosystem opportunities.",
+                    "የTM AI ስርዓት የማሽነሪ እድሎችን በራስ ሰር እያስተዳደረ ነው።"
                   )}
                 </p>
               </div>

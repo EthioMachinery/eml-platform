@@ -17,7 +17,7 @@ import {
   Plus,
 } from "lucide-react";
 
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/supabaseClient";
 import { useLanguage } from "@/context/LanguageContext";
 
 export default function ServicesPage() {
@@ -149,8 +149,8 @@ export default function ServicesPage() {
           <div className="max-w-4xl">
             <div className="inline-flex items-center gap-3 bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 px-5 py-3 rounded-full font-black mb-8">
               🛠️ {t(
-                "EML Service Ecosystem",
-                "የEML የአገልግሎት ስርዓት"
+                "TM Service Ecosystem",
+                "የTM የአገልግሎት ስርዓት"
               )}
             </div>
 
@@ -163,8 +163,8 @@ export default function ServicesPage() {
 
             <p className="mt-8 text-xl text-zinc-400 leading-9 max-w-3xl">
               {t(
-                "EML connects mechanics, workshops, operators, technicians, spare parts suppliers and machinery service providers into one intelligent ecosystem.",
-                "EML መካኒኮችን፣ ጋራጆችን፣ ኦፕሬተሮችን፣ ቴክኒሻኖችን እና የመለዋወጫ አቅራቢዎችን በአንድ ዘመናዊ ስርዓት ያገናኛል።"
+                "TM connects mechanics, workshops, operators, technicians, spare parts suppliers and machinery service providers into one intelligent ecosystem.",
+                "TM መካኒኮችን፣ ጋራጆችን፣ ኦፕሬተሮችን፣ ቴክኒሻኖችን እና የመለዋወጫ አቅራቢዎችን በአንድ ዘመናዊ ስርዓት ያገናኛል።"
               )}
             </p>
 
@@ -296,7 +296,7 @@ export default function ServicesPage() {
                   </div>
 
                   <h3 className="text-2xl font-black mb-4">
-                    {item.company_name || item.full_name || "EML Provider"}
+                    {item.company_name || item.full_name || "TM Provider"}
                   </h3>
 
                   <div className="space-y-4 text-zinc-300">
@@ -348,7 +348,7 @@ export default function ServicesPage() {
             <div className="flex flex-col md:flex-row gap-8 md:items-center md:justify-between">
               <div className="max-w-3xl">
                 <div className="text-yellow-400 font-black tracking-widest mb-4">
-                  {t("EML VERIFIED SERVICES", "የEML የተረጋገጡ አገልግሎቶች")}
+                  {t("TM VERIFIED SERVICES", "የTM የተረጋገጡ አገልግሎቶች")}
                 </div>
                 <h2 className="text-4xl font-black mb-6">
                   {t(
@@ -358,8 +358,8 @@ export default function ServicesPage() {
                 </h2>
                 <p className="text-zinc-300 leading-8 text-lg">
                   {t(
-                    "EML helps machinery owners connect with verified professionals, mobile repair teams and intelligent service providers across Ethiopia.",
-                    "EML የማሽነሪ ባለቤቶችን ከተረጋገጡ ባለሙያዎች እና የጥገና ቡድኖች ጋር ያገናኛል።"
+                    "TM helps machinery owners connect with verified professionals, mobile repair teams and intelligent service providers across Ethiopia.",
+                    "TM የማሽነሪ ባለቤቶችን ከተረጋገጡ ባለሙያዎች እና የጥገና ቡድኖች ጋር ያገናኛል።"
                   )}
                 </p>
               </div>

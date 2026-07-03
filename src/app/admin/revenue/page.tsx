@@ -219,8 +219,8 @@ export default function RevenueAdminPage() {
 
           <p className="mt-4 text-white/80 max-w-2xl mx-auto">
             {t(
-              "Use EML revenue intelligence to scale subscriptions, deals and market expansion.",
-              "EML የገቢ መረጃን ተጠቅመው ምዝገባ፣ ግብይት እና ስፋትን ያሳድጉ።"
+              "Use TM revenue intelligence to scale subscriptions, deals and market expansion.",
+              "TM የገቢ መረጃን ተጠቅመው ምዝገባ፣ ግብይት እና ስፋትን ያሳድጉ።"
             )}
           </p>
 

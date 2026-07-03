@@ -140,7 +140,7 @@ export default function DevelopersPage() {
             "Plugin APIs",
 
           intelligence:
-            "Allows enterprises and governments to extend EML infrastructure capabilities.",
+            "Allows enterprises and governments to extend TM infrastructure capabilities.",
         },
 
         {
@@ -203,7 +203,7 @@ export default function DevelopersPage() {
 
               <Code2 size={20} />
 
-              EML DEVELOPERS PLATFORM
+              TM DEVELOPERS PLATFORM
 
             </div>
 
@@ -224,18 +224,18 @@ export default function DevelopersPage() {
               telemetry systems,
               industrial APIs,
               automation pipelines,
-              and infrastructure intelligence solutions on top of EML.
+              and infrastructure intelligence solutions on top of TM.
 
             </p>
 
             <div className="flex flex-wrap gap-5 mt-10">
 
               <Link
-                href="/eml-cloud"
+                href="/tm-cloud"
                 className="bg-violet-500 hover:bg-violet-400 text-black font-black px-8 py-5 rounded-2xl transition"
               >
 
-                EML Cloud
+                TM Cloud
 
               </Link>
 
@@ -314,13 +314,13 @@ export default function DevelopersPage() {
 
               <h2 className="text-4xl font-black mb-6">
 
-                Build industrial intelligence systems on top of EML infrastructure.
+                Build industrial intelligence systems on top of TM infrastructure.
 
               </h2>
 
               <p className="text-zinc-300 text-lg leading-8">
 
-                EML Developers Platform exposes APIs,
+                TM Developers Platform exposes APIs,
                 orchestration systems,
                 AI infrastructure,
                 telemetry networks,
@@ -575,7 +575,7 @@ export default function DevelopersPage() {
             <Service
               icon={Bot}
               title="AI Agent SDKs"
-              text="Build autonomous industrial AI agents using EML orchestration systems."
+              text="Build autonomous industrial AI agents using TM orchestration systems."
             />
 
             <Service
@@ -587,13 +587,13 @@ export default function DevelopersPage() {
             <Service
               icon={Blocks}
               title="Plugin Ecosystem"
-              text="Extend EML infrastructure through enterprise plugins and integrations."
+              text="Extend TM infrastructure through enterprise plugins and integrations."
             />
 
             <Service
               icon={Cloud}
               title="Cloud Developer Infrastructure"
-              text="Deploy industrial intelligence systems on EML Cloud infrastructure."
+              text="Deploy industrial intelligence systems on TM Cloud infrastructure."
             />
 
           </div>
@@ -622,13 +622,13 @@ export default function DevelopersPage() {
 
                 <h2 className="text-5xl font-black mb-6 leading-tight">
 
-                  EML enables the next generation of industrial innovation
+                  TM enables the next generation of industrial innovation
 
                 </h2>
 
                 <p className="text-zinc-300 text-xl leading-9">
 
-                  EML Developers Platform transforms EML into an open industrial intelligence ecosystem —
+                  TM Developers Platform transforms TM into an open industrial intelligence ecosystem —
                   enabling governments,
                   enterprises,
                   developers,
@@ -642,11 +642,11 @@ export default function DevelopersPage() {
               <div className="flex flex-wrap gap-5">
 
                 <Link
-                  href="/eml-cloud"
+                  href="/tm-cloud"
                   className="bg-violet-500 hover:bg-violet-400 text-black font-black px-8 py-5 rounded-2xl transition"
                 >
 
-                  EML Cloud
+                  TM Cloud
 
                 </Link>
 

@@ -44,7 +44,7 @@ function fixFiles(currentDir) {
 }
 
 console.log("====================================================");
-console.log("EML GLOBAL TRANSLATION CODEMOD - ACTIVE");
+console.log("TM GLOBAL TRANSLATION CODEMOD - ACTIVE");
 console.log("====================================================");
 
 fixFiles(targetDir);

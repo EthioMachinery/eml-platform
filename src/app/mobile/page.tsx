@@ -77,8 +77,8 @@ export default function MobilePage() {
 
   const t = {
     title: isAm
-      ? "EML ሞባይል ኢኮሲስተም"
-      : "EML Mobile App Ecosystem",
+      ? "TM ሞባይል ኢኮሲስተም"
+      : "TM Mobile App Ecosystem",
 
     sub: isAm
       ? "ሞባይል ቀዳሚ እድገት"

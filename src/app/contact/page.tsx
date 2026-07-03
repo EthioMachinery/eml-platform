@@ -8,10 +8,10 @@ import { supabase } from "@/lib/supabaseClient";
 
 const localContactTranslations: Record<string, Record<string, string>> = {
   "contact_title": {
-    en: "Get in Touch with EML Sourcing",
-    am: "ከ EML አገልግሎት ጋር ይገናኙ",
-    or: "Quunnamtii EML Sourcing",
-    ti: "ምስ EML ኣገልግሎት ርኸቡ"
+    en: "Get in Touch with TM Sourcing",
+    am: "ከ TM አገልግሎት ጋር ይገናኙ",
+    or: "Quunnamtii TM Sourcing",
+    ti: "ምስ TM ኣገልግሎት ርኸቡ"
   },
   "contact_desc": {
     en: "Have questions about machinery listings, optional escrow processing, operator placement, or enterprise sponsorships? Reach out directly.",
@@ -50,10 +50,10 @@ const localContactTranslations: Record<string, Record<string, string>> = {
     ti: "መልእኽቲ / ዝርዝር ምንጪ"
   },
   "success_msg": {
-    en: "Message sent successfully! EML support will respond within 24 hours.",
-    am: "መልዕክቱ በተሳካ ሁኔታ ተልኳል! EML ድጋፍ በ24 ሰዓት ውስጥ ምላሽ ይሰጣል።",
-    or: "Ergaan milkiin ergameera! EML deeggarsi sa'aatii 24 keessatti deebii kenna.",
-    ti: "መልእኽቲ ብዓወት ተሰዲዱ! EML ደገፍ ኣብ ውሽጢ 24 ሰዓት ክምልስ እዩ።"
+    en: "Message sent successfully! TM support will respond within 24 hours.",
+    am: "መልዕክቱ በተሳካ ሁኔታ ተልኳል! TM ድጋፍ በ24 ሰዓት ውስጥ ምላሽ ይሰጣል።",
+    or: "Ergaan milkiin ergameera! TM deeggarsi sa'aatii 24 keessatti deebii kenna.",
+    ti: "መልእኽቲ ብዓወት ተሰዲዱ! TM ደገፍ ኣብ ውሽጢ 24 ሰዓት ክምልስ እዩ።"
   },
   "error_msg": {
     en: "Failed to send message. Please try again.",
@@ -135,7 +135,7 @@ export default function ContactUsPage() {
           <div className="bg-zinc-950 border border-zinc-900 rounded-2xl p-6 space-y-4 text-xs">
             <div className="space-y-1">
               <span className="block text-[10px] text-zinc-500 font-bold uppercase tracking-widest">
-                EML Direct Email Support
+                TM Direct Email Support
               </span>
               
                 <a href={mailtoHref}
@@ -147,7 +147,7 @@ export default function ContactUsPage() {
 
             <div className="space-y-1 pt-4 border-t border-zinc-900">
               <span className="block text-[10px] text-zinc-500 font-bold uppercase tracking-widest">
-                EML Direct Mobile Hotline
+                TM Direct Mobile Hotline
               </span>
               
                 <a href={telHref}
@@ -181,7 +181,7 @@ export default function ContactUsPage() {
                 rel="noopener noreferrer"
                 className="text-xs font-bold text-blue-400 hover:underline"
               >
-                Join EML Telegram →
+                Join TM Telegram →
               </a>
             </div>
           </div>

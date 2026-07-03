@@ -1,106 +1,52 @@
 "use client";
 
-import React from "react";
-import Link from "next/link";
-import { useTranslate } from "@/hooks/useTranslate";
+import React from 'react';
+import { useI18n } from '@/context/LanguageContext';
 
+/**
+ * TM GLOBAL FOOTER — V3.0
+ * Fully synchronized with Unified Language Engine.
+ */
 export default function Footer() {
-  const { t } = useTranslate();
-  const currentYear = new Date().getFullYear();
+  const { t } = useI18n();
+
+  // Helper to ensure 't' is safe to call
+  const safeT = (key: string) => typeof t === 'function' ? t(key) : key;
 
   return (
-    <footer className="bg-black border-t border-zinc-900 text-zinc-400 py-12" id="eml-global-footer">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          
-          {/* Brand Info & Logo - Stacked Amharic on Top, English below */}
-          <div className="md:col-span-2 space-y-4">
-            <Link href="/" className="flex items-center gap-3 select-none w-fit">
-              <img
-                src="/logo.png"
-                alt="EML Logo"
-                className="h-10 w-auto object-contain rounded-md"
-                onError={(e) => {
-                  e.currentTarget.style.display = 'none';
-                }}
-              />
-              <div className="flex flex-col">
-                <span className="text-amber-500 text-sm font-black leading-tight tracking-wide">
-                  ኢትዮ ማሽነሪ አገናኝ
-                </span>
-                <span className="text-zinc-500 text-[9px] font-bold leading-none tracking-widest uppercase mt-0.5">
-                  Ethio Machinery Link
-                </span>
-              </div>
-            </Link>
-            <p className="text-xs text-zinc-500 max-w-sm leading-relaxed">
-              {t("footer.tagline")}
-            </p>
-          </div>
-
-          {/* Column 1: Marketplace Links */}
-          <div className="space-y-3">
-            <h4 className="text-xs font-bold text-white uppercase tracking-widest">
-              {t("footer.marketplace")}
-            </h4>
-            <ul className="space-y-2 text-xs">
-              <li>
-                <Link href="/browse" className="hover:text-white transition-colors">
-                  {t("nav.browse")}
-                </Link>
-              </li>
-              <li>
-                <Link href="/post-machinery" className="hover:text-white transition-colors">
-                  {t("footer.upload")}
-                </Link>
-              </li>
-              <li>
-                <Link href="/fleet" className="hover:text-white transition-colors">
-                  {t("footer.fleet")}
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Column 2: Company Links */}
-          <div className="space-y-3">
-            <h4 className="text-xs font-bold text-white uppercase tracking-widest">
-              {t("footer.company")}
-            </h4>
-            <ul className="space-y-2 text-xs">
-              <li>
-                <Link href="/about" className="hover:text-white transition-colors">
-                  {t("footer.aboutUs")}
-                </Link>
-              </li>
-              <li>
-                <Link href="/contact" className="hover:text-white transition-colors">
-                  {t("footer.contact")}
-                </Link>
-              </li>
-              <li>
-                <Link href="/enterprise" className="hover:text-white transition-colors">
-                  {t("footer.enterprise")}
-                </Link>
-              </li>
-            </ul>
-          </div>
-
+    <footer className="bg-zinc-950 border-t border-white/5 py-12 px-6 relative z-10">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
+        <div className="col-span-1 md:col-span-2">
+          <h2 className="text-lg font-black uppercase tracking-tighter mb-4 text-white">
+            Trustworthy Machinery
+          </h2>
+          <p className="text-zinc-500 text-sm max-w-sm leading-relaxed">
+            ታማኝ ማሽነሪ - Ethiopia's premier autonomous marketplace for heavy equipment and industrial parts.
+          </p>
         </div>
 
-        {/* Divider and Copyright */}
-        <div className="border-t border-zinc-900 mt-12 pt-6 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p className="text-[10px] text-zinc-600 tracking-wider">
-            &copy; {currentYear} EML &mdash; {t("footer.allRightsReserved")}
-          </p>
-          <div className="flex gap-4 text-[10px] text-zinc-600">
-            <Link href="/terms" className="hover:text-zinc-400 transition-colors">
-              Terms of Service
-            </Link>
-            <Link href="/privacy" className="hover:text-zinc-400 transition-colors">
-              Privacy Policy
-            </Link>
-          </div>
+        <div>
+          <h4 className="text-[10px] font-bold text-white uppercase tracking-widest mb-6">Marketplace</h4>
+          <ul className="space-y-3 text-zinc-500 text-xs uppercase font-bold">
+            <li><a href="/browse" className="hover:text-emerald-500 transition-colors">{safeT('browse')}</a></li>
+            <li><a href="/requests" className="hover:text-emerald-500 transition-colors">{safeT('requests')}</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 className="text-[10px] font-bold text-white uppercase tracking-widest mb-6">System</h4>
+          <ul className="space-y-3 text-zinc-500 text-xs uppercase font-bold">
+            <li><a href="/about" className="hover:text-emerald-500 transition-colors">About TM</a></li>
+            <li><a href="/pricing" className="hover:text-emerald-500 transition-colors">Platform Rates</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto mt-12 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-[9px] text-zinc-600 uppercase tracking-widest">
+        <span>© 2026 TM Industrial Ecosystem</span>
+        <div className="flex gap-6">
+          <span>Addis Ababa, Ethiopia</span>
+          <span>Security: MIL-SPEC AES-256</span>
         </div>
       </div>
     </footer>

@@ -114,7 +114,7 @@ export default function KnowledgeGraphPage() {
           id: 3,
 
           entity:
-            "EML Fleet Logistics Mesh",
+            "TM Fleet Logistics Mesh",
 
           type:
             "Transport Intelligence",
@@ -192,7 +192,7 @@ export default function KnowledgeGraphPage() {
 
               <Network size={20} />
 
-              EML KNOWLEDGE GRAPH
+              TM KNOWLEDGE GRAPH
 
             </div>
 
@@ -302,7 +302,7 @@ export default function KnowledgeGraphPage() {
 
               <h2 className="text-4xl font-black mb-6">
 
-                EML AI understands the entire industrial ecosystem.
+                TM AI understands the entire industrial ecosystem.
 
               </h2>
 
@@ -609,7 +609,7 @@ export default function KnowledgeGraphPage() {
 
                 <h2 className="text-5xl font-black mb-6 leading-tight">
 
-                  EML is becoming an industrial intelligence network
+                  TM is becoming an industrial intelligence network
 
                 </h2>
 

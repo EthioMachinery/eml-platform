@@ -1,9 +1,9 @@
 import { supabase } from "@/lib/supabaseClient";
 import {
-  EMLCore,
+  TMCore,
   Deal,
   RiskLevel,
-} from "@/core/emlCore";
+} from "@/core/tmCore";
 
 export type AutoAction =
   | "APPROVE"
@@ -23,7 +23,7 @@ export class AutoTrigger {
     deal: Deal
   ): Promise<AutomationEvent> {
     const result =
-      EMLCore.ai.scoreDeal(
+      TMCore.ai.scoreDeal(
         deal
       );
 

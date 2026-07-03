@@ -122,7 +122,7 @@ export default function SellerPage() {
   const whatsappNumber = seller.phone?.replace(/\s/g, "")?.replace("+", "") || "";
 
   const whatsappMessage = encodeURIComponent(
-    `Hello ${sellerName}, I found your company profile on EML and I am interested in your machinery listings.`
+    `Hello ${sellerName}, I found your company profile on TM and I am interested in your machinery listings.`
   );
 
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${whatsappMessage}`;

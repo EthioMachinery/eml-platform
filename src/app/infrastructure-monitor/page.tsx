@@ -204,7 +204,7 @@ export default function InfrastructureMonitorPage() {
 
               <Radar size={20} />
 
-              EML INFRASTRUCTURE MONITOR
+              TM INFRASTRUCTURE MONITOR
 
             </div>
 
@@ -626,7 +626,7 @@ export default function InfrastructureMonitorPage() {
 
                 <p className="text-zinc-300 text-xl leading-9">
 
-                  EML Infrastructure Monitor provides live operational intelligence for fleets,
+                  TM Infrastructure Monitor provides live operational intelligence for fleets,
                   machinery,
                   infrastructure projects,
                   logistics systems,

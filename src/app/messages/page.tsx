@@ -155,7 +155,7 @@ export default function MessagesPage() {
               </div>
               <div>
                 <h1 className="text-3xl font-black">Messages</h1>
-                <p className="text-zinc-400">EML Enterprise Communication</p>
+                <p className="text-zinc-400">TM Enterprise Communication</p>
               </div>
             </div>
 

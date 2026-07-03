@@ -410,9 +410,9 @@ export default function AdminControlCenter() {
 
       <div className="border-b border-zinc-900 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <img src="/logo.png" alt="EML" className="w-8 h-8 rounded-full" />
+          <img src="/logo.png" alt="TM" className="w-8 h-8 rounded-full" />
           <div>
-            <p className="text-xs text-amber-500 font-black uppercase tracking-widest">EML Super Admin</p>
+            <p className="text-xs text-amber-500 font-black uppercase tracking-widest">TM Super Admin</p>
             <p className="text-white font-black text-lg leading-none">Control Center</p>
           </div>
         </div>

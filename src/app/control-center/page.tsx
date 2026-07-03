@@ -204,7 +204,7 @@ export default function ControlCenterPage() {
 
               <Monitor size={20} />
 
-              EML CONTROL CENTER
+              TM CONTROL CENTER
 
             </div>
 
@@ -230,11 +230,11 @@ export default function ControlCenterPage() {
             <div className="flex flex-wrap gap-5 mt-10">
 
               <Link
-                href="/eml-os"
+                href="/tm-os"
                 className="bg-red-500 hover:bg-red-400 text-black font-black px-8 py-5 rounded-2xl transition"
               >
 
-                Open EML OS
+                Open TM OS
 
               </Link>
 
@@ -313,13 +313,13 @@ export default function ControlCenterPage() {
 
               <h2 className="text-4xl font-black mb-6">
 
-                One centralized intelligence center controlling the EML ecosystem.
+                One centralized intelligence center controlling the TM ecosystem.
 
               </h2>
 
               <p className="text-zinc-300 text-lg leading-8">
 
-                EML Control Center unifies infrastructure operations,
+                TM Control Center unifies infrastructure operations,
                 AI governance,
                 industrial orchestration,
                 ecosystem monitoring,
@@ -621,13 +621,13 @@ export default function ControlCenterPage() {
 
                 <h2 className="text-5xl font-black mb-6 leading-tight">
 
-                  EML Control Center governs the industrial intelligence ecosystem
+                  TM Control Center governs the industrial intelligence ecosystem
 
                 </h2>
 
                 <p className="text-zinc-300 text-xl leading-9">
 
-                  EML Control Center is the operational brain of the EML platform —
+                  TM Control Center is the operational brain of the TM platform —
                   orchestrating AI,
                   infrastructure,
                   enterprise systems,
@@ -642,11 +642,11 @@ export default function ControlCenterPage() {
               <div className="flex flex-wrap gap-5">
 
                 <Link
-                  href="/eml-os"
+                  href="/tm-os"
                   className="bg-red-500 hover:bg-red-400 text-black font-black px-8 py-5 rounded-2xl transition"
                 >
 
-                  EML OS
+                  TM OS
 
                 </Link>
 

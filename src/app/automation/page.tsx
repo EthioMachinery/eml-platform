@@ -198,7 +198,7 @@ export default function AutomationPage() {
 
               <Workflow size={20} />
 
-              EML AUTOMATION
+              TM AUTOMATION
 
             </div>
 
@@ -312,7 +312,7 @@ export default function AutomationPage() {
 
               <p className="text-zinc-300 text-lg leading-8">
 
-                EML Automation orchestrates enterprise workflows,
+                TM Automation orchestrates enterprise workflows,
                 infrastructure systems,
                 AI operations,
                 procurement execution,
@@ -612,13 +612,13 @@ export default function AutomationPage() {
 
                 <h2 className="text-5xl font-black mb-6 leading-tight">
 
-                  EML Automation powers autonomous industrial ecosystems
+                  TM Automation powers autonomous industrial ecosystems
 
                 </h2>
 
                 <p className="text-zinc-300 text-xl leading-9">
 
-                  EML Automation transforms EML into a semi-autonomous industrial civilization platform —
+                  TM Automation transforms TM into a semi-autonomous industrial civilization platform —
                   enabling AI-driven execution,
                   intelligent workflow orchestration,
                   autonomous infrastructure operations,

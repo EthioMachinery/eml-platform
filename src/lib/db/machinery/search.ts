@@ -86,8 +86,8 @@ export async function fetchLocalizedListings(
         locationToken: item.location || "addis_ababa",
         verified: true,
         imageUrl: item.image_url || null,
-        ownerName: "EML Verified Supplier",
-        ownerPhone: "Contact via EML"
+        ownerName: "TM Verified Supplier",
+        ownerPhone: "Contact via TM"
       };
     });
   } catch (err) {

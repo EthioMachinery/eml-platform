@@ -197,7 +197,7 @@ export default function MaintenancePage() {
 
               <Brain size={20} />
 
-              EML AI MAINTENANCE ENGINE
+              TM AI MAINTENANCE ENGINE
 
             </div>
 
@@ -304,7 +304,7 @@ export default function MaintenancePage() {
 
               <h2 className="text-4xl font-black mb-6">
 
-                EML AI predicts machine failures before they happen.
+                TM AI predicts machine failures before they happen.
 
               </h2>
 
@@ -624,7 +624,7 @@ export default function MaintenancePage() {
 
                 <p className="text-zinc-300 text-xl leading-9">
 
-                  EML transforms fleet operations using predictive AI,
+                  TM transforms fleet operations using predictive AI,
                   maintenance intelligence,
                   spare parts forecasting,
                   and autonomous industrial optimization.

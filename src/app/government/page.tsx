@@ -190,7 +190,7 @@ export default function GovernmentPage() {
 
               <Landmark size={20} />
 
-              EML GOVERNMENT PROCUREMENT SYSTEM
+              TM GOVERNMENT PROCUREMENT SYSTEM
 
             </div>
 
@@ -297,7 +297,7 @@ export default function GovernmentPage() {
 
               <h2 className="text-4xl font-black mb-6">
 
-                EML AI detects procurement risk and infrastructure anomalies.
+                TM AI detects procurement risk and infrastructure anomalies.
 
               </h2>
 
@@ -600,7 +600,7 @@ export default function GovernmentPage() {
 
                 <p className="text-zinc-300 text-xl leading-9">
 
-                  EML integrates procurement intelligence,
+                  TM integrates procurement intelligence,
                   contractor verification,
                   infrastructure monitoring,
                   government ERP,

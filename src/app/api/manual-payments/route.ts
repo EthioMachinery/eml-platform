@@ -1,3 +1,4 @@
+import { logEvent } from "@/core/logEvent";
 import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabaseClient";
 
@@ -22,6 +23,8 @@ export async function POST(req: Request) {
     !body?.amount ||
     !body?.payment_method
   ) {
+    // Structured event log — feeds CEO live stream
+    await logEvent({ id: crypto.randomUUID(), type: 'PAYMENT_INITIATED', title: 'Manual Payment', timestamp: new Date().toISOString() }).catch(() => {});
     return NextResponse.json(
       { success: false, error: "Invalid payload" },
       { status: 400 }

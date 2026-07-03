@@ -1,3 +1,4 @@
+import { logEvent } from "@/core/logEvent";
 import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabaseClient";
 

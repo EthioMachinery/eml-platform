@@ -271,7 +271,7 @@ export default function TendersPage() {
                       <button
                         type="button"
                         className="w-full md:w-auto px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-xs font-bold uppercase tracking-wider transition-all shadow-sm"
-                        onClick={() => alert(`EML Tender Registration. Processing administrative bidding document entry fee of 500 ETB.`)}
+                        onClick={() => alert(`TM Tender Registration. Processing administrative bidding document entry fee of 500 ETB.`)}
                       >
                         Register to Bid
                       </button>

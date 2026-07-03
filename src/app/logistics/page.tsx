@@ -168,8 +168,8 @@ export default function TransportPage() {
           <div className="max-w-4xl">
             <div className="inline-flex items-center gap-3 bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 px-5 py-3 rounded-full font-black mb-8">
               🚛 {t(
-                "EML Logistics Network",
-                "የEML ሎጂስቲክስ ኔትወርክ"
+                "TM Logistics Network",
+                "የTM ሎጂስቲክስ ኔትወርክ"
               )}
             </div>
 
@@ -182,8 +182,8 @@ export default function TransportPage() {
 
             <p className="mt-8 text-xl text-zinc-400 leading-9 max-w-3xl">
               {t(
-                "EML connects machinery owners, transport companies, lowbed operators, fuel logistics providers and project mobilization teams into one intelligent logistics ecosystem.",
-                "EML የማሽነሪ ባለቤቶችን፣ ትራንስፖርት ኩባንያዎችን, ሎቤድ ኦፕሬተሮችን እና የፕሮጀክት ሎጂስቲክስ ባለሙያዎችን በአንድ ስርዓት ያገናኛል።"
+                "TM connects machinery owners, transport companies, lowbed operators, fuel logistics providers and project mobilization teams into one intelligent logistics ecosystem.",
+                "TM የማሽነሪ ባለቤቶችን፣ ትራንስፖርት ኩባንያዎችን, ሎቤድ ኦፕሬተሮችን እና የፕሮጀክት ሎጂስቲክስ ባለሙያዎችን በአንድ ስርዓት ያገናኛል።"
               )}
             </p>
 
@@ -298,7 +298,7 @@ export default function TransportPage() {
         <div className="flex items-center justify-between mb-10">
           <div>
             <div className="text-yellow-400 font-black tracking-widest mb-3">
-              EML LOGISTICS
+              TM LOGISTICS
             </div>
             <h2 className="text-4xl font-black">
               {t("Verified Transport Providers", "የተረጋገጡ አጓጓዦች")}
@@ -321,8 +321,8 @@ export default function TransportPage() {
             </div>
             <p className="text-zinc-400 mb-8">
               {t(
-                "Be the first logistics provider in the EML ecosystem.",
-                "በEML ስርዓት ውስጥ የመጀመሪያው አጓጓዥ ይሁኑ።"
+                "Be the first logistics provider in the TM ecosystem.",
+                "በTM ስርዓት ውስጥ የመጀመሪያው አጓጓዥ ይሁኑ።"
               )}
             </p>
             <Link
@@ -437,7 +437,7 @@ export default function TransportPage() {
               
               <div className="max-w-3xl">
                 <div className="text-yellow-400 font-black tracking-widest mb-4">
-                  {t("EML VERIFIED LOGISTICS", "የየEML የተረጋገጠ ሎጂስቲክስ")}
+                  {t("TM VERIFIED LOGISTICS", "የየTM የተረጋገጠ ሎጂስቲክስ")}
                 </div>
                 <h2 className="text-4xl font-black mb-6">
                   {t(
@@ -447,8 +447,8 @@ export default function TransportPage() {
                 </h2>
                 <p className="text-zinc-300 leading-8 text-lg">
                   {t(
-                    "EML helps transporters, contractors and machinery owners connect through secure logistics workflows, verified transport providers and transparent transport requests.",
-                    "EML አጓጓዦችን፣ ተቋራጮችን እና የማሽነሪ ባለቤቶችን በደህንነቱ በተጠበቀ የሎጂስቲክስ ስርዓት ያገናኛል።"
+                    "TM helps transporters, contractors and machinery owners connect through secure logistics workflows, verified transport providers and transparent transport requests.",
+                    "TM አጓጓዦችን፣ ተቋራጮችን እና የማሽነሪ ባለቤቶችን በደህንነቱ በተጠበቀ የሎጂስቲክስ ስርዓት ያገናኛል።"
                   )}
                 </p>
               </div>

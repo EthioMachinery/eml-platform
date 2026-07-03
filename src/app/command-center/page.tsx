@@ -198,7 +198,7 @@ export default function CommandCenterPage() {
 
               <MonitorSmartphone size={20} />
 
-              EML COMMAND CENTER
+              TM COMMAND CENTER
 
             </div>
 
@@ -312,7 +312,7 @@ export default function CommandCenterPage() {
 
               <p className="text-zinc-300 text-lg leading-8">
 
-                EML Command Center orchestrates industrial infrastructure,
+                TM Command Center orchestrates industrial infrastructure,
                 enterprise systems,
                 AI agents,
                 governance networks,
@@ -613,13 +613,13 @@ export default function CommandCenterPage() {
 
                 <h2 className="text-5xl font-black mb-6 leading-tight">
 
-                  EML Command Center orchestrates sovereign industrial ecosystems
+                  TM Command Center orchestrates sovereign industrial ecosystems
 
                 </h2>
 
                 <p className="text-zinc-300 text-xl leading-9">
 
-                  EML Command Center transforms EML into a real-time industrial civilization operating system —
+                  TM Command Center transforms TM into a real-time industrial civilization operating system —
                   enabling unified orchestration,
                   AI-driven operations,
                   strategic ecosystem intelligence,

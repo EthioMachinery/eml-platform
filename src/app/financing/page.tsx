@@ -16,7 +16,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/supabaseClient";
 import { useLanguage } from "@/context/LanguageContext";
 
 export default function FinancingPage() {
@@ -126,8 +126,8 @@ export default function FinancingPage() {
           <div className="max-w-4xl">
             <div className="inline-flex items-center gap-3 bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 px-5 py-3 rounded-full font-black mb-8">
               💰 {t(
-                "EML Financing Ecosystem",
-                "የEML ፋይናንስ ስርዓት"
+                "TM Financing Ecosystem",
+                "የTM ፋይናንስ ስርዓት"
               )}
             </div>
 
@@ -140,8 +140,8 @@ export default function FinancingPage() {
 
             <p className="mt-8 text-xl text-zinc-400 leading-9 max-w-3xl">
               {t(
-                "EML connects contractors, machinery buyers, leasing companies, banks and financial institutions into one intelligent financing ecosystem.",
-                "EML ተቋራጮችን፣ የማሽነሪ ገዢዎችን፣ ባንኮችን እና የፋይናንስ ተቋማትን በአንድ ዘመናዊ ስርዓት ያገናኛል።"
+                "TM connects contractors, machinery buyers, leasing companies, banks and financial institutions into one intelligent financing ecosystem.",
+                "TM ተቋራጮችን፣ የማሽነሪ ገዢዎችን፣ ባንኮችን እና የፋይናንስ ተቋማትን በአንድ ዘመናዊ ስርዓት ያገናኛል።"
               )}
             </p>
 
@@ -286,7 +286,7 @@ export default function FinancingPage() {
                   </div>
 
                   <h3 className="text-2xl font-black mb-4">
-                    {item.company_name || item.bank_name || "EML Finance"}
+                    {item.company_name || item.bank_name || "TM Finance"}
                   </h3>
 
                   <div className="space-y-4 text-zinc-300">
@@ -338,7 +338,7 @@ export default function FinancingPage() {
             <div className="flex flex-col md:flex-row gap-8 md:items-center md:justify-between">
               <div className="max-w-3xl">
                 <div className="text-yellow-400 font-black tracking-widest mb-4">
-                  {t("EML VERIFIED FINANCING", "የEML የተረጋገጠ ፋይናንስ")}
+                  {t("TM VERIFIED FINANCING", "የTM የተረጋገጠ ፋይናንስ")}
                 </div>
                 <h2 className="text-4xl font-black mb-6">
                   {t(
@@ -348,8 +348,8 @@ export default function FinancingPage() {
                 </h2>
                 <p className="text-zinc-300 leading-8 text-lg">
                   {t(
-                    "EML helps contractors, fleet owners and machinery buyers access financing through verified institutions and intelligent financing workflows.",
-                    "EML ተቋራጮችን፣ የፍሊት ባለቤቶችን እና የማሽነሪ ገዢዎችን ከተረጋገጡ የፋይናንስ ተቋማት ጋር ያገናኛል።"
+                    "TM helps contractors, fleet owners and machinery buyers access financing through verified institutions and intelligent financing workflows.",
+                    "TM ተቋራጮችን፣ የፍሊት ባለቤቶችን እና የማሽነሪ ገዢዎችን ከተረጋገጡ የፋይናንስ ተቋማት ጋር ያገናኛል።"
                   )}
                 </p>
               </div>

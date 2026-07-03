@@ -16,7 +16,7 @@ import {
   BadgeCheck,
 } from "lucide-react";
 
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/supabaseClient";
 import { useLanguage } from "@/context/LanguageContext";
 
 export default function InsurancePage() {
@@ -126,8 +126,8 @@ export default function InsurancePage() {
           <div className="max-w-4xl">
             <div className="inline-flex items-center gap-3 bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 px-5 py-3 rounded-full font-black mb-8">
               🛡️ {t(
-                "EML Insurance Ecosystem",
-                "የEML ኢንሹራንስ ስርዓት"
+                "TM Insurance Ecosystem",
+                "የTM ኢንሹራንስ ስርዓት"
               )}
             </div>
 
@@ -140,8 +140,8 @@ export default function InsurancePage() {
 
             <p className="mt-8 text-xl text-zinc-400 leading-9 max-w-3xl">
               {t(
-                "EML connects contractors, machinery owners, transporters, rental businesses and insurance providers into one trusted ecosystem.",
-                "EML ተቋራጮችን፣ የማሽነሪ ባለቤቶችን፣ አጓጓዦችን፣ የኪራይ ንግዶችን እና የኢንሹራንስ ተቋማትን በአንድ ስርዓት ያገናኛል።"
+                "TM connects contractors, machinery owners, transporters, rental businesses and insurance providers into one trusted ecosystem.",
+                "TM ተቋራጮችን፣ የማሽነሪ ባለቤቶችን፣ አጓጓዦችን፣ የኪራይ ንግዶችን እና የኢንሹራንስ ተቋማትን በአንድ ስርዓት ያገናኛል።"
               )}
             </p>
 
@@ -286,7 +286,7 @@ export default function InsurancePage() {
                   </div>
 
                   <h3 className="text-2xl font-black mb-4">
-                    {item.company_name || "EML Insurance"}
+                    {item.company_name || "TM Insurance"}
                   </h3>
 
                   <div className="space-y-4 text-zinc-300">
@@ -338,7 +338,7 @@ export default function InsurancePage() {
             <div className="flex flex-col md:flex-row gap-8 md:items-center md:justify-between">
               <div className="max-w-3xl">
                 <div className="text-cyan-400 font-black tracking-widest mb-4">
-                  {t("EML VERIFIED PROTECTION", "የEML የተረጋገጠ ጥበቃ")}
+                  {t("TM VERIFIED PROTECTION", "የTM የተረጋገጠ ጥበቃ")}
                 </div>
                 <h2 className="text-4xl font-black mb-6">
                   {t(
@@ -348,8 +348,8 @@ export default function InsurancePage() {
                 </h2>
                 <p className="text-zinc-300 leading-8 text-lg">
                   {t(
-                    "EML helps contractors, machinery owners and logistics operators reduce operational risk through verified insurance systems.",
-                    "EML ተቋራጮችን፣ የማሽነሪ ባለቤቶችን እና አጓጓዦችን ከሪስክ ለመጠበቅ ያግዛል።"
+                    "TM helps contractors, machinery owners and logistics operators reduce operational risk through verified insurance systems.",
+                    "TM ተቋራጮችን፣ የማሽነሪ ባለቤቶችን እና አጓጓዦችን ከሪስክ ለመጠበቅ ያግዛል።"
                   )}
                 </p>
               </div>

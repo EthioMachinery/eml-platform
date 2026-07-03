@@ -223,7 +223,7 @@ export default function ContractorsPage() {
 
               <Building2 size={20} />
 
-              EML CONTRACTOR MARKETPLACE
+              TM CONTRACTOR MARKETPLACE
 
             </div>
 
@@ -336,7 +336,7 @@ export default function ContractorsPage() {
 
               <h2 className="text-4xl font-black mb-6">
 
-                EML AI predicts project demand,
+                TM AI predicts project demand,
                 machinery needs,
                 workforce requirements,
                 and procurement optimization.
@@ -695,7 +695,7 @@ export default function ContractorsPage() {
 
                 <p className="text-zinc-300 text-xl leading-9">
 
-                  EML connects projects,
+                  TM connects projects,
                   contractors,
                   machinery fleets,
                   operators,

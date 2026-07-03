@@ -18,7 +18,7 @@ export default function ReferralPage() {
     useState<Lang>("en");
 
   const [code] =
-    useState("EML-BT-2026");
+    useState("TM-BT-2026");
 
   const [copied,
     setCopied] =

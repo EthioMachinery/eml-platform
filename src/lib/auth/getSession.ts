@@ -1,5 +1,5 @@
 // src/lib/auth/getSession.ts
-// EML — Server-Side Session Helper
+// TM — Server-Side Session Helper
 //
 // Reads the authenticated user's identity from request headers.
 // The middleware (src/middleware.ts) validates the session and injects

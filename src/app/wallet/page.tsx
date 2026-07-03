@@ -113,11 +113,11 @@ export default function WalletPage() {
             
             <div>
               <div className="text-yellow-400 font-black tracking-[0.25em] mb-4">
-                ኢትዮ ማሽነሪ አገናኝ
+                ታማኝ ማሽነሪ
               </div>
 
               <h1 className="text-5xl font-black leading-tight mb-4">
-                Ethio Machinery Link
+                Trustworthy Machinery
               </h1>
 
               <div className="text-2xl font-black text-yellow-400 mb-6">
@@ -129,8 +129,8 @@ export default function WalletPage() {
 
               <p className="text-zinc-400 text-lg max-w-3xl leading-9">
                 {t(
-                  "Manage machinery transactions, commissions, withdrawals, Telebirr transfers, bank transfers and platform earnings securely inside the EML ecosystem.",
-                  "የማሽነሪ ግብይቶችን፣ ኮሚሽኖችን፣ የገንዘብ ማውጫዎችን፣ ቴሌብር እና ባንክ ክፍያዎችን በEML ስርዓት ውስጥ በደህንነት ያስተዳድሩ።"
+                  "Manage machinery transactions, commissions, withdrawals, Telebirr transfers, bank transfers and platform earnings securely inside the TM ecosystem.",
+                  "የማሽነሪ ግብይቶችን፣ ኮሚሽኖችን፣ የገንዘብ ማውጫዎችን፣ ቴሌብር እና ባንክ ክፍያዎችን በTM ስርዓት ውስጥ በደህንነት ያስተዳድሩ።"
                 )}
               </p>
             </div>
@@ -248,8 +248,8 @@ export default function WalletPage() {
 
             <p className="text-zinc-400 max-w-2xl mx-auto leading-8 mb-10">
               {t(
-                "Start buying, renting or posting machinery to activate the EML financial ecosystem.",
-                "የEML የፋይናንስ ስርዓትን ለማስጀመር ማሽነሪ ይግዙ፣ ይከራዩ ወይም ይለጥፉ።"
+                "Start buying, renting or posting machinery to activate the TM financial ecosystem.",
+                "የTM የፋይናንስ ስርዓትን ለማስጀመር ማሽነሪ ይግዙ፣ ይከራዩ ወይም ይለጥፉ።"
               )}
             </p>
 
@@ -294,7 +294,7 @@ export default function WalletPage() {
                         </div>
 
                         <div className="text-zinc-400 leading-8 max-w-3xl">
-                          {tx.note || t("EML Machinery Ecosystem Transaction", "የEML የማሽነሪ ስርዓት ግብይት")}
+                          {tx.note || t("TM Machinery Ecosystem Transaction", "የTM የማሽነሪ ስርዓት ግብይት")}
                         </div>
 
                         <div className="flex flex-wrap items-center gap-6 mt-5 text-sm text-zinc-500">

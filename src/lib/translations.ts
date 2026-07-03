@@ -1,107 +1,123 @@
 export const translations = {
-
   en: {
     // GENERAL
-    loading: "Loading...",
+    loading: "Loading Industrial Engine...",
     submit: "Submit",
     cancel: "Cancel",
+    save: "Save Changes",
     yes: "Yes",
     no: "No",
+    back: "Back",
+    all: "All Assets",
+    filter: "Filter Marketplace",
+    search: "Search Machinery...",
 
     // NAV / HEADER
-    dashboard: "Dashboard",
-    browse: "Browse Marketplace",
-    requests: "Requests",
-    notifications: "Notifications",
+    dashboard: "My Dashboard",
+    browse: "Browse Assets",
+    requests: "Machine Requests",
+    notifications: "System Alerts",
+    wallet: "Financial Ledger",
+    ceoWarRoom: "CEO Command Center",
+    adminPanel: "Admin Hub",
 
     // USER / AUTH
-    loggedInAs: "Logged in as",
-    role: "Role",
-    notSelected: "Not selected",
-    logout: "Logout",
+    loggedInAs: "Node Identity:",
+    role: "Operational Role",
+    notSelected: "Role Not Defined",
+    logout: "De-authenticate",
+    fullName: "Legal Full Name",
+    email: "Industrial Email",
+    phone: "Contact Line",
+    company: "Organization Name",
+    trustScore: "Ecosystem Trust Score",
+    verifiedUser: "KYC Verified",
+    bio: "Technical Background",
+    yearsExperience: "Industry Tenure (Years)",
 
     // ROLES
-    owner: "Machinery Owner",
-    renter: "Renter",
-    operatorRole: "Operator",
-    serviceProvider: "Service Provider",
+    owner: "Machinery Fleet Owner",
+    renter: "Heavy Equipment Renter",
+    operatorRole: "Certified Heavy Operator",
+    serviceProvider: "Maintenance Engineer",
+    inspector: "Safety Auditor",
+    logistics: "Logistics Coordinator",
 
-    // BROWSE MACHINERY
-    browseTitle: "Browse Marketplace",
-    boost: "Boost to Premium",
-    premium: "Premium",
-    type: "Type",
-    location: "Location",
-    price: "Price",
-    expires: "Expires",
+    // BROWSE & SEARCH
+    browseTitle: "Global Machinery Grid",
+    boost: "Accelerate Listing",
+    premium: "Elite Tier Asset",
+    type: "Asset Classification",
+    category: "Equipment Category",
+    location: "Geographic Region",
+    price: "Acquisition Cost",
+    rentPrice: "Daily Rental Rate",
+    expires: "Session Expiration",
+    condition: "Technical Condition",
+    year: "Year of Manufacture",
+    verifiedListing: "EML Certified Asset",
 
-    // BROWSE REQUESTS
-    browseRequestsTitle: "Browse Machine Requests",
-    machineTypePlaceholder: "Machine Type (Excavator, Loader...)",
-    noRequests: "No requests found",
-    posted: "Posted",
-    call: "Call",
+    // INQUIRY FORM
+    inquiry: {
+      title: "Initialize Secure Inquiry",
+      typeLabel: "Procurement Type",
+      placeholderName: "Enter your legal name",
+      placeholderMessage: "Describe your project scope and duration requirements...",
+      placeholderOther: "please specify, mention, describe or other appropriate means of description",
+      submit: "Transmit Message",
+      success: "Inquiry Synced to Cloud. Seller Notified via Telegram.",
+      error: "Transmission Error. Verify EML Node connection.",
+      options: {
+        purchase: "Direct Asset Purchase",
+        rental: "Strategic Rental Lease",
+        parts: "Component Procurement",
+        maintenance: "Technical Service Request",
+        operator: "Operator Deployment",
+        other: "Other (Specify Below)"
+      }
+    },
 
-    // PAYMENT
-    paymentInstructions: "Payment Instructions",
-    submitPayment: "Submit Payment",
-    transactionPlaceholder: "Transaction Reference",
-    loginRequired: "Please login first",
-    enterRef: "Please enter transaction reference",
-    successPayment: "Payment submitted successfully",
-    errorPayment: "Error submitting request",
+    // PAYMENT & ESCROW
+    paymentInstructions: "Secure Payout Protocols",
+    submitPayment: "Commit Transaction",
+    transactionPlaceholder: "Bank Ledger Reference ID",
+    loginRequired: "Identity Verification Required",
+    enterRef: "Reference ID must be strictly provided",
+    successPayment: "Funds Secured. Awaiting AI Document Audit.",
+    errorPayment: "Transaction Ledger Failure",
+    escrowSecure: "Atomic Escrow Active",
+    commission: "Network Service Fee",
 
-    // POST MACHINE
-    postMachine: "Post Machinery",
-    title: "Title",
-    model: "Model",
-    contact: "Contact",
-    posting: "Posting...",
-    fillRequired: "Please fill all required fields",
-    submitting: "Submitting...",
-    imageUploadError: "Image upload failed",
-    errorPosting: "Error posting machinery",
-    successPost: "Machinery posted successfully!",
+    // REVIEWS
+    reviews: {
+      title: "Verified Feedback",
+      write: "Rate the Transaction",
+      placeholder: "Detail the machine condition and operator professionalism...",
+      verified: "Verified Industrial Transaction",
+      ratingLabel: "Performance Rating",
+      submit: "Publish Feedback",
+      success: "Feedback published to the Global Trust Ledger.",
+      noReviews: "No verified historical data for this asset.",
+      impact: "Reputation Momentum"
+    },
 
-    // REQUEST
-    postRequest: "Post Machine Request",
-    budget: "Budget",
-    duration: "Duration",
-    description: "Description",
-    operator: "Operator Required",
+    // DASHBOARD & ANALYTICS
+    myMachinery: "Fleet Inventory",
+    noMachines: "No assets found in local node",
+    updateStatus: "Toggle Availability",
+    available: "Active / Ready",
+    rented: "Deployed to Site",
+    sold: "Transferred / Sold",
+    maintenance: "Offline / Repair",
+    revenue: "Network Revenue",
+    deals: "Escrow Pipeline",
+    findJobs: "Scan for Contracts",
+    offerServices: "Broadcast Services",
 
-    // MATCHING
-    matchingTitle: "Matching Requests",
-    matchScore: "Match Score",
-    noMatches: "No matching machines found",
-
-    // MY MACHINERY
-    myMachinery: "My Machinery",
-    noMachines: "You have not posted any machinery yet",
-    condition: "Condition",
-    year: "Year",
-    included: "Included",
-    notIncluded: "Not Included",
-    updateStatus: "Update Status",
-    available: "Available",
-    rented: "Rented",
-    sold: "Sold",
-    maintenance: "Maintenance",
-    edit: "Edit",
-    delete: "Delete",
-    deleteConfirm: "Are you sure you want to delete this machinery?",
-
-    // DASHBOARD ACTIONS
-    findJobs: "Find Jobs",
-    offerServices: "Offer Services",
-
-    // NOTIFICATIONS
-    noNotifications: "No notifications",
-
-    // MATCH ALERTS
-    machineMatch: "Machine Match Found",
-    matchFound: "matches your request",
-
+    // ALERTS
+    noNotifications: "Node Status: Nominal",
+    machineMatch: "Match Potential Detected",
+    matchFound: "Syncs with your active procurement request",
   },
 
   am: {
@@ -109,102 +125,119 @@ export const translations = {
     loading: "በመጫን ላይ...",
     submit: "አስገባ",
     cancel: "ይቅር",
+    save: "ለውጦችን መዝግብ",
     yes: "አዎ",
     no: "አይ",
+    back: "ተመለስ",
+    all: "ሁሉም",
+    filter: "አጣራ",
+    search: "ፈልግ...",
 
     // NAV
     dashboard: "ዳሽቦርድ",
     browse: "ገበያ",
-    requests: "ጥያቄዎች",
+    requests: "የማሽን ጥያቄዎች",
     notifications: "ማሳወቂያዎች",
+    wallet: "የኔ ቦርሳ",
+    ceoWarRoom: "ዋና መቆጣጠሪያ",
+    adminPanel: "የአስተዳዳሪ ክፍል",
 
     // USER
-    loggedInAs: "የገባው ተጠቃሚ",
+    loggedInAs: "የገባው ተጠቃሚ:",
     role: "ሚና",
     notSelected: "አልተመረጠም",
     logout: "ውጣ",
+    fullName: "ሙሉ ስም",
+    email: "ኢሜይል",
+    phone: "ስልክ ቁጥር",
+    company: "የድርጅት ስም",
+    trustScore: "የታማኝነት ነጥብ",
+    verifiedUser: "የተረጋገጠ ተጠቃሚ",
+    bio: "ስለ ተጠቃሚው",
+    yearsExperience: "የስራ ልምድ (በዓመት)",
 
     // ROLES
     owner: "የማሽን ባለቤት",
     renter: "ተከራይ",
     operatorRole: "ኦፕሬተር",
-    serviceProvider: "አገልግሎት ሰጪ",
+    serviceProvider: "የጥገና ባለሙያ",
+    inspector: "ቴክኒካል መርማሪ",
+    logistics: "የትራንስፖርት አቅራቢ",
 
-    // BROWSE MACHINERY
-    browseTitle: "ገበያ ይመልከቱ",
+    // BROWSE
+    browseTitle: "የማሽነሪ ገበያ",
     boost: "ፕሪሚየም አድርግ",
     premium: "ፕሪሚየም",
-    type: "አይነት",
+    type: "የማሽን አይነት",
+    category: "ምድብ",
     location: "አካባቢ",
-    price: "ዋጋ",
-    expires: "የሚያበቃበት",
+    price: "የሽያጭ ዋጋ",
+    rentPrice: "የኪራይ ዋጋ",
+    expires: "የሚያበቃበት ቀን",
+    condition: "የማሽኑ ሁኔታ",
+    year: "የተመረተበት ዓመት",
+    verifiedListing: "የተረጋገጠ ማሽን",
 
-    // BROWSE REQUESTS
-    browseRequestsTitle: "የማሽን ጥያቄዎች",
-    machineTypePlaceholder: "የማሽን አይነት (ኤክስካቫተር...)",
-    noRequests: "ምንም ጥያቄ የለም",
-    posted: "የተለጠፈ",
-    call: "ደውል",
+    // INQUIRY FORM
+    inquiry: {
+      title: "ጥያቄ ይላኩ",
+      typeLabel: "ምን አይነት ጥያቄ አለዎት?",
+      placeholderName: "ሙሉ ስምዎን ያስገቡ",
+      placeholderMessage: "የፍላጎትዎን ዝርዝር ወይም የፕሮጀክቱን ሁኔታ እዚህ ይግለጹ...",
+      placeholderOther: "እባክዎን ይጥቀሱ፣ ይጥቀሱ፣ ይግለጹ ወይም በሌላ ተገቢ መግለጫ ያብራሩ",
+      submit: "መልዕክት ላክ",
+      success: "ጥያቄዎ በትክክል ተልኳል! ባለቤቱ በቴሌግራም ይደርሰዋል።",
+      error: "ጥያቄውን ለመላክ አልተሳካም። እባክዎ ኢንተርኔትዎን ያረጋግጡ።",
+      options: {
+        purchase: "ለግዢ",
+        rental: "ለኪራይ",
+        parts: "መለዋወጫ ለመጠየቅ",
+        maintenance: "ለጥገና አገልግሎት",
+        operator: "ኦፕሬተር ለመቅጠር",
+        other: "ሌላ (እባክዎ ከታች ይጥቀሱ)"
+      }
+    },
 
     // PAYMENT
     paymentInstructions: "የክፍያ መመሪያ",
-    submitPayment: "ክፍያ አስገባ",
-    transactionPlaceholder: "የክፍያ ማስረጃ",
-    loginRequired: "እባክዎ ይግቡ",
-    enterRef: "ማስረጃ ያስገቡ",
-    successPayment: "ክፍያ ተላክ",
-    errorPayment: "ስህተት ተፈጥሯል",
+    submitPayment: "ክፍያ አረጋግጥ",
+    transactionPlaceholder: "የባንክ ማስተላለፊያ ቁጥር (Reference)",
+    loginRequired: "ለመቀጠል እባክዎ ይግቡ",
+    enterRef: "እባክዎ የክፍያ መለያ ቁጥሩን ያስገቡ",
+    successPayment: "ማስረጃው ለምርመራ ቀርቧል",
+    errorPayment: "ማስረጃውን መላክ አልተሳካም",
+    escrowSecure: "አስተማማኝ ክፍያ",
+    commission: "የአገልግሎት ክፍያ",
 
-    // POST MACHINE
-    postMachine: "ማሽን አስገባ",
-    title: "ርዕስ",
-    model: "ሞዴል",
-    contact: "ስልክ",
-    posting: "በማስገባት ላይ...",
-    fillRequired: "እባክዎ ሁሉንም ያስገቡ",
-    submitting: "በመላክ ላይ...",
-    imageUploadError: "ምስል መጫን አልተሳካም",
-    errorPosting: "ስህተት ተፈጥሯል",
-    successPost: "ማሽኑ ተሳክቷል",
-
-    // REQUEST
-    postRequest: "ጥያቄ አስገባ",
-    budget: "በጀት",
-    duration: "ጊዜ",
-    description: "መግለጫ",
-    operator: "ኦፕሬተር ያስፈልጋል",
-
-    // MATCHING
-    matchingTitle: "የሚገኙ ማሽኖች",
-    matchScore: "የተመሳሳይነት ውጤት",
-    noMatches: "ምንም የሚስማማ ማሽን የለም",
-
-    // MY MACHINERY
-    myMachinery: "የኔ ማሽኖች",
-    noMachines: "ምንም ማሽን አልገባችሁም",
-    condition: "ሁኔታ",
-    year: "ዓመት",
-    included: "አለ",
-    notIncluded: "የለም",
-    updateStatus: "ሁኔታ አዘምን",
-    available: "ዝግጁ",
-    rented: "ተከራይቷል",
-    sold: "ተሽጧል",
-    maintenance: "ጥገና",
-    edit: "አርትዕ",
-    delete: "ሰርዝ",
-    deleteConfirm: "ይህን ማሽን ማጥፋት ይፈልጋሉ?",
+    // REVIEWS
+    reviews: {
+      title: "የተጠቃሚዎች ምስክርነት",
+      write: "ልምድዎን ያጋሩ",
+      placeholder: "ስለ ማሽኑ ሁኔታ እና ስለ ባለቤቱ አያያዝ ያብራሩ...",
+      verified: "የተረጋገጠ ግዢ",
+      ratingLabel: "አጠቃላይ ደረጃ",
+      submit: "ምስክርነት አስገባ",
+      success: "ምስክርነትዎ በታማኝነት መዝገብ ላይ ተመዝግቧል።",
+      noReviews: "እስካሁን የተሰጠ ምስክርነት የለም።",
+      impact: "በታማኝነት ነጥብ ላይ ያለው ተጽዕኖ"
+    },
 
     // DASHBOARD
+    myMachinery: "የኔ ማሽኖች",
+    noMachines: "እስካሁን ምንም ማሽን አላስመዘገቡም",
+    updateStatus: "ሁኔታውን ቀይር",
+    available: "ዝግጁ",
+    rented: "የተከራየ",
+    sold: "የተሸጠ",
+    maintenance: "ጥገና ላይ",
+    revenue: "ጠቅላላ ገቢ",
+    deals: "የተደረጉ ስምምነቶች",
     findJobs: "ስራ ፈልግ",
     offerServices: "አገልግሎት አቅርብ",
 
-    // NOTIFICATIONS
-    noNotifications: "ምንም የለም",
-
-    // MATCH ALERTS
-    machineMatch: "ተመሳሳይ ማሽን ተገኝቷል",
+    // ALERTS
+    noNotifications: "ምንም አዲስ ማሳወቂያ የለም",
+    machineMatch: "አዲስ ማሽን ተገኝቷል",
     matchFound: "ከጥያቄዎ ጋር ይስማማል",
   },
-
 };

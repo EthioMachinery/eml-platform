@@ -202,7 +202,7 @@ export default function SuppliersPage() {
 
               <Warehouse size={20} />
 
-              EML SUPPLIER MARKETPLACE
+              TM SUPPLIER MARKETPLACE
 
             </div>
 
@@ -310,7 +310,7 @@ export default function SuppliersPage() {
 
               <h2 className="text-4xl font-black mb-6">
 
-                EML AI analyzes supplier reliability,
+                TM AI analyzes supplier reliability,
                 inventory demand,
                 delivery performance,
                 and procurement optimization.
@@ -659,7 +659,7 @@ export default function SuppliersPage() {
 
                 <p className="text-zinc-300 text-xl leading-9">
 
-                  EML connects suppliers,
+                  TM connects suppliers,
                   contractors,
                   machinery fleets,
                   operators,

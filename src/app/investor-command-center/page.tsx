@@ -37,7 +37,7 @@ export default function InvestorCommandCenterPage() {
     {
       icon: "🏆",
       title: "First Mover Advantage",
-      desc: "EML can become the category leader before traditional players digitize.",
+      desc: "TM can become the category leader before traditional players digitize.",
     },
   ];
 
@@ -74,8 +74,8 @@ export default function InvestorCommandCenterPage() {
 
           <p className="mt-6 text-lg md:text-xl text-white/85 max-w-3xl mx-auto">
             {t(
-              "EML is building Ethiopia's leading machinery super app with scalable revenue and Pan-African expansion potential.",
-              "EML የኢትዮጵያ መሪ የማሽነሪ ሱፐር አፕ እየገነባ ነው፣ ሊሰፋ የሚችል ገቢ እና የአፍሪካ ስፋት እድል አለው።"
+              "TM is building Ethiopia's leading machinery super app with scalable revenue and Pan-African expansion potential.",
+              "TM የኢትዮጵያ መሪ የማሽነሪ ሱፐር አፕ እየገነባ ነው፣ ሊሰፋ የሚችል ገቢ እና የአፍሪካ ስፋት እድል አለው።"
             )}
           </p>
 
@@ -119,7 +119,7 @@ export default function InvestorCommandCenterPage() {
       {/* WHY INVEST */}
       <section className="max-w-7xl mx-auto px-4 py-16">
         <h2 className="text-4xl font-black text-center mb-10">
-          Why EML Wins
+          Why TM Wins
         </h2>
 
         <div className="grid md:grid-cols-2 gap-6">
@@ -193,8 +193,8 @@ export default function InvestorCommandCenterPage() {
 
           <p className="mt-4 text-white/80 max-w-2xl mx-auto">
             {t(
-              "EML combines marketplace scale, fintech revenue and industrial trust infrastructure.",
-              "EML የገበያ መጠን፣ fintech ገቢ እና የኢንዱስትሪ እምነት መሠረትን ያጣምራል።"
+              "TM combines marketplace scale, fintech revenue and industrial trust infrastructure.",
+              "TM የገበያ መጠን፣ fintech ገቢ እና የኢንዱስትሪ እምነት መሠረትን ያጣምራል።"
             )}
           </p>
 

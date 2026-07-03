@@ -194,7 +194,7 @@ export default function AIAgentsPage() {
 
               <Bot size={20} />
 
-              EML AI AGENTS
+              TM AI AGENTS
 
             </div>
 
@@ -212,7 +212,7 @@ export default function AIAgentsPage() {
               financing,
               infrastructure monitoring,
               industrial optimization,
-              and operational decision-making across the EML ecosystem.
+              and operational decision-making across the TM ecosystem.
 
             </p>
 
@@ -308,7 +308,7 @@ export default function AIAgentsPage() {
 
               <p className="text-zinc-300 text-lg leading-8">
 
-                EML AI Agents continuously coordinate industrial operations,
+                TM AI Agents continuously coordinate industrial operations,
                 optimize logistics,
                 forecast risks,
                 negotiate procurement pathways,
@@ -636,7 +636,7 @@ export default function AIAgentsPage() {
 
                 <p className="text-zinc-300 text-xl leading-9">
 
-                  EML AI Agents transform industrial systems into autonomous,
+                  TM AI Agents transform industrial systems into autonomous,
                   intelligent,
                   self-optimizing infrastructure ecosystems capable of acting independently across operational workflows.
 

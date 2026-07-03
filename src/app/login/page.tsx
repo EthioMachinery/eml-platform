@@ -4,16 +4,16 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ShieldCheck, Sparkles } from "lucide-react";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/supabaseClient";
 import { useLanguage } from "@/context/LanguageContext";
 import EnterpriseInput from "@/components/EnterpriseInput";
 
 const localLoginTranslations: Record<string, Record<string, string>> = {
   "login_title": {
-    en: "Sign In to Your EML Account",
-    am: "ወደ EML አካውንትዎ ይግቡ",
-    or: "Akkaawuntii EML Keessan Seenaa",
-    ti: "ናብ ናይ EML ኣካውንትኩም እተው"
+    en: "Sign In to Your TM Account",
+    am: "ወደ TM አካውንትዎ ይግቡ",
+    or: "Akkaawuntii TM Keessan Seenaa",
+    ti: "ናብ ናይ TM ኣካውንትኩም እተው"
   },
   "login_subtitle": {
     en: "Access your verified industrial identity",
@@ -113,7 +113,7 @@ export default function LoginPage() {
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 px-5 py-2 rounded-full font-black text-xs mb-6">
             <Sparkles size={16} />
-            EML ENTERPRISE IDENTITY
+            TM ENTERPRISE IDENTITY
           </div>
           <div className="w-16 h-16 mx-auto rounded-3xl bg-yellow-500/10 flex items-center justify-center mb-5">
             <ShieldCheck className="text-yellow-400" size={32} />

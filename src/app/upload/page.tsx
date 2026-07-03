@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Upload, ImagePlus, CheckCircle2 } from "lucide-react";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/supabaseClient";
 import { useEnterpriseTranslation } from "@/hooks/useEnterpriseTranslation";
 
 const CATEGORIES = [

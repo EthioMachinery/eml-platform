@@ -1,6 +1,6 @@
 import { supabase } from "@/lib/supabaseClient";
 import { CEOAutopilot } from "@/core/ceoAutopilot";
-import { Deal } from "@/core/emlCore";
+import { Deal } from "@/core/tmCore";
 
 /**
  * =========================

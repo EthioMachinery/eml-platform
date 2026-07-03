@@ -1,3 +1,4 @@
+import { logEvent } from "@/core/logEvent";
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
@@ -21,7 +22,8 @@ export async function POST(req: NextRequest) {
     const { transactionRef, escrowId, paymentMethod, senderPhone, amountReceived } = payload;
 
     if (!transactionRef || !escrowId || !amountReceived) {
-      return NextResponse.json(
+      await logEvent({ id: crypto.randomUUID(), type: "PAYMENT_COMPLETED", title: "Payment Verified", timestamp: new Date().toISOString() }).catch(() => {});
+    return NextResponse.json(
         { error: "Missing required transactional parameters in request." },
         { status: 400 }
       );
@@ -95,7 +97,7 @@ export async function POST(req: NextRequest) {
       throw updateListingError;
     }
 
-    // 6. Log EML Platform Commissions directly into the revenue ledger (Autopilot Profit)
+    // 6. Log TM Platform Commissions directly into the revenue ledger (Autopilot Profit)
     const { error: logRevenueError } = await supabaseAdmin
       .from("revenue")
       .insert([
@@ -113,16 +115,18 @@ export async function POST(req: NextRequest) {
       console.error("Critical warning: Failed to write commission ledger row:", logRevenueError);
     }
 
+    // Structured event log — feeds CEO live stream
+    await logEvent({ id: crypto.randomUUID(), type: 'PAYMENT_COMPLETED', title: 'Payment Verified', timestamp: new Date().toISOString() }).catch(() => {});
     return NextResponse.json({
       success: true,
       transactionId: escrowId,
       newEscrowStage: "funded",
       emlCommissionEarned: escrowRecord.eml_commission_fee,
-      message: "Payment verified successfully. EML commission logged, and escrow account is funded."
+      message: "Payment verified successfully. TM commission logged, and escrow account is funded."
     });
 
   } catch (err: any) {
-    console.error("EML Automated Verification Exception:", err);
+    console.error("TM Automated Verification Exception:", err);
     return NextResponse.json(
       { error: err.message || "Internal server error during transaction processing." },
       { status: 500 }

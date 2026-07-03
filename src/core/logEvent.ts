@@ -1,8 +1,8 @@
 import { supabase } from "@/lib/supabaseClient";
 import { liveEventBus } from "./liveEventBus";
-import { EMLActivityEvent } from "./eventTypes";
+import { TMActivityEvent } from "./eventTypes";
 
-export async function logEvent(event: EMLActivityEvent) {
+export async function logEvent(event: TMActivityEvent) {
   // 1. Save to database (SOURCE OF TRUTH)
   const { error } = await supabase.from("eml_events").insert({
     id: event.id,
@@ -22,5 +22,5 @@ export async function logEvent(event: EMLActivityEvent) {
   // 2. Emit locally for instant UI response
   liveEventBus.emit(event);
 
-  console.log("[EML EVENT SAVED]", event.type);
+  console.log("[TM EVENT SAVED]", event.type);
 }

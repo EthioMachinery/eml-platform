@@ -1,17 +1,9 @@
-import en from "@/translations/en";
-import am from "@/translations/am";
-import or from "@/translations/or";
-import ti from "@/translations/ti";
+import { enterprise } from "@/lib/i18n/dictionary";
 
 export type Language = "en" | "am" | "or" | "ti";
 export type Lang = Language;
 
-export const translations: Record<string, any> = {
-  en,
-  am,
-  or,
-  ti,
-};
+export const translations: Record<string, any> = enterprise;
 
 export function getLang(): Lang {
   if (typeof window === "undefined") {

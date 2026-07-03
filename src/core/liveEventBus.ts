@@ -1,11 +1,11 @@
-import { EMLActivityEvent } from "./eventTypes";
+import { TMActivityEvent } from "./eventTypes";
 
-type Listener = (event: EMLActivityEvent) => void;
+type Listener = (event: TMActivityEvent) => void;
 
 class LiveEventBus {
   private listeners: Listener[] = [];
 
-  emit(event: EMLActivityEvent) {
+  emit(event: TMActivityEvent) {
     this.listeners.forEach((listener) => listener(event));
   }
 

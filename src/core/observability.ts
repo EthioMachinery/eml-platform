@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabaseClient";
-import { Deal } from "@/core/emlCore";
+import { Deal } from "@/core/tmCore";
 
 /**
  * =========================

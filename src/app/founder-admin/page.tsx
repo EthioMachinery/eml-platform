@@ -78,8 +78,8 @@ export default function FounderAdminPage() {
 
           <p className="mt-6 text-lg md:text-xl text-white/85 max-w-3xl mx-auto">
             {t(
-              "Run EML like a unicorn startup with live revenue, growth, operations and AI intelligence.",
-              "EMLን እንደ ዩኒኮርን ኩባንያ በቀጥታ ገቢ፣ እድገት፣ ኦፕሬሽን እና AI ጥበብ ያስተዳድሩ።"
+              "Run TM like a unicorn startup with live revenue, growth, operations and AI intelligence.",
+              "TMን እንደ ዩኒኮርን ኩባንያ በቀጥታ ገቢ፣ እድገት፣ ኦፕሬሽን እና AI ጥበብ ያስተዳድሩ።"
             )}
           </p>
 

@@ -110,7 +110,7 @@ export default function SparePartsPage() {
               Spare Parts Hub
             </h1>
             <p className="text-sm text-zinc-400">
-              Source genuine heavy machinery engine components, undercarriage tracks, and hydraulic lines under EML Escrow protection.
+              Source genuine heavy machinery engine components, undercarriage tracks, and hydraulic lines under TM Escrow protection.
             </p>
           </div>
 

@@ -121,7 +121,7 @@ export default function RegisterPage() {
           <div className="max-w-5xl">
             <div className="inline-flex items-center gap-3 bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 px-6 py-3 rounded-full font-black mb-6">
               <Sparkles size={20} />
-              EML ENTERPRISE IDENTITY
+              TM ENTERPRISE IDENTITY
             </div>
             <h1 className="text-4xl md:text-6xl font-black leading-tight">
               {tr("register.title")}
@@ -162,7 +162,7 @@ export default function RegisterPage() {
                   <div className="text-2xl font-black">
                     {step === 1 ? tr("register.step1") : tr("register.step2")}
                   </div>
-                  <div className="text-zinc-400 text-sm mt-1">EML Ecosystem Identity Gateway</div>
+                  <div className="text-zinc-400 text-sm mt-1">TM Ecosystem Identity Gateway</div>
                 </div>
               </div>
 
@@ -189,7 +189,7 @@ export default function RegisterPage() {
                     />
                     <EnterpriseInput
                       label={tr("forms.email")}
-                      placeholder="partner@ethiomachinery.com"
+                      placeholder="partner@trustworthymachinery.com"
                       value={email}
                       onChange={setEmail}
                       type="email"
@@ -283,7 +283,7 @@ export default function RegisterPage() {
                 </div>
               </div>
               <p className="text-zinc-300 leading-8">
-                EML AI automatically builds your industrial profile, trust score, business classification, operational intelligence, and ecosystem compatibility.
+                TM AI automatically builds your industrial profile, trust score, business classification, operational intelligence, and ecosystem compatibility.
               </p>
             </div>
 

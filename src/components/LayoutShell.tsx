@@ -21,7 +21,7 @@ export default function LayoutShell({
             href="/"
             className="font-black text-yellow-400"
           >
-            EML
+            TM
           </Link>
 
           <div className="flex items-center gap-4 text-sm">
@@ -162,7 +162,7 @@ export default function LayoutShell({
           {/* COPYRIGHT */}
           <div className="mt-10 pt-8 border-t border-zinc-800 text-center text-sm text-zinc-500">
 
-            © {year} Ethio Machinery Link
+            © {year} Trustworthy Machinery
 
           </div>
 

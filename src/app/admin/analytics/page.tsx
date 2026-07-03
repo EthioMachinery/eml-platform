@@ -27,7 +27,7 @@ import {
 
 import Link from "next/link";
 
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/supabaseClient";
 
 export default function AdminAnalyticsPage() {
   const [loading, setLoading] =
@@ -232,7 +232,7 @@ export default function AdminAnalyticsPage() {
 
               <Bot size={20} />
 
-              EML ENTERPRISE INTELLIGENCE
+              TM ENTERPRISE INTELLIGENCE
 
             </div>
 

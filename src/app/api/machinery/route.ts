@@ -1,5 +1,6 @@
+import { logEvent } from "@/core/logEvent";
 // src/app/api/machinery/route.ts
-// EML — Machinery Listings API
+// TM — Machinery Listings API
 // GET: Public browse with composite filters (no auth required)
 // POST: Create a new listing (auth required — seller or admin only)
 

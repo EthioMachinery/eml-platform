@@ -228,7 +228,7 @@ export default function ERPPage() {
 
               <Brain size={20} />
 
-              EML INDUSTRIAL ERP CORE
+              TM INDUSTRIAL ERP CORE
 
             </div>
 
@@ -338,7 +338,7 @@ export default function ERPPage() {
 
               <h2 className="text-4xl font-black mb-6">
 
-                EML AI automates industrial operations across the enterprise.
+                TM AI automates industrial operations across the enterprise.
 
               </h2>
 
@@ -620,7 +620,7 @@ export default function ERPPage() {
 
                 <p className="text-zinc-300 text-xl leading-9">
 
-                  EML integrates procurement,
+                  TM integrates procurement,
                   logistics,
                   maintenance,
                   fleet operations,

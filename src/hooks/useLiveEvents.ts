@@ -3,10 +3,10 @@
 import { useEffect, useState } from "react";
 import { liveEventBus } from "@/core/liveEventBus";
 import { supabase } from "@/lib/supabaseClient";
-import { EMLActivityEvent } from "@/core/eventTypes";
+import { TMActivityEvent } from "@/core/eventTypes";
 
 export function useLiveEvents() {
-  const [events, setEvents] = useState<EMLActivityEvent[]>([]);
+  const [events, setEvents] = useState<TMActivityEvent[]>([]);
 
   useEffect(() => {
     let mounted = true;
@@ -62,7 +62,7 @@ export function useLiveEvents() {
         (payload) => {
           const d = payload.new;
 
-          const event: EMLActivityEvent = {
+          const event: TMActivityEvent = {
             id: d.id,
             type: d.type,
             title: d.title,

@@ -1,5 +1,5 @@
-import { EMLActivityEvent } from "./eventTypes";
-import { EMLCore } from "./emlCore";
+import { TMActivityEvent } from "./eventTypes";
+import { TMCore } from "./tmCore";
 
 export type AutomationAction =
   | "SCORE_DEAL"
@@ -9,7 +9,7 @@ export type AutomationAction =
   | "SEND_ALERT";
 
 export class AutomationEngine {
-  static async process(event: EMLActivityEvent) {
+  static async process(event: TMActivityEvent) {
     switch (event.type) {
       case "DEAL_CREATED":
         return this.handleDealCreated(event);
@@ -25,13 +25,13 @@ export class AutomationEngine {
     }
   }
 
-  static handleDealCreated(event: EMLActivityEvent) {
+  static handleDealCreated(event: TMActivityEvent) {
     const deal = {
       id: event.entityId || "",
       price: event.metadata?.price || 0,
     };
 
-    const analysis = EMLCore.ai.scoreDeal(deal);
+    const analysis = TMCore.ai.scoreDeal(deal);
 
     console.log("[AUTOMATION] Deal analysis:", analysis);
 
@@ -42,19 +42,19 @@ export class AutomationEngine {
     return this.trigger("SCORE_DEAL", event);
   }
 
-  static handleRequestPosted(event: EMLActivityEvent) {
+  static handleRequestPosted(event: TMActivityEvent) {
     console.log("[AUTOMATION] Matching request...");
 
     return this.trigger("TRIGGER_MATCHING", event);
   }
 
-  static handlePayment(event: EMLActivityEvent) {
+  static handlePayment(event: TMActivityEvent) {
     console.log("[AUTOMATION] Updating trust score...");
 
     return this.trigger("UPDATE_TRUST", event);
   }
 
-  static trigger(action: AutomationAction, event: EMLActivityEvent) {
+  static trigger(action: AutomationAction, event: TMActivityEvent) {
     console.log("[ACTION TRIGGERED]", action);
 
     return {

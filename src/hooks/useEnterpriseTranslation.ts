@@ -3,24 +3,9 @@
 import { useLanguage }
   from "@/context/LanguageContext";
 
-import en
-  from "@/translations/en";
+import { enterprise } from "@/lib/i18n/dictionary";
 
-import am
-  from "@/translations/am";
-
-import or
-  from "@/translations/or";
-
-import ti
-  from "@/translations/ti";
-
-const dictionaries = {
-  en,
-  am,
-  or,
-  ti,
-};
+const dictionaries = enterprise;
 
 export function useEnterpriseTranslation() {
   const {
@@ -35,14 +20,14 @@ export function useEnterpriseTranslation() {
       ];
 
     if (!dictionary) {
-      return (en as Record<string, any>)[key] || key;
+      return (dictionaries.en as Record<string, any>)[key] || key;
     }
 
     return (
       dictionary[
         key as keyof typeof dictionary
       ] ||
-      (en as Record<string, any>)[key] ||
+      (dictionaries.en as Record<string, any>)[key] ||
       key
     );
   }

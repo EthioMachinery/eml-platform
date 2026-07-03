@@ -9,10 +9,10 @@ import { supabase } from "@/lib/supabaseClient";
 
 const localEscrowTranslations: Record<string, Record<string, string>> = {
   "portal_title": {
-    en: "EML Secure Escrow Portal",
-    am: "የ EML ታማኝ የክፍያ ዋስትና መድረክ",
-    or: "Dabaree Kafaltii Wabii EML",
-    ti: "መድረኽ ውሑስ ክፍሊት EML"
+    en: "TM Secure Escrow Portal",
+    am: "የ TM ታማኝ የክፍያ ዋስትና መድረክ",
+    or: "Dabaree Kafaltii Wabii TM",
+    ti: "መድረኽ ውሑስ ክፍሊት TM"
   },
   "portal_desc": {
     en: "Secure heavy machinery transactions in Ethiopia. Funds are released to suppliers, operators, or haulers only as milestones are verified.",
@@ -28,17 +28,17 @@ const localEscrowTranslations: Record<string, Record<string, string>> = {
   },
   "milestone_1": { en: "1. Fund Escrow Wallet", am: "፩. የዋስትና አካውንቱን ይሙሉ", or: "1. Waletii Wabii Kafali", ti: "፩. መአከቢ ክፍሊት ምልኣት" },
   "milestone_1_desc": {
-    en: "Buyer deposits the total balance into EML secure holding.",
-    am: "ገዢው ጠቅላላውን የዋስትና ገንዘብ በEML አስተማማኝ የዋስትና አካውንት ውስጥ ያስቀምጣል።",
-    or: "Bitiin guutuu kaffaltii herrega wabii EML keessatti dhangalaasa.",
-    ti: "ዓዳጊ ምሉእ መጠን ክፍሊት ኣብ ናይ EML ውሑስ ሕሳብ የቐምጥ።"
+    en: "Buyer deposits the total balance into TM secure holding.",
+    am: "ገዢው ጠቅላላውን የዋስትና ገንዘብ በTM አስተማማኝ የዋስትና አካውንት ውስጥ ያስቀምጣል።",
+    or: "Bitiin guutuu kaffaltii herrega wabii TM keessatti dhangalaasa.",
+    ti: "ዓዳጊ ምሉእ መጠን ክፍሊት ኣብ ናይ TM ውሑስ ሕሳብ የቐምጥ።"
   },
   "milestone_2": { en: "2. Certified Inspection Check", am: "፪. የተረጋገጠ የማሽነሪ ምርመራ", or: "2. Mirkaneessa Gamaggamaa", ti: "፪. ዝተረጋገጸ ምርመራ ማሽን" },
   "milestone_2_desc": {
-    en: "Independent EML certified inspector performs checks. Post verification, the inspection fee is released.",
-    am: "የተረጋገጠ የEML ባለሙያ ማሽኑን ይፈትሻል። ከምርመራ በኋላ የባለሙያ ክፍያ ይለቀቃል።",
+    en: "Independent TM certified inspector performs checks. Post verification, the inspection fee is released.",
+    am: "የተረጋገጠ የTM ባለሙያ ማሽኑን ይፈትሻል። ከምርመራ በኋላ የባለሙያ ክፍያ ይለቀቃል።",
     or: "Ogeessi mirkanaaye maashinicha qorata. Mirkaneessaan booda kaffaltiin ogeessaa ni gadi lakkifama.",
-    ti: "ዝተረጋገጸ ናይ EML ኪኢላ ነቲ ማሽን ይምረምሮ። ድሕሪ ምርግጋጽ ክፍሊት እቲ ኪኢላ ይለቐቕ።"
+    ti: "ዝተረጋገጸ ናይ TM ኪኢላ ነቲ ማሽን ይምረምሮ። ድሕሪ ምርግጋጽ ክፍሊት እቲ ኪኢላ ይለቐቕ።"
   },
   "milestone_3": { en: "3. Heavy Transport Dispatch", am: "፫. የከባድ ጫኝ ትራንስፖርት ስምሪት", or: "3. Geessiba Maashinarii Fe'i", ti: "፫. መጓዓዝቲ ከበድቲ ማሽነሪታት" },
   "milestone_3_desc": {
@@ -49,16 +49,16 @@ const localEscrowTranslations: Record<string, Record<string, string>> = {
   },
   "milestone_4": { en: "4. Final Site Verification", am: "፬. የመጨረሻ ስራ ቦታ ርክክብ", or: "4. Mirkaneessa Hojii dhumaa", ti: "፬. ናይ መወዳእታ ምርጋጽ ቦታ ስራሕ" },
   "milestone_4_desc": {
-    en: "Buyer verifies on-site operations. Remaining balance is released to the machinery owner, and the EML commission is settled.",
-    am: "ገዢው በስራ ቦታው ላይ ማሽኑን ተረክቦ ያረጋግጣል። ቀሪው ገንዘብ ለአቅራቢው ይለቀቃል፣ የEML ኮሚሽንም ይቆረጣል።",
-    or: "Bitiin iddoo hojiitti maashinicha mirkaneessa. Kaffaltiin hafe abbaa maashiniif gadi lakkifama, komishiniin EML ni murama.",
-    ti: "ዓዳጊ ኣብ ቦታ ስራሕ ነቲ ማሽን ተረኪቡ የረጋግጽ። ዝተረፈ ክፍሊት ንዋና ማሽን ይለቐቕ፣ ናይ EML ኮሚሽን ይቑረጽ።"
+    en: "Buyer verifies on-site operations. Remaining balance is released to the machinery owner, and the TM commission is settled.",
+    am: "ገዢው በስራ ቦታው ላይ ማሽኑን ተረክቦ ያረጋግጣል። ቀሪው ገንዘብ ለአቅራቢው ይለቀቃል፣ የTM ኮሚሽንም ይቆረጣል።",
+    or: "Bitiin iddoo hojiitti maashinicha mirkaneessa. Kaffaltiin hafe abbaa maashiniif gadi lakkifama, komishiniin TM ni murama.",
+    ti: "ዓዳጊ ኣብ ቦታ ስራሕ ነቲ ማሽን ተረኪቡ የረጋግጽ። ዝተረፈ ክፍሊት ንዋና ማሽን ይለቐቕ፣ ናይ TM ኮሚሽን ይቑረጽ።"
   },
   "financial_title": { en: "Financial Split Breakdown", am: "የክፍያ ክፍፍል ዝርዝር", or: "Ibsa Kafaltii Hiramaa", ti: "ዝርዝር ምክፍፋል ክፍሊት" },
   "include_insp": { en: "Include Certified Inspection", am: "የማሽነሪ ምርመራን አካትት", or: "Mirkaneessa Gamaggamaa dabaladhu", ti: "ምርመራ ማሽን ኣእትው" },
   "include_log": { en: "Include Logistics Transport", am: "የሎጂስቲክስ መጓጓዣን አካትት", or: "Geessiba Maashinarii dabaladhu", ti: "መጓዓዝቲ ማሽን ኣእትው" },
   "listed_price": { en: "Machinery Listed Price:", am: "የማሽኑ መደበኛ ዋጋ፡", or: "Gatii Maashinarii Galmeeffame:", ti: "ዋጋ ማሽን፡" },
-  "platform_fee": { en: "EML Platform Fee (3%):", am: "የ EML ፕላትፎርም ክፍያ (3%)፡", or: "Kafaltii Platform EML (3%):", ti: "ክፍሊት መድረኽ EML (3%)፡" },
+  "platform_fee": { en: "TM Platform Fee (3%):", am: "የ TM ፕላትፎርም ክፍያ (3%)፡", or: "Kafaltii Platform TM (3%):", ti: "ክፍሊት መድረኽ TM (3%)፡" },
   "insp_alloc": { en: "Inspector Allocation (1.5%):", am: "የባለሙያ መገምገሚያ ክፍያ (1.5%)፡", or: "Kafaltii Qorataa (1.5%):", ti: "ክፍሊት መርማሪ (1.5%)፡" },
   "log_alloc": { en: "Logistics Allocation (2.5%):", am: "የከባድ ጫኝ መኪና ክፍያ (2.5%)፡", or: "Kafaltii Geessibaa (2.5%):", ti: "ክፍሊት መጓዓዝቲ (2.5%)፡" },
   "net_payout": { en: "Supplier Net Payout:", am: "ለአቅራቢው የተጣራ ክፍያ፡", or: "Kafaltii Qulqulluu Dhiyeessaa:", ti: "የተረጋገጸ ክፍሊት ኣቕራቢ፡" },
@@ -78,8 +78,8 @@ const localEscrowTranslations: Record<string, Record<string, string>> = {
   "login_btn": { en: "Sign In", am: "ግባ", or: "Seeni", ti: "እተው" },
   "change_listing_btn": { en: "Change Listing", am: "ዝርዝር ይቀይሩ", or: "Tarreffama Jijjiiri", ti: "ዝርዝር ቀይር" },
   "direct_warning": {
-    en: "Note: This escrow protection is optional. Direct payment bypasses EML financial protection and holds zero platform guarantees.",
-    am: "ማሳሰቢያ፡ ይህ የዋስትና ክፍያ አማራጭ ነው። ቀጥታ ክፍያ የ EML የፋይናንስ ጥበቃን ያልፋል፤ እንዲሁም ምንም አይነት የፕላትፎርም ዋስትና የለውም።",
+    en: "Note: This escrow protection is optional. Direct payment bypasses TM financial protection and holds zero platform guarantees.",
+    am: "ማሳሰቢያ፡ ይህ የዋስትና ክፍያ አማራጭ ነው። ቀጥታ ክፍያ የ TM የፋይናንስ ጥበቃን ያልፋል፤ እንዲሁም ምንም አይነት የፕላትፎርም ዋስትና የለውም።",
     or: "Hubachiisa: Kafaltiin wabii kun filannoo dha. Kafaltiin kallattii daldala keessan balaadhaaf saaxila, wabummaa platform hin qabu.",
     ti: "መተሓሳሰቢ፡ እዚ ናይ ዋስትና ክፍሊት ኣማራጺ እዩ። ቀጥታዊ ክፍሊት ውሕስነት የብሉን፣ ዋስትና መድረኽ እውን ኣይህብን።"
   }

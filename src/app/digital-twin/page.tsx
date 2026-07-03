@@ -195,7 +195,7 @@ export default function DigitalTwinPage() {
 
               <Orbit size={20} />
 
-              EML DIGITAL TWIN SYSTEM
+              TM DIGITAL TWIN SYSTEM
 
             </div>
 
@@ -308,7 +308,7 @@ export default function DigitalTwinPage() {
 
               <p className="text-zinc-300 text-lg leading-8">
 
-                EML Digital Twin technology creates intelligent real-time models of industrial systems,
+                TM Digital Twin technology creates intelligent real-time models of industrial systems,
                 infrastructure operations,
                 machinery ecosystems,
                 transport networks,
@@ -635,7 +635,7 @@ export default function DigitalTwinPage() {
 
                 <p className="text-zinc-300 text-xl leading-9">
 
-                  EML Digital Twin technology transforms infrastructure operations into intelligent,
+                  TM Digital Twin technology transforms infrastructure operations into intelligent,
                   predictive,
                   AI-powered simulation ecosystems capable of forecasting industrial risks before they occur.
 

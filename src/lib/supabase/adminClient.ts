@@ -1,5 +1,5 @@
 // src/lib/supabase/adminClient.ts
-// EML — Centralized Administrative Supabase Client
+// TM — Centralized Administrative Supabase Client
 //
 // This is the ONLY place the Service Role key is used in this project.
 // Import this client in all /api/* route handlers.
@@ -23,14 +23,14 @@ const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl) {
   throw new Error(
-    '[EML] Missing environment variable: NEXT_PUBLIC_SUPABASE_URL\n' +
+    '[TM] Missing environment variable: NEXT_PUBLIC_SUPABASE_URL\n' +
     'Add it to your .env.local file.'
   );
 }
 
 if (!supabaseServiceRoleKey) {
   throw new Error(
-    '[EML] Missing environment variable: SUPABASE_SERVICE_ROLE_KEY\n' +
+    '[TM] Missing environment variable: SUPABASE_SERVICE_ROLE_KEY\n' +
     'Add it to your .env.local file.\n' +
     'NEVER expose this key to the browser or commit it to Git.'
   );

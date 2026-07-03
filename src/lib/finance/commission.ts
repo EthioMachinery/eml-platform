@@ -1,5 +1,5 @@
 // src/lib/finance/commission.ts
-// EML — Commission Calculation Engine
+// TM — Commission Calculation Engine
 //
 // Reads commission rules from public.commission_settings and calculates
 // the exact breakdown for any deal. All amounts are in ETB (Ethiopian Birr).
@@ -23,7 +23,7 @@ export type DealType = 'PURCHASE' | 'RENTAL' | 'LEASE';
 export interface CommissionBreakdown {
   gross_amount:       number;   // Full deal value in ETB
   commission_rate:    number;   // Percentage applied (e.g. 2.5)
-  commission_amount:  number;   // ETB earned by EML (always rounded up)
+  commission_amount:  number;   // ETB earned by TM (always rounded up)
   seller_receives:    number;   // ETB paid out to seller
   currency:           string;   // Always 'ETB'
 }
@@ -55,7 +55,7 @@ export async function getCommissionRate(dealType: DealType): Promise<number> {
 
   if (error || !data) {
     console.warn(
-      `[EML] commission_settings: no rate found for deal_type "${dealType}". ` +
+      `[TM] commission_settings: no rate found for deal_type "${dealType}". ` +
       `Using default: ${DEFAULT_RATES[dealType]}%`
     );
     return DEFAULT_RATES[dealType];

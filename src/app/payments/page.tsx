@@ -59,11 +59,11 @@ export default function PaymentsPage() {
 
         <div className="max-w-4xl mb-16">
           <div className="text-yellow-400 font-black tracking-widest mb-4">
-            ኢትዮ ማሽነሪ አገናኝ
+            ታማኝ ማሽነሪ
           </div>
 
           <h1 className="text-6xl font-black leading-tight mb-6">
-            Ethio Machinery Link
+            Trustworthy Machinery
           </h1>
 
           <div className="text-3xl font-black text-yellow-400 mb-8">
@@ -75,8 +75,8 @@ export default function PaymentsPage() {
 
           <p className="text-zinc-400 text-xl leading-9">
             {t(
-              "EML supports Telebirr, mobile banking, bank transfers and enterprise-level commission management built for the Ethiopian machinery ecosystem.",
-              "EML ለኢትዮጵያ የማሽነሪ ስርዓት የተገነባ ቴሌብር፣ ሞባይል ባንኪንግ፣ ባንክ ዝውውር እና የኮሚሽን ስርዓትን ይደግፋል።"
+              "TM supports Telebirr, mobile banking, bank transfers and enterprise-level commission management built for the Ethiopian machinery ecosystem.",
+              "TM ለኢትዮጵያ የማሽነሪ ስርዓት የተገነባ ቴሌብር፣ ሞባይል ባንኪንግ፣ ባንክ ዝውውር እና የኮሚሽን ስርዓትን ይደግፋል።"
             )}
           </p>
         </div>
@@ -117,15 +117,15 @@ export default function PaymentsPage() {
 
             <h2 className="text-4xl font-black mb-4">
               {t(
-                "Open EML Payment Center",
-                "የEML ክፍያ ማዕከል ይክፈቱ"
+                "Open TM Payment Center",
+                "የTM ክፍያ ማዕከል ይክፈቱ"
               )}
             </h2>
 
             <p className="text-zinc-400 max-w-3xl leading-8">
               {t(
-                "Escrow is optional. EML is optimized for Ethiopian payment realities while maintaining enterprise-level transaction protection.",
-                "ኤስክሮው አማራጭ ነው። EML ለኢትዮጵያ የክፍያ ሁኔታዎች ተስማሚ ሆኖ በኢንተርፕራይዝ ደረጃ የግብይት ጥበቃ ያቀርባል።"
+                "Escrow is optional. TM is optimized for Ethiopian payment realities while maintaining enterprise-level transaction protection.",
+                "ኤስክሮው አማራጭ ነው። TM ለኢትዮጵያ የክፍያ ሁኔታዎች ተስማሚ ሆኖ በኢንተርፕራይዝ ደረጃ የግብይት ጥበቃ ያቀርባል።"
               )}
             </p>
           </div>

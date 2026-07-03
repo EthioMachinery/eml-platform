@@ -197,7 +197,7 @@ export default function MarketIntelligencePage() {
 
               <Radar size={20} />
 
-              EML MARKET INTELLIGENCE
+              TM MARKET INTELLIGENCE
 
             </div>
 
@@ -310,7 +310,7 @@ export default function MarketIntelligencePage() {
 
               <p className="text-zinc-300 text-lg leading-8">
 
-                EML Market Intelligence predicts industrial demand,
+                TM Market Intelligence predicts industrial demand,
                 infrastructure growth,
                 logistics movement,
                 procurement trends,
@@ -610,13 +610,13 @@ export default function MarketIntelligencePage() {
 
                 <h2 className="text-5xl font-black mb-6 leading-tight">
 
-                  EML Market Intelligence powers predictive industrial ecosystems
+                  TM Market Intelligence powers predictive industrial ecosystems
 
                 </h2>
 
                 <p className="text-zinc-300 text-xl leading-9">
 
-                  EML Market Intelligence transforms EML into a strategic industrial intelligence civilization —
+                  TM Market Intelligence transforms TM into a strategic industrial intelligence civilization —
                   enabling predictive planning,
                   AI-driven market forecasting,
                   infrastructure growth modeling,

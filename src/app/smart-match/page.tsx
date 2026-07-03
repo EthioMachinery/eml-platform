@@ -17,7 +17,7 @@ import {
   Cpu,
 } from "lucide-react";
 
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/supabaseClient";
 import { useLanguage } from "@/context/LanguageContext";
 
 export default function SmartMatchPage() {
@@ -127,8 +127,8 @@ export default function SmartMatchPage() {
           <div className="max-w-5xl">
             <div className="inline-flex items-center gap-3 bg-violet-500/10 border border-violet-500/20 text-violet-400 px-5 py-3 rounded-full font-black mb-8">
               🤖 {t(
-                "EML Artificial Intelligence Engine",
-                "የEML የሰው ሰራሽ አስተዋይነት ስርዓት"
+                "TM Artificial Intelligence Engine",
+                "የTM የሰው ሰራሽ አስተዋይነት ስርዓት"
               )}
             </div>
 
@@ -141,8 +141,8 @@ export default function SmartMatchPage() {
 
             <p className="mt-8 text-xl text-zinc-400 leading-9 max-w-4xl">
               {t(
-                "EML automatically connects machinery buyers, sellers, transporters, contractors, financiers, insurance providers and service providers using intelligent AI matching.",
-                "EML የማሽነሪ ገዢዎችን፣ ሻጮችን፣ አጓጓዦችን፣ ተቋራጮችን፣ ፋይናንስ ተቋማትን፣ ኢንሹራንስ አቅራቢዎችን እና አገልግሎት ሰጪዎችን AI በመጠቀም ያገናኛል።"
+                "TM automatically connects machinery buyers, sellers, transporters, contractors, financiers, insurance providers and service providers using intelligent AI matching.",
+                "TM የማሽነሪ ገዢዎችን፣ ሻጮችን፣ አጓጓዦችን፣ ተቋራጮችን፣ ፋይናንስ ተቋማትን፣ ኢንሹራንስ አቅራቢዎችን እና አገልግሎት ሰጪዎችን AI በመጠቀም ያገናኛል።"
               )}
             </p>
 
@@ -245,8 +245,8 @@ export default function SmartMatchPage() {
               </div>
               <p className="text-zinc-400 mb-8">
                 {t(
-                  "Start AI matching requests through EML.",
-                  "የAI ማገናኛ ጥያቄዎችን በEML ይጀምሩ።"
+                  "Start AI matching requests through TM.",
+                  "የAI ማገናኛ ጥያቄዎችን በTM ይጀምሩ።"
                 )}
               </p>
               <Link
@@ -278,7 +278,7 @@ export default function SmartMatchPage() {
                   </div>
 
                   <h3 className="text-2xl font-black mb-4">
-                    {item.title || "EML AI Match"}
+                    {item.title || "TM AI Match"}
                   </h3>
 
                   <div className="space-y-4 text-zinc-300">
@@ -331,7 +331,7 @@ export default function SmartMatchPage() {
               
               <div className="max-w-3xl">
                 <div className="text-violet-400 font-black tracking-widest mb-4">
-                  {t("EML AI INTELLIGENCE", "የEML AI አስተዋይነት")}
+                  {t("TM AI INTELLIGENCE", "የTM AI አስተዋይነት")}
                 </div>
                 <h2 className="text-4xl font-black mb-6">
                   {t(
@@ -341,8 +341,8 @@ export default function SmartMatchPage() {
                 </h2>
                 <p className="text-zinc-300 leading-8 text-lg">
                   {t(
-                    "EML transforms machinery commerce into a smart enterprise ecosystem powered by intelligent automation and AI matching.",
-                    "EML የማሽነሪ ግብይትን AI እና አውቶሜሽን የሚመራ ዘመናዊ ስርዓት ያደርገዋል።"
+                    "TM transforms machinery commerce into a smart enterprise ecosystem powered by intelligent automation and AI matching.",
+                    "TM የማሽነሪ ግብይትን AI እና አውቶሜሽን የሚመራ ዘመናዊ ስርዓት ያደርገዋል።"
                   )}
                 </p>
               </div>

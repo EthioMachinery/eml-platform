@@ -1,4 +1,4 @@
-import { EMLCore, Deal, RiskLevel } from "./emlCore";
+import { TMCore, Deal, RiskLevel } from "./tmCore";
 
 /**
  * ================================
@@ -23,7 +23,7 @@ export const DealIntelligence = {
    * MAIN SCORING ENGINE
    */
   rankDeal(deal: Deal): DealRank {
-    const risk = EMLCore.ai.detectFraud(deal);
+    const risk = TMCore.ai.detectFraud(deal);
 
     let score = 50; // base score
     const reason: string[] = [];

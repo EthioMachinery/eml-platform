@@ -1,79 +1,66 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { LanguageCode } from '@/constants/languages';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { legacy as translations } from '@/lib/i18n/dictionary';
+import { LANGUAGES, Language } from '@/lib/i18n/config';
 
-interface LanguageContextProps {
-  language: LanguageCode;
-  setLanguage: (lang: LanguageCode) => void;
-  isPending: boolean;
+interface LanguageContextType {
+  language: Language;
+  setLanguage: (lang: Language) => void;
+  t: (path: string) => string;
 }
 
-const LanguageContext = createContext<LanguageContextProps | undefined>(undefined);
+const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
-export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [language, setLanguageState] = useState<LanguageCode>('en');
-  const [isPending, setIsPending] = useState(true);
+export function LanguageProvider({ children }: { children: React.ReactNode }) {
+  const [language, setLanguageState] = useState<Language>('en');
 
   useEffect(() => {
-    // 1. Resolve client language on mount (checking query param, then localStorage, then browser language)
-    const params = new URLSearchParams(window.location.search);
-    const queryLang = params.get('lang') as LanguageCode;
-    const savedLang = localStorage.getItem('eml_locale') as LanguageCode;
-    
-    let resolvedLang: LanguageCode = 'en';
-    if (queryLang && ['en', 'am', 'or', 'ti'].includes(queryLang)) {
-      resolvedLang = queryLang;
-      localStorage.setItem('eml_locale', queryLang);
-    } else if (savedLang && ['en', 'am', 'or', 'ti'].includes(savedLang)) {
-      resolvedLang = savedLang;
-    } else {
-      const browserLang = navigator.language.slice(0, 2);
-      resolvedLang = ['am', 'or', 'ti'].includes(browserLang) 
-        ? (browserLang as LanguageCode) 
-        : 'en';
-    }
-    
-    setLanguageState(resolvedLang);
-    document.documentElement.setAttribute('lang', resolvedLang);
-    setIsPending(false);
-
-    // 2. Register EML PWA Service Worker for offline resilience
-    if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
-          .then((registration) => {
-            console.log('EML Service Worker registered successfully. Scope:', registration.scope);
-          })
-          .catch((error) => {
-            console.error('EML Service Worker registration failed:', error);
-          });
-      });
-    }
+    const saved = localStorage.getItem('eml_lang') as Language;
+    if (saved && translations[saved]) setLanguageState(saved);
   }, []);
 
-  const setLanguage = (lang: LanguageCode) => {
-    setIsPending(true);
+  const setLanguage = (lang: Language) => {
     setLanguageState(lang);
-    localStorage.setItem('eml_locale', lang);
-    document.documentElement.setAttribute('lang', lang);
-    
-    // Notify other windows/instances
-    window.dispatchEvent(new Event('eml_language_changed'));
-    setIsPending(false);
+    localStorage.setItem('eml_lang', lang);
+  };
+
+  // Safe translation helper inside the provider
+  const t = (path: string): string => {
+    try {
+      const keys = path.split('.');
+      let current: any = translations[language] || translations['en'];
+
+      for (const key of keys) {
+        if (current && current[key] !== undefined) {
+          current = current[key];
+        } else {
+          const fallback = (translations['en'] as any)[key];
+          return typeof fallback === 'string' ? fallback : path;
+        }
+      }
+      return typeof current === 'string' ? current : path;
+    } catch (e) {
+      return path;
+    }
   };
 
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, isPending }}>
+    <LanguageContext.Provider value={{ language, setLanguage, t }}>
       {children}
     </LanguageContext.Provider>
   );
 }
 
-export function useLanguage() {
+export function useI18n() {
   const context = useContext(LanguageContext);
-  if (!context) {
-    throw new Error('useLanguage must be utilized within a LanguageProvider wrapper.');
+  // Return a fallback object so the app doesn't crash if used outside provider
+  if (context === undefined) {
+    return {
+      language: 'en' as Language,
+      setLanguage: () => {},
+      t: (s: string) => s
+    };
   }
-  return context;
+  return { ...context, lang: context.language };
 }

@@ -20,8 +20,8 @@ export default function GlobalNavbar() {
         <div className="flex flex-col leading-tight">
           <span className="text-xs text-gray-500 font-medium">
             {language === "am"
-              ? "ኢትዮ ማሽነሪ አገናኝ"
-              : "Ethio Machinery Link"}
+              ? "ታማኝ ማሽነሪ"
+              : "Trustworthy Machinery"}
           </span>
         </div>
 

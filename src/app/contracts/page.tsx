@@ -16,7 +16,7 @@ import {
   Wallet,
 } from "lucide-react";
 
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/supabaseClient";
 import { useLanguage } from "@/context/LanguageContext";
 
 export default function ContractsPage() {
@@ -126,8 +126,8 @@ export default function ContractsPage() {
           <div className="max-w-4xl">
             <div className="inline-flex items-center gap-3 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-5 py-3 rounded-full font-black mb-8">
               📄 {t(
-                "EML Smart Contract Infrastructure",
-                "የEML ዘመናዊ የውል ስርዓት"
+                "TM Smart Contract Infrastructure",
+                "የTM ዘመናዊ የውል ስርዓት"
               )}
             </div>
 
@@ -140,8 +140,8 @@ export default function ContractsPage() {
 
             <p className="mt-8 text-xl text-zinc-400 leading-9 max-w-3xl">
               {t(
-                "EML provides trusted contract infrastructure for machinery transactions, rentals, logistics, financing and enterprise operations.",
-                "EML ለማሽነሪ ግብይት፣ ለኪራይ፣ ለሎጂስቲክስ፣ ለፋይናንስ እና ለድርጅት ስራዎች የታመነ የውል ስርዓት ያቀርባል።"
+                "TM provides trusted contract infrastructure for machinery transactions, rentals, logistics, financing and enterprise operations.",
+                "TM ለማሽነሪ ግብይት፣ ለኪራይ፣ ለሎጂስቲክስ፣ ለፋይናንስ እና ለድርጅት ስራዎች የታመነ የውል ስርዓት ያቀርባል።"
               )}
             </p>
 
@@ -244,8 +244,8 @@ export default function ContractsPage() {
               </div>
               <p className="text-zinc-400 mb-8">
                 {t(
-                  "Start your first enterprise contract through EML.",
-                  "የመጀመሪያውን የድርጅት ውል በEML ይጀምሩ።"
+                  "Start your first enterprise contract through TM.",
+                  "የመጀመሪያውን የድርጅት ውል በTM ይጀምሩ።"
                 )}
               </p>
               <Link
@@ -277,7 +277,7 @@ export default function ContractsPage() {
                   </div>
 
                   <h3 className="text-2xl font-black mb-4">
-                    {item.title || "EML Contract"}
+                    {item.title || "TM Contract"}
                   </h3>
 
                   <div className="space-y-4 text-zinc-300">
@@ -329,7 +329,7 @@ export default function ContractsPage() {
             <div className="flex flex-col md:flex-row gap-8 md:items-center md:justify-between">
               <div className="max-w-3xl">
                 <div className="text-emerald-400 font-black tracking-widest mb-4">
-                  {t("EML LEGAL TRUST", "የEML ህጋዊ እምነት")}
+                  {t("TM LEGAL TRUST", "የTM ህጋዊ እምነት")}
                 </div>
                 <h2 className="text-4xl font-black mb-6">
                   {t(
@@ -339,8 +339,8 @@ export default function ContractsPage() {
                 </h2>
                 <p className="text-zinc-300 leading-8 text-lg">
                   {t(
-                    "EML helps reduce disputes, improve trust and protect transactions through enterprise-level contract systems.",
-                    "EML በድርጅት ደረጃ የውል ስርዓት በመጠቀም ክርክሮችን ይቀንሳል፣ እምነትን ያሳድጋል እና ግብይቶችን ይጠብቃል።"
+                    "TM helps reduce disputes, improve trust and protect transactions through enterprise-level contract systems.",
+                    "TM በድርጅት ደረጃ የውል ስርዓት በመጠቀም ክርክሮችን ይቀንሳል፣ እምነትን ያሳድጋል እና ግብይቶችን ይጠብቃል።"
                   )}
                 </p>
               </div>

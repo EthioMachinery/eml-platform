@@ -178,7 +178,7 @@ export default function CreditAIPage() {
 
               <Brain size={20} />
 
-              EML INDUSTRIAL CREDIT AI
+              TM INDUSTRIAL CREDIT AI
 
             </div>
 
@@ -286,7 +286,7 @@ export default function CreditAIPage() {
 
               <h2 className="text-4xl font-black mb-6">
 
-                EML AI predicts financing risk before failures happen.
+                TM AI predicts financing risk before failures happen.
 
               </h2>
 
@@ -599,7 +599,7 @@ export default function CreditAIPage() {
 
                 <p className="text-zinc-300 text-xl leading-9">
 
-                  EML combines financing intelligence,
+                  TM combines financing intelligence,
                   contractor scoring,
                   supplier reliability,
                   procurement trust,

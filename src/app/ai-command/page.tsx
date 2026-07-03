@@ -190,7 +190,7 @@ export default function AICommandPage() {
 
               <Brain size={20} />
 
-              EML AI COMMAND CENTER
+              TM AI COMMAND CENTER
 
             </div>
 
@@ -299,7 +299,7 @@ export default function AICommandPage() {
 
               <h2 className="text-4xl font-black mb-6">
 
-                EML AI continuously learns from the entire industrial ecosystem.
+                TM AI continuously learns from the entire industrial ecosystem.
 
               </h2>
 
@@ -613,7 +613,7 @@ export default function AICommandPage() {
 
                 <p className="text-zinc-300 text-xl leading-9">
 
-                  EML AI Command Center integrates financing,
+                  TM AI Command Center integrates financing,
                   procurement,
                   logistics,
                   infrastructure analytics,

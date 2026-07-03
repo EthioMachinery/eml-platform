@@ -201,7 +201,7 @@ export default function DataExchangePage() {
 
               <Database size={20} />
 
-              EML DATA EXCHANGE
+              TM DATA EXCHANGE
 
             </div>
 
@@ -314,7 +314,7 @@ export default function DataExchangePage() {
 
               <p className="text-zinc-300 text-lg leading-8">
 
-                EML Data Exchange orchestrates secure industrial data movement across logistics,
+                TM Data Exchange orchestrates secure industrial data movement across logistics,
                 procurement,
                 infrastructure systems,
                 governments,
@@ -615,13 +615,13 @@ export default function DataExchangePage() {
 
                 <h2 className="text-5xl font-black mb-6 leading-tight">
 
-                  EML Data Exchange powers industrial intelligence flow
+                  TM Data Exchange powers industrial intelligence flow
 
                 </h2>
 
                 <p className="text-zinc-300 text-xl leading-9">
 
-                  EML Data Exchange transforms industrial data into a sovereign intelligence economy —
+                  TM Data Exchange transforms industrial data into a sovereign intelligence economy —
                   enabling AI ecosystems,
                   infrastructure systems,
                   logistics intelligence,
@@ -644,11 +644,11 @@ export default function DataExchangePage() {
                 </Link>
 
                 <Link
-                  href="/eml-cloud"
+                  href="/tm-cloud"
                   className="border border-zinc-700 hover:border-zinc-500 font-black px-8 py-5 rounded-2xl transition"
                 >
 
-                  EML Cloud
+                  TM Cloud
 
                 </Link>
 

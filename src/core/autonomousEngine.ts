@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabaseClient";
-import { EMLCore, Deal } from "@/core/emlCore";
+import { TMCore, Deal } from "@/core/tmCore";
 import { AutoTrigger } from "@/core/autoTrigger";
 
 type ExecutionMode =
@@ -33,7 +33,7 @@ export class AutonomousEngine {
       deals.map((deal) => ({
         deal,
         score:
-          EMLCore.ai.scoreDeal(
+          TMCore.ai.scoreDeal(
             deal
           ),
       }));

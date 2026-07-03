@@ -72,7 +72,7 @@ export async function fetchLocalizedProfessionals(
         specialtyTokens,
         experienceYears: item.experience_years || 5,
         locationToken: item.location_token || "addis_ababa",
-        phone: item.phone_number || "Contact via EML",
+        phone: item.phone_number || "Contact via TM",
         verified: item.is_verified || false,
         dailyRate: item.daily_rate || 1500,
         bio: item.bio || "",

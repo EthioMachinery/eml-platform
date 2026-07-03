@@ -1,194 +1,55 @@
-import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { type NextRequest } from 'next/server';
+import { z } from 'zod';
+import { supabaseAdmin } from '@/lib/supabase/adminClient';
+import { successResponse, errorResponse, internalError } from '@/lib/api/response';
+import { TelegramService } from '@/lib/telegram';
 
-export const dynamic = "force-dynamic";
+const NotifySchema = z.object({
+  target_user_id: z.string().uuid(),
+  type: z.enum(['INQUIRY', 'REVIEW', 'PAYMENT', 'MATCH']),
+  data: z.record(z.any()),
+});
 
-export async function GET() {
+/**
+ * POST /api/auto-notify
+ * High-speed industrial notification bridge.
+ */
+export async function POST(request: NextRequest) {
   try {
-    const supabaseUrl =
-      process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const body = await request.json();
+    const val = NotifySchema.safeParse(body);
+    if (!val.success) return errorResponse("Invalid notification payload", 400);
 
-    const serviceKey =
-      process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const { target_user_id, type, data } = val.data;
 
-    if (
-      !supabaseUrl ||
-      !serviceKey
-    ) {
-      return NextResponse.json(
-        {
-          success: false,
-          error:
-            "Missing Supabase environment variables",
-        },
-        { status: 500 }
-      );
+    // 1. Fetch user profile to get Telegram ID and Language preference
+    const { data: profile } = await supabaseAdmin
+      .from('profiles')
+      .select('telegram_chat_id, language')
+      .eq('id', target_user_id)
+      .single();
+
+    if (!profile?.telegram_chat_id) {
+      return successResponse({ status: 'SKIPPED', reason: 'USER_NOT_LINKED_TO_TELEGRAM' });
     }
 
-    const supabase =
-      createClient(
-        supabaseUrl,
-        serviceKey
-      );
-
-    /* LOAD DATA */
-    const {
-      data: listings,
-    } = await supabase
-      .from("machinery")
-      .select("*");
-
-    const {
-      data: requests,
-    } = await supabase
-      .from(
-        "machinery_requests"
-      )
-      .select("*");
-
-    const {
-      data: premium,
-    } = await supabase
-      .from(
-        "premium_users"
-      )
-      .select("*")
-      .eq(
-        "status",
-        "approved"
-      );
-
-    let created = 0;
-
-    /* REQUESTS -> LISTINGS MATCH */
-    for (const req of requests || []) {
-      for (const item of listings || []) {
-        let score = 0;
-
-        if (
-          req.type === item.type
-        )
-          score += 60;
-
-        if (
-          req.location ===
-          item.location
-        )
-          score += 30;
-
-        if (
-          req.sale_or_rental ===
-          item.sale_or_rental
-        )
-          score += 10;
-
-        if (score >= 70) {
-          const title =
-            "New Match Found";
-
-          const body =
-            `${item.title} matches your request`;
-
-          const {
-            data: exists,
-          } = await supabase
-            .from(
-              "notifications"
-            )
-            .select("id")
-            .eq(
-              "user_id",
-              req.owner_id
-            )
-            .eq(
-              "title",
-              title
-            )
-            .eq(
-              "body",
-              body
-            )
-            .maybeSingle();
-
-          if (!exists) {
-            await supabase
-              .from(
-                "notifications"
-              )
-              .insert([
-                {
-                  user_id:
-                    req.owner_id,
-                  title,
-                  body,
-                  read: false,
-                },
-              ]);
-
-            created++;
-          }
-        }
-      }
-    }
-
-    /* PREMIUM REMINDER */
-    for (const p of premium || []) {
-      const title =
-        "Premium Reminder";
-
-      const body =
-        "Your premium plan is active. Renew before expiry.";
-
-      const {
-        data: exists,
-      } = await supabase
-        .from(
-          "notifications"
-        )
-        .select("id")
-        .eq(
-          "user_id",
-          p.user_id
-        )
-        .eq(
-          "title",
-          title
-        )
-        .maybeSingle();
-
-      if (!exists) {
-        await supabase
-          .from(
-            "notifications"
-          )
-          .insert([
-            {
-              user_id:
-                p.user_id,
-              title,
-              body,
-              read: false,
-            },
-          ]);
-
-        created++;
-      }
-    }
-
-    return NextResponse.json({
-      success: true,
-      notifications_created:
-        created,
-    });
-  } catch (error: any) {
-    return NextResponse.json(
-      {
-        success: false,
-        error:
-          error.message ||
-          "Server error",
-      },
-      { status: 500 }
+    // 2. Format the message
+    const message = TelegramService.formatAlert(
+      type, 
+      data, 
+      (profile.language as 'en' | 'am') || 'en'
     );
+
+    // 3. Dispatch via Telegram Bot API
+    const result = await TelegramService.sendMessage(profile.telegram_chat_id, message);
+
+    if (result) {
+      return successResponse({ status: 'SENT', message_id: result.message_id });
+    } else {
+      return errorResponse("Telegram dispatch failed", 500);
+    }
+
+  } catch (err) {
+    return internalError(err, 'POST /api/auto-notify');
   }
 }

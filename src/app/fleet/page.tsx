@@ -23,7 +23,7 @@ import {
   Wrench,
 } from "lucide-react";
 
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/supabaseClient";
 import { useLanguage } from "@/context/LanguageContext";
 
 type FleetMachine = {
@@ -92,8 +92,8 @@ export default function FleetPage() {
             <div className="inline-flex items-center gap-3 bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 px-5 py-3 rounded-full font-black mb-8">
               <Truck size={20} />
               {t(
-                "EML ENTERPRISE FLEET MARKETPLACE",
-                "የEML የኢንተርፕራይዝ ፍሊት ገበያ"
+                "TM ENTERPRISE FLEET MARKETPLACE",
+                "የTM የኢንተርፕራይዝ ፍሊት ገበያ"
               )}
             </div>
 
@@ -204,8 +204,8 @@ export default function FleetPage() {
 
               <p className="text-zinc-300 text-lg leading-8">
                 {t(
-                  "EML AI continuously analyzes fleet activity, operator performance, regional demand, transport efficiency, and machinery utilization.",
-                  "EML AI የፍሊት እንቅስቃሴን፣ የኦፕሬተር አፈፃፀምን፣ የክልል ፍላጎትን፣ የትራንስፖርት ብቃትን እና የማሽነሪ አጠቃቀምን በቀጣይነት ይመረምራል።"
+                  "TM AI continuously analyzes fleet activity, operator performance, regional demand, transport efficiency, and machinery utilization.",
+                  "TM AI የፍሊት እንቅስቃሴን፣ የኦፕሬተር አፈፃፀምን፣ የክልል ፍላጎትን፣ የትራንስፖርት ብቃትን እና የማሽነሪ አጠቃቀምን በቀጣይነት ይመረምራል።"
                 )}
               </p>
             </div>
@@ -408,8 +408,8 @@ export default function FleetPage() {
                 "AI የጥገና ስርዓት"
               )}
               text={t(
-                "Predictive maintenance powered by EML AI.",
-                "በEML AI የተደገፈ ቅድመ ጥገና ትንበያ።"
+                "Predictive maintenance powered by TM AI.",
+                "በTM AI የተደገፈ ቅድመ ጥገና ትንበያ።"
               )}
             />
           </div>

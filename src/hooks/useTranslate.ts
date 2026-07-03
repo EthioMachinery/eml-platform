@@ -1,69 +1,50 @@
 "use client";
+import { useState, useEffect } from 'react';
+import { legacy as translations } from '@/lib/i18n/dictionary';
 
-import { useLanguage } from '../context/LanguageContext';
-import { translations } from '../lib/i18n/translations';
-import { TranslationSchema } from '../translations/keys';
+/**
+ * TM GLOBALIZATION HOOK
+ * Optimized for Amharic (Ethiopic) and Global Latin scripts.
+ */
 
-// Nested Key extraction helper types for strict path typing
-type PathsToStringProps<T> = T extends string
-  ? []
-  : {
-      [K in Extract<keyof T, string>]: [K, ...PathsToStringProps<T[K]>];
-    }[Extract<keyof T, string>];
-
-type Join<T extends string[], D extends string> = T extends []
-  ? never
-  : T extends [infer F]
-  ? F
-  : T extends [infer F, ...infer R]
-  ? F extends string
-    ? R extends string[]
-      ? `${F}${D}${Join<R, D>}`
-      : never
-    : never
-  : string;
-
-export type TranslationPath = Join<PathsToStringProps<TranslationSchema>, '.'>;
+type Language = 'en' | 'am' | 'or' | 'ti';
 
 export function useTranslate() {
-  const { language } = useLanguage();
+  // 1. Initialize language from local storage or default to English
+  const [lang, setLang] = useState<Language>('en');
 
-  const t = (path: TranslationPath): string => {
-    const keys = path.split('.');
-    
-    // Attempt dynamic lookup inside the selected language state
-    let resolved: any = translations[language];
-    for (const key of keys) {
-      if (resolved && key in resolved) {
-        resolved = resolved[key];
-      } else {
-        resolved = undefined;
-        break;
-      }
+  useEffect(() => {
+    const savedLang = localStorage.getItem('eml_lang') as Language;
+    if (savedLang && translations[savedLang]) {
+      setLang(savedLang);
     }
+  }, []);
 
-    if (typeof resolved === 'string') {
-      return resolved;
+  /**
+   * Main translation function
+   * @param key The key from the translations object
+   * @returns The translated string or the key itself if missing
+   */
+  const t = (key: string): string => {
+    try {
+      // Access the language object, fallback to English if the current lang is missing
+      const dictionary = translations[lang] || translations['en'];
+      
+      // Handle deep-nested keys (e.g., 'auth.login_success')
+      const value = key.split('.').reduce((obj: any, i) => obj?.[i], dictionary);
+      
+      return value || translations['en'][key as keyof typeof translations['en']] || key;
+    } catch (e) {
+      return key; // Return the key as a fallback
     }
-
-    // Fail-safe fallback: Attempt English translation lookup
-    let fallback: any = translations['en'];
-    for (const key of keys) {
-      if (fallback && key in fallback) {
-        fallback = fallback[key];
-      } else {
-        fallback = undefined;
-        break;
-      }
-    }
-
-    if (typeof fallback === 'string') {
-      return fallback;
-    }
-
-    // Ultimate fallback returning original raw path tokens
-    return path;
   };
 
-  return { t, currentLanguage: language };
+  const changeLanguage = (newLang: Language) => {
+    setLang(newLang);
+    localStorage.setItem('eml_lang', newLang);
+    // Optional: Refresh or notify the system for AI-context updates
+    window.dispatchEvent(new Event('languageChange'));
+  };
+
+  return { t, lang, changeLanguage };
 }

@@ -202,7 +202,7 @@ export default function DigitalEconomyPage() {
 
               <Coins size={20} />
 
-              EML DIGITAL ECONOMY
+              TM DIGITAL ECONOMY
 
             </div>
 
@@ -226,11 +226,11 @@ export default function DigitalEconomyPage() {
             <div className="flex flex-wrap gap-5 mt-10">
 
               <Link
-                href="/eml-payments"
+                href="/tm-payments"
                 className="bg-amber-500 hover:bg-amber-400 text-black font-black px-8 py-5 rounded-2xl transition"
               >
 
-                EML Payments
+                TM Payments
 
               </Link>
 
@@ -315,7 +315,7 @@ export default function DigitalEconomyPage() {
 
               <p className="text-zinc-300 text-lg leading-8">
 
-                EML Digital Economy coordinates industrial commerce,
+                TM Digital Economy coordinates industrial commerce,
                 infrastructure participation,
                 procurement liquidity,
                 AI-driven economic systems,
@@ -615,13 +615,13 @@ export default function DigitalEconomyPage() {
 
                 <h2 className="text-5xl font-black mb-6 leading-tight">
 
-                  EML Digital Economy powers industrial economic civilization
+                  TM Digital Economy powers industrial economic civilization
 
                 </h2>
 
                 <p className="text-zinc-300 text-xl leading-9">
 
-                  EML Digital Economy transforms EML into a sovereign industrial economic ecosystem —
+                  TM Digital Economy transforms TM into a sovereign industrial economic ecosystem —
                   enabling intelligent commerce,
                   infrastructure participation,
                   AI-driven liquidity,
@@ -635,11 +635,11 @@ export default function DigitalEconomyPage() {
               <div className="flex flex-wrap gap-5">
 
                 <Link
-                  href="/eml-payments"
+                  href="/tm-payments"
                   className="bg-amber-500 hover:bg-amber-400 text-black font-black px-8 py-5 rounded-2xl transition"
                 >
 
-                  EML Payments
+                  TM Payments
 
                 </Link>
 

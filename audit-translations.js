@@ -33,7 +33,7 @@ function scanDirectory(currentDir) {
 }
 
 console.log("====================================================");
-console.log("EML TRANSLATION CONTEXT AUDITOR - ACTIVE");
+console.log("TM TRANSLATION CONTEXT AUDITOR - ACTIVE");
 console.log(`Scanning: ${targetDir}`);
 console.log("====================================================");
 

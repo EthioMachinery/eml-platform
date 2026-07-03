@@ -18,7 +18,7 @@ import {
   User,
 } from "lucide-react";
 
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/supabaseClient";
 
 import { useLanguage } from "@/context/LanguageContext";
 
@@ -177,7 +177,7 @@ export default function OperatorsPage() {
 
             <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-yellow-500/20 bg-yellow-500/10 px-5 py-2 text-sm font-black text-yellow-400">
 
-              👷 EML OPERATORS
+              👷 TM OPERATORS
 
             </div>
 

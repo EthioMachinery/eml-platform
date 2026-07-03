@@ -1,122 +1,103 @@
 // src/proxy.ts
-// EML — Authentication & Route Guard (Next.js 16)
-//
-// Protects:
-//   - All /api/* routes → returns 401 JSON if no valid session
-//   - All page routes → redirects to /login if no valid session
-//
-// Public routes (no auth required) are listed in PUBLIC_ROUTES below.
+// TM — Enterprise-Grade Authentication & Route Guard
+// Optimized for Global Industrial Security Standards
 
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { createServerClient, type CookieOptions } from '@supabase/ssr';
 
 // ---------------------------------------------------------------------------
-// Public page routes — accessible without login
+// CONFIGURATION
 // ---------------------------------------------------------------------------
-const PUBLIC_PAGE_ROUTES = [
-  '/',
-  '/login',
-  '/register',
-  '/signup',
-  '/browse',
-  '/machinery',
-  '/machines',
-  '/pricing',
-  '/about',
-  '/services',
-];
+const PUBLIC_PAGE_ROUTES = ['/', '/login', '/register', '/signup', '/browse', '/machinery', '/machines', '/pricing', '/about', '/services'];
+const PUBLIC_API_ROUTES = ['/api/machinery'];
+const ADMIN_PREFIXES = ['/admin', '/ceo', '/founder-admin', '/api/admin'];
 
-// ---------------------------------------------------------------------------
-// Public API routes — accessible without login (GET only)
-// ---------------------------------------------------------------------------
-const PUBLIC_API_ROUTES = [
-  '/api/machinery',
-];
+export async function proxy(request: NextRequest) {
+  let response = NextResponse.next({
+    request: { headers: request.headers },
+  });
 
-// ---------------------------------------------------------------------------
-// Supabase project reference — used to identify the auth cookie
-// ---------------------------------------------------------------------------
-const SUPABASE_PROJECT_REF = 'ncmhztlaogviekbfmufc';
-const AUTH_COOKIE_NAME     = `sb-${SUPABASE_PROJECT_REF}-auth-token`;
+  // 1. INITIALIZE SUPABASE CLIENT (Verify Token Authenticity)
+  // Using @supabase/ssr ensures we aren't just checking for a cookie's existence,
+  // but validating that the session is real and not expired.
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) { return request.cookies.get(name)?.value; },
+        set(name: string, value: string, options: CookieOptions) {
+          response.cookies.set({ name, value, ...options });
+        },
+        remove(name: string, options: CookieOptions) {
+          response.cookies.set({ name, value: '', ...options });
+        },
+      },
+    }
+  );
 
-// ---------------------------------------------------------------------------
-// Main proxy function (replaces middleware in Next.js 16)
-// ---------------------------------------------------------------------------
-export function proxy(request: NextRequest) {
+  const { data: { user } } = await supabase.auth.getUser();
   const { pathname } = request.nextUrl;
 
-  // --- Check for valid Supabase session cookie ---
-  const authCookie  = request.cookies.get(AUTH_COOKIE_NAME);
-  const hasSession  = !!authCookie?.value;
-
-  // -------------------------------------------------------------------------
-  // API Route Protection
-  // Returns 401 JSON — never redirects API calls to a login page
-  // -------------------------------------------------------------------------
+  // 2. API PROTECTION
   if (pathname.startsWith('/api/')) {
-    // Allow public API routes (GET only)
-    const isPublicApi = PUBLIC_API_ROUTES.some(
-      (route) => pathname === route || pathname.startsWith(route + '/')
-    );
+    const isPublicApi = PUBLIC_API_ROUTES.some(route => pathname === route || pathname.startsWith(route + '/'));
+    
     if (isPublicApi && request.method === 'GET') {
-      return NextResponse.next();
+      return response;
     }
 
-    // Require session for all other API calls
-    if (!hasSession) {
+    if (!user) {
       return NextResponse.json(
-        {
-          success: false,
-          error:   'Authentication required. Please sign in.',
-          code:    'UNAUTHORIZED',
-        },
+        { success: false, error: 'Valid session required', code: 'UNAUTHORIZED' },
         { status: 401 }
       );
     }
-
-    // Session exists — pass the user token forward as a header
-    // Route handlers can read: request.headers.get('x-auth-token')
-    const requestHeaders = new Headers(request.headers);
-    requestHeaders.set('x-auth-token', authCookie!.value);
-
-    return NextResponse.next({
-      request: { headers: requestHeaders },
-    });
   }
 
-  // -------------------------------------------------------------------------
-  // Page Route Protection
-  // Redirects to /login if no session found
-  // -------------------------------------------------------------------------
-  const isPublicPage = PUBLIC_PAGE_ROUTES.some(
-    (route) =>
-      pathname === route ||
-      pathname.startsWith(route + '/') ||
-      pathname.startsWith('/machinery/') ||
-      pathname.startsWith('/machines/')
+  // 3. ROLE-BASED ACCESS CONTROL (RBAC) - Critical for Top 10 Status
+  // Prevents unauthorized users from accessing the CEO Command Center or Admin APIs
+  const isInternalRoute = ADMIN_PREFIXES.some(prefix => pathname.startsWith(prefix));
+  
+  if (isInternalRoute) {
+    if (!user) {
+      return NextResponse.redirect(new URL('/login?redirect=' + pathname, request.url));
+    }
+
+    // SMART FEATURE: Check the role claim in the JWT metadata
+    const userRole = user.app_metadata?.role || 'user';
+    const isAdmin = userRole === 'admin' || userRole === 'super_admin' || user.email?.endsWith('@trustworthymachinery.com');
+
+    if (!isAdmin) {
+      // Redirect unauthorized users to their dashboard, not login
+      return NextResponse.redirect(new URL('/dashboard', request.url));
+    }
+  }
+
+  // 4. PUBLIC ROUTE REDIRECT
+  const isPublicPage = PUBLIC_PAGE_ROUTES.some(route => 
+    pathname === route || pathname.startsWith(route + '/')
   );
 
-  if (!isPublicPage && !hasSession) {
+  if (!isPublicPage && !user) {
     const loginUrl = new URL('/login', request.url);
     loginUrl.searchParams.set('redirect', pathname);
     return NextResponse.redirect(loginUrl);
   }
 
-  return NextResponse.next();
+  // 5. SECURITY HARDENING HEADERS
+  // Adds a layer of industrial-grade protection to every request
+  response.headers.set('X-Frame-Options', 'DENY');
+  response.headers.set('X-Content-Type-Options', 'nosniff');
+  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+  response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(self)');
+
+  return response;
 }
 
-// ---------------------------------------------------------------------------
-// Matcher — which paths this proxy runs on
-// ---------------------------------------------------------------------------
 export const config = {
   matcher: [
-    /*
-     * Match all paths except:
-     * - _next/static  (static files)
-     * - _next/image   (image optimisation)
-     * - favicon.ico
-     * - public folder files (images, icons, manifest)
-     */
     '/((?!_next/static|_next/image|favicon.ico|icon-|logo|manifest|sw.js|OneSignal).*)',
   ],
 };

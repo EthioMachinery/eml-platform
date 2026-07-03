@@ -200,7 +200,7 @@ export default function GovernancePage() {
 
               <Scale size={20} />
 
-              EML GOVERNANCE
+              TM GOVERNANCE
 
             </div>
 
@@ -225,7 +225,7 @@ export default function GovernancePage() {
             <div className="flex flex-wrap gap-5 mt-10">
 
               <Link
-                href="/eml-identity"
+                href="/tm-identity"
                 className="bg-red-500 hover:bg-red-400 text-black font-black px-8 py-5 rounded-2xl transition"
               >
 
@@ -314,7 +314,7 @@ export default function GovernancePage() {
 
               <p className="text-zinc-300 text-lg leading-8">
 
-                EML Governance orchestrates ecosystem-wide industrial policies,
+                TM Governance orchestrates ecosystem-wide industrial policies,
                 AI governance,
                 enterprise compliance,
                 sovereign infrastructure controls,
@@ -614,13 +614,13 @@ export default function GovernancePage() {
 
                 <h2 className="text-5xl font-black mb-6 leading-tight">
 
-                  EML Governance secures industrial civilization systems
+                  TM Governance secures industrial civilization systems
 
                 </h2>
 
                 <p className="text-zinc-300 text-xl leading-9">
 
-                  EML Governance transforms EML into a governable industrial intelligence civilization —
+                  TM Governance transforms TM into a governable industrial intelligence civilization —
                   enabling sovereign trust,
                   AI accountability,
                   operational oversight,
@@ -634,11 +634,11 @@ export default function GovernancePage() {
               <div className="flex flex-wrap gap-5">
 
                 <Link
-                  href="/eml-identity"
+                  href="/tm-identity"
                   className="bg-red-500 hover:bg-red-400 text-black font-black px-8 py-5 rounded-2xl transition"
                 >
 
-                  EML Identity
+                  TM Identity
 
                 </Link>
 

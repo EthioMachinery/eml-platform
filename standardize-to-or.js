@@ -39,7 +39,7 @@ function standardize() {
 }
 
 console.log("====================================================");
-console.log("EML OROMO CODE STANDARDIZER - ACTIVE");
+console.log("TM OROMO CODE STANDARDIZER - ACTIVE");
 console.log("====================================================");
 
 standardize();

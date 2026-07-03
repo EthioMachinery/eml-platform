@@ -204,7 +204,7 @@ export default function ProcurementPage() {
 
               <Brain size={20} />
 
-              EML PROCUREMENT AI ENGINE
+              TM PROCUREMENT AI ENGINE
 
             </div>
 
@@ -311,7 +311,7 @@ export default function ProcurementPage() {
 
               <h2 className="text-4xl font-black mb-6">
 
-                EML AI automatically selects the best suppliers and predicts procurement risk.
+                TM AI automatically selects the best suppliers and predicts procurement risk.
 
               </h2>
 
@@ -620,7 +620,7 @@ export default function ProcurementPage() {
 
                 <p className="text-zinc-300 text-xl leading-9">
 
-                  EML combines AI procurement,
+                  TM combines AI procurement,
                   supplier intelligence,
                   inventory forecasting,
                   industrial logistics,

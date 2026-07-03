@@ -1,4 +1,4 @@
-export type EMLActivityType =
+export type TMActivityType =
   | "DEAL_CREATED"
   | "DEAL_UPDATED"
   | "REQUEST_POSTED"
@@ -8,9 +8,9 @@ export type EMLActivityType =
   | "USER_REGISTERED"
   | "SYSTEM_ALERT";
 
-export type EMLActivityEvent = {
+export type TMActivityEvent = {
   id: string;
-  type: EMLActivityType;
+  type: TMActivityType;
   title: string;
   description?: string;
   userId?: string;
