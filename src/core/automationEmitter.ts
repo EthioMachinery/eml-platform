@@ -6,7 +6,8 @@ export type AutomationEventType =
   | "DEAL_SCORED"
   | "OPPORTUNITY_DETECTED"
   | "FRAUD_ALERT"
-  | "AUTO_MATCH";
+  | "AUTO_MATCH"
+  | "PAYMENT_COMPLETED";
 
 export async function emitAutomationEvent(
   event_type: AutomationEventType,

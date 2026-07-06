@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/lib/supabaseClient';
 import { useAuth } from '@/components/AuthProvider';
-import { useI18n } from '@/hooks/useI18n';
+import { useI18n } from '@/context/LanguageContext';
 
 /**
  * TM SELLER VERIFICATION CENTER — V2.0

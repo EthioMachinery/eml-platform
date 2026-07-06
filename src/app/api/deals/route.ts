@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
     const validation = DealInputSchema.safeParse(body);
     
     if (!validation.success) {
-      return errorResponse(validation.error.errors[0].message, 400, 'VALIDATION_FAILED');
+      return errorResponse(validation.error.issues[0].message, 400, 'VALIDATION_FAILED');
     }
 
     const { machinery_id, seller_id, gross_amount, deal_type, currency } = validation.data;
@@ -140,7 +140,7 @@ export async function POST(request: NextRequest) {
         machine_title: listing.title,
         amount: `${gross_amount} ${currency}`,
         commission: commission_amount,
-        buyer_name: session.user?.email || 'Authenticated User'
+        buyer_name: session.email || 'Authenticated User'
       },
       created_at: now
     });

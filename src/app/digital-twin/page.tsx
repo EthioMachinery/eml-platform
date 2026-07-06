@@ -451,7 +451,7 @@ export default function DigitalTwinPage() {
                     />
 
                     <Info
-                      icon={Cpu}
+                      icon={Microchip}
                       label="AI Simulation Active"
                     />
 

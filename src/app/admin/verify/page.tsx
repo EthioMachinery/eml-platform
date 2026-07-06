@@ -13,7 +13,6 @@ import {
   Loader2,
   AlertOctagon
 } from 'lucide-react';
-import { format } from 'date-fns';
 
 /**
  * TM VERIFICATION CENTER — V2.0
@@ -107,7 +106,7 @@ export default function VerificationPage() {
             >
               <div className="flex justify-between items-start mb-1">
                 <h3 className="text-sm font-bold text-white truncate w-48">{item.title}</h3>
-                <span className="text-[10px] font-mono text-zinc-500">{format(new Date(item.created_at), 'HH:mm')}</span>
+                <span className="text-[10px] font-mono text-zinc-500">{new Date(item.created_at).toLocaleString()}</span>
               </div>
               <p className="text-[10px] text-zinc-500 uppercase tracking-tighter">
                 Seller: {item.profiles?.full_name || 'Individual'} • Trust: {item.profiles?.trust_score}%
@@ -179,7 +178,7 @@ export default function VerificationPage() {
                   </div>
                   
                   <h3 className="text-xs font-bold text-emerald-500 uppercase mb-6 tracking-widest flex items-center gap-2">
-                    <Cpu className="w-4 h-4" /> TM Intelligence Scanner
+                    <Server className="w-4 h-4" /> TM Intelligence Scanner
                   </h3>
 
                   {!scanResult && !isScanning && (

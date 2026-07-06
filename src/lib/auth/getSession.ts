@@ -20,12 +20,13 @@ import type { NextRequest } from 'next/server';
 // Types
 // ---------------------------------------------------------------------------
 
-export type EmlUserRole = 'admin' | 'verified_seller' | 'buyer' | 'agent' | 'guest';
+export type EmlUserRole = 'admin' | 'verified_seller' | 'buyer' | 'agent' | 'guest' | 'user';
 
 export interface EmlSession {
   userId: string;
   email: string;
   role: EmlUserRole;
+  user?: { email?: string };
 }
 
 // ---------------------------------------------------------------------------

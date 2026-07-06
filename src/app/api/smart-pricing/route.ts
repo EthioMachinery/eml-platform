@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
     const validation = PricingAnalysisSchema.safeParse(body);
 
     if (!validation.success) {
-      return errorResponse(validation.error.errors[0].message, 400, 'INVALID_PARAMS');
+      return errorResponse(validation.error.issues[0].message, 400, 'INVALID_PARAMS');
     }
 
     const { category, proposed_price, year, condition, region } = validation.data;

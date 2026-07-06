@@ -452,7 +452,7 @@ export default function AIAgentsPage() {
                     />
 
                     <Info
-                      icon={Cpu}
+                      icon={Microchip}
                       label="Autonomous Intelligence Active"
                     />
 

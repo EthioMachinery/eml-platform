@@ -9,6 +9,9 @@ import { legacy as translations } from '@/lib/i18n/dictionary';
 
 type Language = 'en' | 'am' | 'or' | 'ti';
 
+// Exported so components can type translation key paths
+export type TranslationPath = string;
+
 export function useTranslate() {
   // 1. Initialize language from local storage or default to English
   const [lang, setLang] = useState<Language>('en');
@@ -46,5 +49,5 @@ export function useTranslate() {
     window.dispatchEvent(new Event('languageChange'));
   };
 
-  return { t, lang, changeLanguage };
+  return { t, lang, changeLanguage, currentLanguage: lang };
 }

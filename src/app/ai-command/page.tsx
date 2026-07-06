@@ -250,7 +250,7 @@ export default function AICommandPage() {
           <KPI
             title="AI Engines"
             value="48+"
-            icon={Cpu}
+            icon={Microchip}
             color="cyan"
           />
 

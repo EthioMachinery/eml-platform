@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
     const validation = MatchRequestSchema.safeParse(body);
 
     if (!validation.success) {
-      return errorResponse(validation.error.errors[0].message, 400, 'INPUT_INVALID');
+      return errorResponse(validation.error.issues[0].message, 400, 'INPUT_INVALID');
     }
 
     const req = validation.data;

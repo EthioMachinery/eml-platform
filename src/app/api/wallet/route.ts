@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const val = WalletActionSchema.safeParse(body);
 
-    if (!val.success) return errorResponse(val.error.errors[0].message, 400);
+    if (!val.success) return errorResponse(val.error.issues[0].message, 400);
     const { action, amount, currency, reference } = val.data;
 
     // 3. SECURE TRANSACTION LOGIC
@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
         currency: currency,
         status: 'pending',
         reference_id: reference,
-        metadata: { ip: request.ip, user_agent: request.headers.get('user-agent') }
+        metadata: { ip: request.headers.get('x-forwarded-for') || 'unknown', user_agent: request.headers.get('user-agent') }
       })
       .select()
       .single();

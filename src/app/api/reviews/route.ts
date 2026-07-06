@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
         target_user_id: deal.seller_id,
         type: 'REVIEW',
         data: {
-          buyer: session.user?.email?.split('@')[0] || "Buyer",
+          buyer: session.email?.split('@')[0] || "Buyer",
           rating: val.data.rating,
           comment: val.data.comment
         }

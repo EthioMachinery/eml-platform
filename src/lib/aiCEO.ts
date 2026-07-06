@@ -1,3 +1,3 @@
-import { EMLCore } from "@/core/emlCore";
+import { TMCore } from "@/core/tmCore";
 
-export default EMLCore;
+export default TMCore;

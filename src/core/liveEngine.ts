@@ -1,4 +1,4 @@
-import { EMLCore, Deal } from "./emlCore";
+import { TMCore, type Deal } from "./tmCore";
 
 /**
  * =========================
@@ -7,39 +7,59 @@ import { EMLCore, Deal } from "./emlCore";
  * =========================
  */
 
-type LiveCallback = (data: any) => void;
+type LiveCallback = (data: unknown) => void;
 
 export const LiveEngine = {
   /**
    * Subscribe to real-time deal intelligence stream
    */
   subscribe(callback: LiveCallback) {
-    console.log("LiveEngine started...");
+    let inFlight = false;
 
     const interval = setInterval(async () => {
-      const { supabase } = await import("@/lib/supabaseClient");
+      if (inFlight) return;
+      inFlight = true;
 
-      const { data } = await supabase
-        .from("machinery")
-        .select("*")
-        .limit(5);
+      try {
+        const { supabase } = await import("@/lib/supabaseClient");
 
-      const deals: Deal[] = data || [];
+        const { data, error } = await supabase
+          .from("machinery")
+          .select("*")
+          .limit(5);
 
-      deals.forEach((deal) => {
-        // FIX: use ai layer
-        const risk = EMLCore.ai.detectFraud(deal);
+        if (error) {
+          callback({
+            event: "live_engine_error",
+            message: error.message,
+            timestamp: new Date().toISOString(),
+          });
+          return;
+        }
 
-        const score = EMLCore.ai.scoreDeal(deal);
+        const deals: Deal[] = data || [];
 
+        deals.forEach((deal) => {
+          const risk = TMCore.ai.detectFraud(deal);
+          const score = TMCore.ai.scoreDeal(deal);
+
+          callback({
+            event: "deal_update",
+            deal,
+            risk,
+            score,
+            timestamp: new Date().toISOString(),
+          });
+        });
+      } catch (err) {
         callback({
-          event: "deal_update",
-          deal,
-          risk,
-          score,
+          event: "live_engine_error",
+          message: err instanceof Error ? err.message : "Unknown live engine error",
           timestamp: new Date().toISOString(),
         });
-      });
+      } finally {
+        inFlight = false;
+      }
     }, 5000);
 
     return () => clearInterval(interval);
@@ -49,8 +69,8 @@ export const LiveEngine = {
    * Single deal real-time analysis
    */
   analyzeDeal(deal: Deal) {
-    const risk = EMLCore.ai.detectFraud(deal);
-    const score = EMLCore.ai.scoreDeal(deal);
+    const risk = TMCore.ai.detectFraud(deal);
+    const score = TMCore.ai.scoreDeal(deal);
 
     return {
       deal,

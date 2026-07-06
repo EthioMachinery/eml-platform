@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { Star, User, CheckCircle2, MessageSquare } from 'lucide-react';
-import { format } from 'date-fns';
 import { useI18n } from '@/context/LanguageContext';
 
 export default function UserReviews({ sellerId }: { sellerId: string }) {
@@ -74,7 +73,7 @@ export default function UserReviews({ sellerId }: { sellerId: string }) {
               </div>
               <p className="text-sm text-zinc-400 leading-relaxed italic font-light">"{review.comment}"</p>
               <div className="mt-4 text-[9px] text-zinc-600 font-mono uppercase border-t border-white/5 pt-3">
-                Transaction ID: {review.id.split('-')[0]} // {format(new Date(review.created_at), 'MMM dd, yyyy')}
+                Transaction ID: {review.id.split('-')[0]} // {new Date(review.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
               </div>
             </div>
           ))}

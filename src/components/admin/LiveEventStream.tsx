@@ -2,8 +2,15 @@
 
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
-import { Terminal, ShieldAlert, Cpu, CircleDollarSign, Clock } from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns';
+import { Terminal, ShieldAlert, Microchip, CircleDollarSign, Clock } from 'lucide-react';
+
+function timeAgo(ts: string): string {
+  const diff = Math.floor((Date.now() - new Date(ts).getTime()) / 1000);
+  if (diff < 60) return `${diff}s ago`;
+  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+  return `${Math.floor(diff / 86400)}d ago`;
+}
 
 /**
  * TM LIVE EVENT STREAM — V2.1
@@ -96,7 +103,7 @@ export default function LiveEventStream() {
               className={`p-3 border rounded-lg transition-all duration-700 flex items-start gap-4 ${getSeverityStyles(event.severity)}`}
             >
               <div className="mt-1">
-                {event.severity === 'AI_DECISION' ? <Cpu className="w-4 h-4" /> : <Terminal className="w-4 h-4" />}
+                {event.severity === 'AI_DECISION' ? <Microchip className="w-4 h-4" /> : <Terminal className="w-4 h-4" />}
               </div>
               
               <div className="flex-1 min-w-0">
@@ -105,7 +112,7 @@ export default function LiveEventStream() {
                     {event.event_name.replace(/_/g, ' ')}
                   </span>
                   <span className="text-[9px] opacity-50">
-                    {formatDistanceToNow(new Date(event.timestamp))}
+                    {timeAgo(event.timestamp)}
                   </span>
                 </div>
                 <p className="text-[10px] opacity-70 leading-relaxed truncate">

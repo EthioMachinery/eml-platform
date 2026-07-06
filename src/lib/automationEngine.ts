@@ -1,5 +1,5 @@
 import { supabase } from "./supabaseClient";
-import { EMLCore, Deal } from "@/core/emlCore";
+import { TMCore, Deal } from "@/core/tmCore";
 
 /**
  * =========================
@@ -27,7 +27,7 @@ export const AutomationEngine = {
   async processDeal(deal: Deal) {
     if (!deal) return null;
 
-    const analysis = EMLCore.ai.scoreDeal(deal);
+    const analysis = TMCore.ai.scoreDeal(deal);
 
     const risk = analysis.risk;
 
@@ -50,7 +50,7 @@ export const AutomationEngine = {
       risk,
       action,
       score: analysis.score,
-      isHighValue: analysis.isHighValue,
+      isHighValue: (deal.price || 0) > 500000,
     };
   },
 

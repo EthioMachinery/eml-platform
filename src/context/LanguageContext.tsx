@@ -64,3 +64,8 @@ export function useI18n() {
   }
   return { ...context, lang: context.language };
 }
+
+// Named export alias so components can import either useI18n or useLanguage
+export function useLanguage() {
+  return useI18n();
+}

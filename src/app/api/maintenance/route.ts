@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const validation = MaintenanceLogSchema.safeParse(body);
-    if (!validation.success) return errorResponse(validation.error.errors[0].message, 400, 'INVALID_LOG');
+    if (!validation.success) return errorResponse(validation.error.issues[0].message, 400, 'INVALID_LOG');
 
     const log = validation.data;
 

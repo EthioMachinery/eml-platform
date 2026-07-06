@@ -117,7 +117,7 @@ export default function CEOCommandCenter() {
               : 'bg-zinc-800 text-zinc-400 grayscale'
             }`}
           >
-            <Cpu className={`w-4 h-4 ${mode === 'LIVE' ? 'animate-spin' : ''}`} />
+            <Microchip className={`w-4 h-4 ${mode === 'LIVE' ? 'animate-spin' : ''}`} />
             <div className="text-left">
               <div className="text-[10px] uppercase leading-none opacity-70">AI Autopilot</div>
               <div className="text-sm font-black tracking-widest">{mode}</div>
