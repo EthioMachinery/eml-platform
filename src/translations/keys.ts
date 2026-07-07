@@ -154,5 +154,5 @@ export interface TranslationSchema {
   };
 }
 
-export type SupportedLanguage = 'en' | 'am' | 'or' | 'ti';
+export type SupportedLanguage = 'en' | 'am' | 'or' | 'ti' | 'so';
 export type TranslationKey = string;

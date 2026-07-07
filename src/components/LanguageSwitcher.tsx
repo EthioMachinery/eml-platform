@@ -2,19 +2,21 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { useLanguage } from "@/context/LanguageContext";
-import { SupportedLanguage } from "@/translations/keys";
+import { type SupportedLanguage } from "@/translations/keys";
 
 interface LanguageOption {
   code: SupportedLanguage;
   label: string;
+  native: string;
   subLabel: string;
 }
 
 const languageOptions: LanguageOption[] = [
-  { code: "en", label: "English", subLabel: "EN" },
-  { code: "am", label: "አማርኛ", subLabel: "AM" },
-  { code: "or", label: "Afaan Oromoo", subLabel: "OM" },
-  { code: "ti", label: "ትግርኛ", subLabel: "TI" },
+  { code: "en", label: "English",      native: "English",      subLabel: "EN" },
+  { code: "am", label: "Amharic",      native: "አማርኛ",         subLabel: "AM" },
+  { code: "or", label: "Afaan Oromoo", native: "Afaan Oromoo", subLabel: "OM" },
+  { code: "ti", label: "Tigrinya",     native: "ትግርኛ",         subLabel: "TI" },
+  { code: "so", label: "Somali",       native: "Soomaali",     subLabel: "SO" },
 ];
 
 export default function LanguageSwitcher() {
@@ -22,97 +24,72 @@ export default function LanguageSwitcher() {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdown if user clicks outside of the element
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+    function handleClickOutside(e: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setIsOpen(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const activeOption = languageOptions.find((opt) => opt.code === language) || languageOptions[0];
-
-  const handleLanguageSelect = (code: SupportedLanguage) => {
-    setLanguage(code);
-    setIsOpen(false);
-  };
+  const active = languageOptions.find((o) => o.code === language) ?? languageOptions[0];
 
   return (
     <div className="relative inline-block text-left" ref={dropdownRef}>
-      <div>
-        <button
-          type="button"
-          disabled={false}
-          onClick={() => setIsOpen((prev) => !prev)}
-          className="inline-flex justify-between items-center w-36 px-3 py-2 rounded-lg bg-zinc-950 border border-zinc-800 text-xs font-bold text-zinc-300 hover:text-white hover:bg-zinc-900 transition-all focus:outline-none focus:ring-2 focus:ring-amber-500 disabled:opacity-50 disabled:cursor-not-allowed"
-          aria-haspopup="true"
-          aria-expanded={isOpen}
+      <button
+        type="button"
+        onClick={() => setIsOpen((p) => !p)}
+        className="inline-flex items-center gap-2 px-3 py-2 rounded-lg
+                   bg-blue-700 hover:bg-blue-600 border border-blue-500
+                   text-white font-bold text-xs transition-all
+                   focus:outline-none focus:ring-2 focus:ring-white"
+        aria-haspopup="true"
+        aria-expanded={isOpen}
+      >
+        <span className="bg-white text-blue-700 text-[10px] font-black px-1.5 py-0.5 rounded uppercase tracking-wider">
+          {active.subLabel}
+        </span>
+        <span className="text-white">{active.native}</span>
+        <svg
+          className={`h-4 w-4 text-blue-200 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+          xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
         >
-          <span className="flex items-center gap-2">
-            <span className="text-amber-500 text-[10px] bg-amber-500/10 px-1.5 py-0.5 rounded uppercase tracking-wider">
-              {activeOption.subLabel}
-            </span>
-            <span>{activeOption.label}</span>
-          </span>
-          <svg
-            className={`h-4 w-4 ml-1 text-zinc-500 transition-transform duration-200 ${
-              isOpen ? "transform rotate-180" : ""
-            }`}
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-          </svg>
-        </button>
-      </div>
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
 
       {isOpen && (
-        <div className="origin-top-right absolute right-0 mt-1.5 w-40 rounded-lg shadow-lg bg-zinc-950 border border-zinc-800 ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
-          <div className="py-1" role="menu" aria-orientation="vertical">
-            {languageOptions.map((option) => {
-              const isSelected = option.code === language;
-              return (
-                <button
-                  key={option.code}
-                  onClick={() => handleLanguageSelect(option.code)}
-                  type="button"
-                  className={`w-full text-left px-4 py-2 text-xs font-semibold flex items-center justify-between transition-colors ${
-                    isSelected
-                      ? "bg-zinc-900 text-amber-500"
-                      : "text-zinc-400 hover:bg-zinc-900 hover:text-white"
-                  }`}
-                  role="menuitem"
-                >
-                  <span className="flex flex-col">
-                    <span>{option.label}</span>
-                  </span>
-                  {isSelected && (
-                    <svg
-                      className="h-4 w-4 text-amber-500"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                  )}
-                </button>
-              );
-            })}
-          </div>
+        <div className="absolute right-0 mt-1.5 w-44 rounded-lg shadow-xl
+                        bg-blue-800 border border-blue-600 z-50 overflow-hidden">
+          {languageOptions.map((opt) => {
+            const isSelected = opt.code === language;
+            return (
+              <button
+                key={opt.code}
+                onClick={() => { setLanguage(opt.code as any); setIsOpen(false); }}
+                type="button"
+                className={`w-full text-left px-4 py-2.5 text-xs font-semibold
+                            flex items-center justify-between transition-colors
+                            ${isSelected
+                              ? "bg-blue-600 text-white"
+                              : "text-blue-100 hover:bg-blue-700 hover:text-white"
+                            }`}
+              >
+                <span className="flex flex-col gap-0.5">
+                  <span className="font-black text-white">{opt.native}</span>
+                  <span className="text-blue-300 text-[10px] uppercase tracking-wider">{opt.label}</span>
+                </span>
+                {isSelected && (
+                  <svg className="h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg"
+                       fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                )}
+              </button>
+            );
+          })}
         </div>
       )}
     </div>
