@@ -16,6 +16,7 @@ import {
   Database,
   Globe2,
   Layers3,
+  Microchip,
   Network,
   Radar,
   Search,
@@ -452,7 +453,7 @@ export default function AIAgentsPage() {
                     />
 
                     <Info
-                      icon={Microchip}
+                      icon={Cpu}
                       label="Autonomous Intelligence Active"
                     />
 

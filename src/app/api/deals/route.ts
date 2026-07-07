@@ -130,7 +130,7 @@ export async function POST(request: NextRequest) {
 
     // 8. TELEMETRY LOGGING (FEEDS THE REAL-TIME LIVE STREAM)
     // The Index: idx_eml_events_created_at makes this scalable
-    await supabaseAdmin.from('eml_events').insert({
+    await supabaseAdmin.from('tm_events').insert({
       event_name: 'DEAL_INITIATED',
       severity: 'INFO',
       actor_id: session.userId,

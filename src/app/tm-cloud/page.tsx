@@ -567,7 +567,7 @@ export default function TMCloudPage() {
           <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-6">
 
             <Service
-              icon={Microchip}
+              icon={Cpu}
               title="AI Compute Infrastructure"
               text="Distributed compute infrastructure for industrial AI and autonomous systems."
             />

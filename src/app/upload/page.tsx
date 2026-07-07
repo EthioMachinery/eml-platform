@@ -176,7 +176,7 @@ export default function UploadPage() {
 
       if (insertError) { setError(insertError.message); return; }
 
-      await supabase.from("eml_events").insert({
+      await supabase.from("tm_events").insert({
         event_name: "MACHINERY_LISTING_CREATED",
         actor_id:   user.id,
         severity:   "INFO",

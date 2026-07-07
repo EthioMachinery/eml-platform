@@ -1,5 +1,2 @@
 import { redirect } from "next/navigation";
-
-export default function PremiumPage() {
-  redirect("/pricing");
-}
+export default function PremiumPage() { redirect("/pricing"); }

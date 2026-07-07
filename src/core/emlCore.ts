@@ -80,8 +80,7 @@ const AIEngine = {
       risk: level,
       riskReason: reason,
       score: Math.min(100, Math.max(0, score)),
-      isInstitutionalGrade: score > 85,
-      isHighValue: (deal.price || 0) > 500000
+      isInstitutionalGrade: score > 85
     };
   },
 

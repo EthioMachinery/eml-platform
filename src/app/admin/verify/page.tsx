@@ -11,7 +11,8 @@ import {
   FileText, 
   Camera,
   Loader2,
-  AlertOctagon
+  AlertOctagon,
+  Server
 } from 'lucide-react';
 
 /**

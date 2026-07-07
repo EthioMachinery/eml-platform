@@ -18,6 +18,7 @@ import {
   LineChart,
   Map,
   MapPinned,
+  Microchip,
   Orbit,
   Radar,
   Search,
@@ -451,7 +452,7 @@ export default function DigitalTwinPage() {
                     />
 
                     <Info
-                      icon={Microchip}
+                      icon={Cpu}
                       label="AI Simulation Active"
                     />
 

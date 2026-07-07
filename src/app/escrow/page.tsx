@@ -161,7 +161,13 @@ export default function EscrowPage() {
     ? (selectedListing.is_rental_only ? selectedListing.price_rental_daily : selectedListing.price_sale) || 0
     : 0;
 
-  const splits = calculateEscrowSplits(machineryPrice, includeInspection, includeLogistics);
+  const splits = calculateEscrowSplits(machineryPrice, {
+    salesRate: 3.5,
+    inspectionRate: 1.5,
+    logisticsRate: 2.5,
+    includeInspection,
+    includeLogistics
+  });
 
   const handleSelectListing = (id: string) => {
     const found = listings.find(l => l.id === id) || null;

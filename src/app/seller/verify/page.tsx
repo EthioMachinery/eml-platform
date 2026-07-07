@@ -74,7 +74,7 @@ export default function SellerVerifyPage() {
       if (profileError) throw profileError;
 
       // 4. LOG TELEMETRY
-      await supabase.from('eml_events').insert({
+      await supabase.from('tm_events').insert({
         event_name: 'KYC_DOCUMENT_UPLOADED',
         severity: 'INFO',
         actor_id: user.id,

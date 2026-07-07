@@ -35,8 +35,8 @@ export const RevenueEngine = {
       salesRate: settings?.machinery_sales_rate ?? 2.5,
       inspectionRate: settings?.escrow_fee_rate ?? 1.5,
       logisticsRate: settings?.transport_matching_rate ?? 2.5,
-      includeInspection: deal.requiresInspection ?? false,
-      includeLogistics: deal.requiresLogistics ?? false,
+      includeInspection: false,
+      includeLogistics: false,
     };
 
     // 2. Calculate Real Platform Revenue (The "TM Cut")
@@ -46,8 +46,8 @@ export const RevenueEngine = {
     // 3. AI Intelligence: Determine Closing Probability
     // adjustRiskBias now factors in trust_score and listing age
     const closingProbability = await LearningEngine.adjustRiskBias(
-      deal.status === 'active' ? 85 : 40,
-      deal.sellerTrustScore > 80 ? "SAFE" : "RISKY"
+      deal.status === 'ACTIVE' ? 85 : 40,
+      (deal.seller_trust_score ?? 0) > 80 ? "SAFE" : "RISKY"
     );
 
     // 4. Calculate Risk-Adjusted Revenue (RAR)

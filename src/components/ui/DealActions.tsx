@@ -28,7 +28,7 @@ export default function DealActions({
   const { language } = useLanguage();
 
   // Local helper to translate dual-strings
-  const t = (en, am) => {
+  const t = (en: string, am: string): string => {
     return language === "am" ? am : en;
   };
 

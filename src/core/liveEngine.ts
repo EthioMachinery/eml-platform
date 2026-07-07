@@ -1,4 +1,4 @@
-import { TMCore, type Deal } from "./tmCore";
+import { EMLCore, Deal } from "./emlCore";
 
 /**
  * =========================
@@ -7,59 +7,39 @@ import { TMCore, type Deal } from "./tmCore";
  * =========================
  */
 
-type LiveCallback = (data: unknown) => void;
+type LiveCallback = (data: any) => void;
 
 export const LiveEngine = {
   /**
    * Subscribe to real-time deal intelligence stream
    */
   subscribe(callback: LiveCallback) {
-    let inFlight = false;
+    console.log("LiveEngine started...");
 
     const interval = setInterval(async () => {
-      if (inFlight) return;
-      inFlight = true;
+      const { supabase } = await import("@/lib/supabaseClient");
 
-      try {
-        const { supabase } = await import("@/lib/supabaseClient");
+      const { data } = await supabase
+        .from("machinery")
+        .select("*")
+        .limit(5);
 
-        const { data, error } = await supabase
-          .from("machinery")
-          .select("*")
-          .limit(5);
+      const deals: Deal[] = data || [];
 
-        if (error) {
-          callback({
-            event: "live_engine_error",
-            message: error.message,
-            timestamp: new Date().toISOString(),
-          });
-          return;
-        }
+      deals.forEach((deal) => {
+        // FIX: use ai layer
+        const risk = EMLCore.ai.detectFraud(deal);
 
-        const deals: Deal[] = data || [];
+        const score = EMLCore.ai.scoreDeal(deal);
 
-        deals.forEach((deal) => {
-          const risk = TMCore.ai.detectFraud(deal);
-          const score = TMCore.ai.scoreDeal(deal);
-
-          callback({
-            event: "deal_update",
-            deal,
-            risk,
-            score,
-            timestamp: new Date().toISOString(),
-          });
-        });
-      } catch (err) {
         callback({
-          event: "live_engine_error",
-          message: err instanceof Error ? err.message : "Unknown live engine error",
+          event: "deal_update",
+          deal,
+          risk,
+          score,
           timestamp: new Date().toISOString(),
         });
-      } finally {
-        inFlight = false;
-      }
+      });
     }, 5000);
 
     return () => clearInterval(interval);
@@ -69,8 +49,8 @@ export const LiveEngine = {
    * Single deal real-time analysis
    */
   analyzeDeal(deal: Deal) {
-    const risk = TMCore.ai.detectFraud(deal);
-    const score = TMCore.ai.scoreDeal(deal);
+    const risk = EMLCore.ai.detectFraud(deal);
+    const score = EMLCore.ai.scoreDeal(deal);
 
     return {
       deal,

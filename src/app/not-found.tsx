@@ -29,7 +29,7 @@ export default function ErrorPage({
         <div className="flex flex-wrap items-center justify-center gap-4">
 
           <button
-            onClick={() => reset()}
+            onClick={() => reset?.()}
             className="h-14 px-8 rounded-2xl bg-yellow-500 hover:bg-yellow-400 text-black font-black transition"
           >
             Try Again

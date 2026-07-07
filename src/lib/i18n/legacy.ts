@@ -21,6 +21,10 @@ const translations = {
     ceoWarRoom: "CEO Command Center",
     adminPanel: "Admin Hub",
 
+    // DASHBOARD NESTED KEYS
+    "dashboard.title": "My Dashboard",
+    "dashboard.logout": "Logout",
+
     // USER / AUTH
     loggedInAs: "Node Identity:",
     role: "Operational Role",
@@ -141,6 +145,10 @@ const translations = {
     wallet: "የኔ ቦርሳ",
     ceoWarRoom: "ዋና መቆጣጠሪያ",
     adminPanel: "የአስተዳዳሪ ክፍል",
+
+    // DASHBOARD NESTED KEYS
+    "dashboard.title": "ዳሽቦርዴ",
+    "dashboard.logout": "ውጣ",
 
     // USER
     loggedInAs: "የገባው ተጠቃሚ:",

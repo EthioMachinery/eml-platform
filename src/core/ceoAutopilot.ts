@@ -30,7 +30,7 @@ export const CEOAutopilot = {
       // 2. Logic Matrix: Determine action based on Risk/Revenue
       let action: "BLOCK" | "MONITOR" | "EXECUTE" = "EXECUTE";
 
-      if (score.risk === "DANGEROUS" || revenue.status === "REJECTED") {
+      if (score.risk === "DANGEROUS" || revenue.closingProbability < 20) {
         action = "BLOCK";
       } else if (score.risk === "RISKY") {
         action = "MONITOR";
@@ -50,7 +50,7 @@ export const CEOAutopilot = {
         outputs: { action, execution },
         confidence_score: score.score,
         decision: action,
-        outcome: execution.status,
+        outcome: "PROCESSED",
       });
 
       return {

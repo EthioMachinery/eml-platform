@@ -37,7 +37,7 @@ export default function LiveEventStream() {
     fetchInitialEvents();
 
     // 2. Real-time Subscription to the PHYSICAL TABLE
-    // We listen to 'eml_events' because that's where the POST route inserts data.
+    // We listen to 'tm_events' because that's where the POST route inserts data.
     const channel = supabase
       .channel('admin_live_feed')
       .on(
@@ -45,7 +45,7 @@ export default function LiveEventStream() {
         { 
           event: 'INSERT', 
           schema: 'public', 
-          table: 'eml_events' // WATCH THE PHYSICAL TABLE
+          table: 'tm_events' // WATCH THE PHYSICAL TABLE
         },
         (payload) => {
           const newRow = payload.new;

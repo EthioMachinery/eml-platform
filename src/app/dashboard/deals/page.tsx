@@ -26,7 +26,7 @@ export default function DealsDashboardPage() {
   async function loadEscrows(uid: string) {
     const { data, error } = await supabase
       .from("escrows")
-      .select("id, total_amount, eml_commission_fee, supplier_payout_balance, current_stage, created_at, listing_id")
+      .select("id, total_amount, tm_commission_fee, supplier_payout_balance, current_stage, created_at, listing_id")
       .or("buyer_id.eq." + uid + ",seller_id.eq." + uid)
       .order("created_at", { ascending: false });
 
@@ -40,7 +40,7 @@ export default function DealsDashboardPage() {
   }, [escrows, activeTab]);
 
   const totalRevenue = escrows.reduce((sum, d) => sum + Number(d.total_amount || 0), 0);
-  const totalCommission = escrows.reduce((sum, d) => sum + Number(d.eml_commission_fee || 0), 0);
+  const totalCommission = escrows.reduce((sum, d) => sum + Number(d.tm_commission_fee || 0), 0);
   const totalNet = escrows.reduce((sum, d) => sum + Number(d.supplier_payout_balance || 0), 0);
 
   const formatter = new Intl.NumberFormat("en-US", { style: "decimal" });
@@ -132,7 +132,7 @@ export default function DealsDashboardPage() {
                       <h2 className="text-3xl font-black mb-4">Deal #{deal.id.slice(0, 8)}</h2>
                       <div className="flex flex-wrap gap-5 text-zinc-400">
                         <div className="flex items-center gap-2"><Banknote size={18} />ETB {formatter.format(deal.total_amount)}</div>
-                        <div className="flex items-center gap-2"><ShieldCheck size={18} />Commission: ETB {formatter.format(deal.eml_commission_fee)}</div>
+                        <div className="flex items-center gap-2"><ShieldCheck size={18} />Commission: ETB {formatter.format(deal.tm_commission_fee)}</div>
                         <div className="flex items-center gap-2"><Clock3 size={18} />{new Date(deal.created_at).toLocaleDateString()}</div>
                       </div>
                     </div>

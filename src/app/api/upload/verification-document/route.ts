@@ -2,7 +2,7 @@ import { type NextRequest } from "next/server";
 
 import { supabaseAdmin } from "@/lib/supabase/adminClient";
 import { errorResponse, internalError, successResponse } from "@/lib/api/response";
-import { getSession, requireAuthenticated } from "@/lib/auth/getSession";
+import { getSession, requireRole } from "@/lib/auth/getSession";
 import {
   analyzeVerificationDocument,
   detectVerificationDocumentMime,
@@ -22,7 +22,7 @@ const ALLOWED_DOCUMENT_TYPES = [
 export async function POST(request: NextRequest) {
   try {
     const session = getSession(request);
-    const authError = requireAuthenticated(session);
+    const authError = requireRole(session, ['buyer', 'verified_seller', 'admin']);
     if (authError) return errorResponse(authError, 401, "UNAUTHORIZED");
 
     const formData = await request.formData();

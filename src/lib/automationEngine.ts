@@ -50,7 +50,7 @@ export const AutomationEngine = {
       risk,
       action,
       score: analysis.score,
-      isHighValue: (deal.price || 0) > 500000,
+      isHighValue: analysis.isInstitutionalGrade,
     };
   },
 

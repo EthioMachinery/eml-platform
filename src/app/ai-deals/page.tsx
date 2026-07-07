@@ -1,5 +1,2 @@
 import { redirect } from "next/navigation";
-
-export default function AIDealsPage() {
-  redirect("/contracts");
-}
+export default function AiDealsPage() { redirect("/browse"); }

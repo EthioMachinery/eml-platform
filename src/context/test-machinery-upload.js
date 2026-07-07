@@ -21,10 +21,11 @@ const TEST_PAYLOAD = {
   };
   
   async function runConnectionTest() {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
     console.log("🚀 Initializing connection verification test against local Next.js API route...");
     
     try {
-      const response = await fetch("http://localhost:3000/api/machinery", {
+      const response = await fetch(`${apiUrl}/api/machinery`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

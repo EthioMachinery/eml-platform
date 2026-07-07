@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
         buyer_id,
         seller_id,
         total_amount,
-        eml_commission_fee,
+        tm_commission_fee,
         current_stage
       `)
       .eq("id", escrowId)
@@ -104,7 +104,7 @@ export async function POST(req: NextRequest) {
         {
           id: crypto.randomUUID(),
           transaction_id: escrowId,
-          amount: Number(escrowRecord.eml_commission_fee),
+          amount: Number(escrowRecord.tm_commission_fee),
           source: `escrow_commission_${paymentMethod}`,
           created_at: new Date().toISOString()
         }
@@ -121,7 +121,7 @@ export async function POST(req: NextRequest) {
       success: true,
       transactionId: escrowId,
       newEscrowStage: "funded",
-      emlCommissionEarned: escrowRecord.eml_commission_fee,
+      emlCommissionEarned: escrowRecord.tm_commission_fee,
       message: "Payment verified successfully. TM commission logged, and escrow account is funded."
     });
 

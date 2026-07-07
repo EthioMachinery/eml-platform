@@ -255,7 +255,7 @@ export default function MaintenancePage() {
           <KPI
             title="Machines Monitored"
             value="48,200+"
-            icon={Microchip}
+            icon={Cpu}
             color="cyan"
           />
 

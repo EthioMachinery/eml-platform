@@ -1,5 +1,2 @@
 import { redirect } from "next/navigation";
-
-export default function QuotesPage() {
-  redirect("/financing");
-}
+export default function QuotesPage() { redirect("/dashboard/inquiries"); }

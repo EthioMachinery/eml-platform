@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabaseClient";
-import { Deal } from "@/core/tmCore";
+import { Deal } from "@/core/emlCore";
 
 export type LiveEvent = {
   id?: string;
@@ -26,7 +26,7 @@ export const EventStream = {
     };
 
     await supabase
-      .from("tm_events")
+      .from("eml_events")
       .insert([event]);
 
     return event;
@@ -48,7 +48,7 @@ export const EventStream = {
   ) {
     const { data } =
       await supabase
-        .from("tm_events")
+        .from("eml_events")
         .select("*")
         .order(
           "timestamp",

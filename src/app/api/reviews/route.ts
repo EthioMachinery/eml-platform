@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
     }).catch(e => console.error("Notification trigger failed", e));
 
     // 4. TELEMETRY
-    await supabaseAdmin.from('eml_events').insert({
+    await supabaseAdmin.from('tm_events').insert({
       event_name: 'USER_REVIEW_POSTED',
       severity: 'INFO',
       payload: { rating: val.data.rating, deal_id: deal.id }

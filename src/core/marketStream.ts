@@ -23,7 +23,7 @@ export const MarketStream = {
         },
         async (payload) => {
           await this.handleEvent(
-            payload.new
+            payload.new as import("@/core/tmCore").Deal
           );
         }
       )

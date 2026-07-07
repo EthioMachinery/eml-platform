@@ -13,11 +13,11 @@ import {
 } from 'lucide-react';
 import { supabase } from "@/lib/supabaseClient";
 import { TMCore } from "@/core/tmCore";
-import { useI18n } from "@/context/LanguageContext"; // NEW UNIFIED PATH
+import { useLanguage } from "@/context/LanguageContext";   // ✅ fixed import
 import PWAInstallPrompt from "@/components/PWAInstallPrompt";
 
 export default function HomePage() {
-  const { t } = useI18n();
+  const { t } = useLanguage();   // ✅ fixed hook usage
   const [pulse, setPulse] = useState<any>({ growthIndex: "0.00", averageTransactionValue: 0 });
   const [loading, setLoading] = useState(true);
 
@@ -67,7 +67,7 @@ export default function HomePage() {
             {safeT('browseTitle')} <ArrowRight size={16} />
           </Link>
           <a 
-            href="https://t.me/EthioMachineryLinkBot" 
+            href="https://t.me/TrustyworthyMachineryBot" 
             target="_blank"
             className="bg-zinc-900 border border-white/10 text-white px-8 py-4 rounded-xl font-black uppercase text-xs transition-all flex items-center gap-2"
           >

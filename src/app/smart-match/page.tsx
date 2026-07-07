@@ -348,7 +348,7 @@ export default function SmartMatchPage() {
               </div>
 
               <div className="w-28 h-28 rounded-[32px] bg-violet-500/20 flex items-center justify-center shrink-0">
-                <Microchip size={60} className="text-violet-400" />
+                <Cpu size={60} className="text-violet-400" />
               </div>
 
             </div>

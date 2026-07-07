@@ -57,7 +57,7 @@ export class AutoTrigger {
       };
 
     await supabase
-      .from("eml_events")
+      .from("tm_events")
       .insert([
         {
           type:

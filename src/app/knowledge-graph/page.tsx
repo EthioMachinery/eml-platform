@@ -458,7 +458,7 @@ export default function KnowledgeGraphPage() {
                     />
 
                     <Info
-                      icon={Microchip}
+                      icon={Cpu}
                       label="AI Relationship Mapping"
                     />
 

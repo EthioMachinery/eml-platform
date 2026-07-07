@@ -127,7 +127,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 6. Audit log
-    await supabaseAdmin.from('eml_events').insert({
+    await supabaseAdmin.from('tm_events').insert({
       event_name: 'MACHINERY_LISTING_CREATED',
       actor_id:   session.userId,
       severity:   'INFO',

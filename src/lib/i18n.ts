@@ -10,7 +10,7 @@ export function getLang(): Lang {
     return "en";
   }
 
-  const storedLang = window.localStorage.getItem("eml_locale") || window.localStorage.getItem("lang");
+  const storedLang = window.localStorage.getItem("tm_locale") || window.localStorage.getItem("lang");
 
   if (
     storedLang === "en" ||
@@ -90,25 +90,27 @@ export function translate(
       return englishFallback;
     }
 
+    const keyFallback = key as string | Record<Language, string>;
     return (
       fallback ||
-      (typeof key === "string"
-        ? key
-        : key.en ||
-          key.am ||
-          key.or ||
-          key.ti ||
+      (typeof keyFallback === "string"
+        ? keyFallback
+        : keyFallback.en ||
+          keyFallback.am ||
+          keyFallback.or ||
+          keyFallback.ti ||
           "")
     );
   } catch {
+    const safeKey = key as string | Record<Language, string>;
     return (
       fallback ||
-      (typeof key === "string"
-        ? key
-        : key.en ||
-          key.am ||
-          key.or ||
-          key.ti ||
+      (typeof safeKey === "string"
+        ? safeKey
+        : safeKey.en ||
+          safeKey.am ||
+          safeKey.or ||
+          safeKey.ti ||
           "")
     );
   }

@@ -23,7 +23,7 @@ export const DealIntelligence = {
    * MAIN SCORING ENGINE
    */
   rankDeal(deal: Deal): DealRank {
-    const risk = TMCore.ai.detectFraud(deal);
+    const { level: risk } = TMCore.ai.detectFraud(deal);
 
     let score = 50; // base score
     const reason: string[] = [];

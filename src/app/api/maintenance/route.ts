@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
       .eq('id', log.machinery_id);
 
     // 4. TELEMETRY: Notify the CEO Autopilot
-    await supabaseAdmin.from('eml_events').insert({
+    await supabaseAdmin.from('tm_events').insert({
       event_name: 'MAINTENANCE_RECORDED',
       severity: 'INFO',
       payload: { 

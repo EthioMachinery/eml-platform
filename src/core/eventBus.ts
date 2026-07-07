@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabaseClient";
-import { Deal } from "@/core/tmCore";
+import { Deal } from "@/core/emlCore";
 import { DealCloser } from "@/core/dealCloser";
 import { PricingEngine } from "@/core/pricingEngine";
 
@@ -9,7 +9,7 @@ export const EventBus = {
     payload: any
   ) {
     await supabase
-      .from("tm_events")
+      .from("eml_events")
       .insert([
         {
           type,

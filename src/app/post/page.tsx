@@ -1,5 +1,2 @@
 import { redirect } from "next/navigation";
-
-export default function PostPage() {
-  redirect("/sell");
-}
+export default function PostPage() { redirect("/post-machinery"); }

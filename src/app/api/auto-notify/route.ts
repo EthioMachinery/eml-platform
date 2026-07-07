@@ -7,7 +7,7 @@ import { TelegramService } from '@/lib/telegram';
 const NotifySchema = z.object({
   target_user_id: z.string().uuid(),
   type: z.enum(['INQUIRY', 'REVIEW', 'PAYMENT', 'MATCH']),
-  data: z.record(z.any()),
+  data: z.record(z.string(), z.any()),
 });
 
 /**

@@ -33,7 +33,7 @@ export const Observability = {
     };
 
     await supabase
-      .from("eml_events")
+      .from("tm_events")
       .insert([
         {
           type:
@@ -81,7 +81,7 @@ export const Observability = {
   ) {
     const { data } =
       await supabase
-        .from("eml_events")
+        .from("tm_events")
         .select("*")
         .order(
           "created_at",

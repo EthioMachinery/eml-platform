@@ -9,7 +9,8 @@ import {
   Zap, 
   BarChart3, 
   AlertTriangle,
-  ArrowUpRight
+  ArrowUpRight,
+  Microchip
 } from 'lucide-react';
 import { CEOAutopilot, AutopilotMode } from '@/core/ceoAutopilot';
 import { RevenueEngine, DealRevenueScore } from '@/core/revenueEngine';

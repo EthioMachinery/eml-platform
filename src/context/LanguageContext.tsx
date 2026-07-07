@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { legacy as translations } from '@/lib/i18n/dictionary';
+import { enterprise as translations } from '@/lib/i18n/dictionary';
 import { LANGUAGES, Language } from '@/lib/i18n/config';
 
 interface LanguageContextType {
@@ -16,13 +16,13 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [language, setLanguageState] = useState<Language>('en');
 
   useEffect(() => {
-    const saved = localStorage.getItem('eml_lang') as Language;
+    const saved = localStorage.getItem('tm_lang') as Language;
     if (saved && translations[saved]) setLanguageState(saved);
   }, []);
 
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);
-    localStorage.setItem('eml_lang', lang);
+    localStorage.setItem('tm_lang', lang);
   };
 
   // Safe translation helper inside the provider
@@ -52,20 +52,19 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function useI18n() {
+// ✅ Proper hook export
+export function useLanguage() {
   const context = useContext(LanguageContext);
-  // Return a fallback object so the app doesn't crash if used outside provider
   if (context === undefined) {
     return {
       language: 'en' as Language,
       setLanguage: () => {},
-      t: (s: string) => s
+      t: (s: string) => s,
+      lang: 'en' as Language
     };
   }
   return { ...context, lang: context.language };
 }
 
-// Named export alias so components can import either useI18n or useLanguage
-export function useLanguage() {
-  return useI18n();
-}
+// ✅ Alias for backward compatibility
+export const useI18n = useLanguage;

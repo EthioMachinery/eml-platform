@@ -283,7 +283,7 @@ export default function TMOSPage() {
           <KPI
             title="OS Intelligence"
             value="ACTIVE"
-            icon={Microchip}
+            icon={Cpu}
             color="purple"
           />
 

@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
 
     // 4. TELEMETRY: Alert the CEO War Room of a high-value movement
     if (amount > 100000) {
-      await supabaseAdmin.from('eml_events').insert({
+      await supabaseAdmin.from('tm_events').insert({
         event_name: 'HIGH_VALUE_WALLET_ACTIVITY',
         severity: 'WARNING',
         actor_id: session.userId,

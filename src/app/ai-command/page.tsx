@@ -18,6 +18,7 @@ import {
   Globe2,
   Layers3,
   LineChart,
+  Microchip,
   Radar,
   Search,
   Server,
@@ -250,7 +251,7 @@ export default function AICommandPage() {
           <KPI
             title="AI Engines"
             value="48+"
-            icon={Microchip}
+            icon={Cpu}
             color="cyan"
           />
 

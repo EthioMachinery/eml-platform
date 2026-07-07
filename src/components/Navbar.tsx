@@ -17,7 +17,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 h-full flex items-center justify-between">
         {/* LOGO */}
         <Link href="/" className="flex items-center gap-2 group">
-          <div className="w-8 h-8 bg-emerald-600 rounded flex items-center justify-center font-black text-white italic group-hover:bg-emerald-500 transition-colors">E</div>
+          <div className="w-8 h-8 bg-emerald-600 rounded flex items-center justify-center font-black text-white text-xs group-hover:bg-emerald-500 transition-colors">TM</div>
           <span className="font-black text-sm tracking-tighter uppercase hidden lg:block">
             Trustworthy Machinery
           </span>
@@ -25,7 +25,7 @@ export default function Navbar() {
 
         {/* ACTIONS */}
         <div className="flex items-center gap-4 md:gap-8">
-          <Link href="/browse" className="text-[10px] font-bold uppercase text-zinc-400 hover:text-emerald-500 transition-colors flex items-center gap-2">
+          <Link href="/browse" className="text-[10px] font-bold uppercase text-zinc-400 hover:text-emerald-500 transition-colors hidden md:flex items-center gap-2">
             <Search size={14} /> <span className="hidden sm:inline">{safeT('browse')}</span>
           </Link>
 

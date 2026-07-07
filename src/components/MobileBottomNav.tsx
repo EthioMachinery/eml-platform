@@ -18,7 +18,7 @@ export default function MobileBottomNav() {
       label: "Browse",
     },
     {
-      href: "/post",
+      href: "/post-machinery",
       icon: "➕",
       label: "Post",
     },
@@ -35,7 +35,7 @@ export default function MobileBottomNav() {
   ];
 
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t bg-white/95 backdrop-blur-xl shadow-2xl">
+    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-white/10 bg-black/95 backdrop-blur-xl shadow-2xl">
       <div className="grid grid-cols-5">
         {items.map((item) => {
           const active =

@@ -4,7 +4,7 @@ import { TMActivityEvent } from "./eventTypes";
 
 export async function logEvent(event: TMActivityEvent) {
   // 1. Save to database (SOURCE OF TRUTH)
-  const { error } = await supabase.from("eml_events").insert({
+  const { error } = await supabase.from("tm_events").insert({
     id: event.id,
     type: event.type,
     title: event.title,

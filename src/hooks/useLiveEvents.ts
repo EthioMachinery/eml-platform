@@ -16,7 +16,7 @@ export function useLiveEvents() {
     // -------------------------
     const loadInitial = async () => {
       const { data } = await supabase
-        .from("eml_events")
+        .from("tm_events")
         .select("*")
         .order("created_at", { ascending: false })
         .limit(50);
@@ -58,7 +58,7 @@ export function useLiveEvents() {
       .channel("eml_events_live")
       .on(
         "postgres_changes",
-        { event: "INSERT", schema: "public", table: "eml_events" },
+        { event: "INSERT", schema: "public", table: "tm_events" },
         (payload) => {
           const d = payload.new;
 

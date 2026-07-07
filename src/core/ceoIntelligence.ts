@@ -13,7 +13,7 @@ export const CEOIntelligence = {
    */
   riskSummary(deals: Deal[]) {
     const risky = deals.filter(
-      (d) => TMCore.ai.detectFraud(d) !== "SAFE"
+      (d) => TMCore.ai.detectFraud(d).level !== "SAFE"
     ).length;
 
     const highValue = deals.filter(
@@ -55,7 +55,7 @@ export const CEOIntelligence = {
   fraudClusters(deals: Deal[]) {
     return deals
       .filter(
-        (d) => TMCore.ai.detectFraud(d) === "DANGEROUS"
+        (d) => TMCore.ai.detectFraud(d).level === "DANGEROUS"
       )
       .map((d) => ({
         id: d.id,
@@ -69,7 +69,7 @@ export const CEOIntelligence = {
   growthSignals(deals: Deal[]) {
     return deals.filter((d) => {
       const risk = TMCore.ai.detectFraud(d);
-      return risk === "SAFE" && (d.price || 0) > 250000;
+      return risk.level === "SAFE" && (d.price || 0) > 250000;
     });
   },
 };

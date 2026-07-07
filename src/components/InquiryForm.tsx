@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import {
   MessageSquare,
   Truck,
@@ -131,7 +131,7 @@ export default function InquiryForm({ machineryId, ownerId, machineTitle }: Prop
       await Promise.all(ecosystemTasks);
 
       // 4. Telemetry: Notify the CEO Autopilot Dashboard
-      await supabase.from('eml_events').insert({
+      await supabase.from('tm_events').insert({
         event_name: 'LEAD_GENERATED',
         severity: 'INFO',
         payload: { machine: machineTitle, type: purpose, is_other: purpose === 'other' }
@@ -345,7 +345,7 @@ function ServiceToggle({ active, onClick, icon, title }: { active: boolean; onCl
       }`}
     >
       <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${active ? "bg-emerald-500 text-black" : "bg-zinc-800 text-zinc-400"}`}>
-        {Object.cloneElement(icon, { size: 18 })}
+        {React.cloneElement(icon, { size: 18 })}
       </div>
       <div className={`text-[11px] font-black uppercase tracking-tighter ${active ? "text-white" : "text-zinc-500"}`}>
         {title}
