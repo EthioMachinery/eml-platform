@@ -3,45 +3,116 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 255, 255, 255;
-  --background-start-rgb: 0, 0, 0;
-  --background-end-rgb: 0, 0, 0;
+  /* TM Brand: pure white on deep blue — WCAG AA+ contrast */
+  --tm-blue-950: #050d1a;
+  --tm-blue-900: #0a1628;
+  --tm-blue-800: #0f2040;
+  --tm-blue-700: #1a3358;
+  --tm-blue-600: #1e40af;
+  --tm-blue-500: #2563eb;
+  --tm-blue-400: #3b82f6;
+  --tm-blue-300: #93c5fd;
+  --tm-white:    #ffffff;
+  --tm-white-90: rgba(255,255,255,0.9);
+  --tm-white-60: rgba(255,255,255,0.6);
+  --tm-white-20: rgba(255,255,255,0.2);
+  --tm-white-10: rgba(255,255,255,0.1);
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: rgb(var(--background-start-rgb));
-  /* Smooth font rendering for high-resolution displays */
+/* ── BASE: entire site is deep blue with white text ── */
+html, body {
+  background-color: var(--tm-blue-950) !important;
+  color: #ffffff !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  min-height: 100%;
 }
 
-/* Specific optimization for Amharic characters to prevent clipping */
+/* All headings white */
+h1, h2, h3, h4, h5, h6 {
+  color: #ffffff !important;
+}
+
+/* Body text near-white */
+p, span, li, td, th, label, div {
+  color: inherit;
+}
+
+/* Links */
+a { color: #93c5fd; }
+a:hover { color: #ffffff; }
+
+/* ── BACKGROUND OVERRIDES ──
+   Every black/zinc/gray background becomes the TM blue palette.
+   !important ensures inline Tailwind classes are overridden globally. */
+.bg-black,
+[class*="bg-black"]          { background-color: var(--tm-blue-950) !important; }
+.bg-zinc-950,
+[class*="bg-zinc-950"]       { background-color: var(--tm-blue-900) !important; }
+.bg-zinc-900,
+[class*="bg-zinc-900"]       { background-color: var(--tm-blue-800) !important; }
+.bg-zinc-800,
+[class*="bg-zinc-800"]       { background-color: var(--tm-blue-700) !important; }
+.bg-zinc-700,
+[class*="bg-zinc-700"]       { background-color: #1e3a5f !important; }
+.bg-neutral-950              { background-color: var(--tm-blue-950) !important; }
+.bg-neutral-900              { background-color: var(--tm-blue-900) !important; }
+.bg-gray-950                 { background-color: var(--tm-blue-950) !important; }
+.bg-gray-900                 { background-color: var(--tm-blue-900) !important; }
+.bg-slate-950                { background-color: var(--tm-blue-950) !important; }
+.bg-slate-900                { background-color: var(--tm-blue-900) !important; }
+
+/* Transparent/dark overlays → blue-tinted */
+.bg-black\/80,
+.bg-black\/90,
+.bg-black\/70                { background-color: rgba(5,13,26,0.85) !important; }
+
+/* ── BORDER OVERRIDES ── */
+.border-zinc-900             { border-color: rgba(255,255,255,0.1) !important; }
+.border-zinc-800             { border-color: rgba(255,255,255,0.12) !important; }
+.border-zinc-700             { border-color: rgba(255,255,255,0.15) !important; }
+.border-white\/5             { border-color: rgba(255,255,255,0.08) !important; }
+.border-white\/10            { border-color: rgba(255,255,255,0.12) !important; }
+
+/* ── TEXT OVERRIDES ── */
+.text-zinc-600               { color: rgba(255,255,255,0.45) !important; }
+.text-zinc-500               { color: rgba(255,255,255,0.55) !important; }
+.text-zinc-400               { color: rgba(255,255,255,0.65) !important; }
+.text-zinc-300               { color: rgba(255,255,255,0.80) !important; }
+.text-zinc-200               { color: rgba(255,255,255,0.90) !important; }
+.text-white                  { color: #ffffff !important; }
+.text-black                  { color: #ffffff !important; }
+
+/* ── CARD / PANEL SURFACES ── */
+/* Cards that use bg-zinc-* or bg-black get blue surfaces */
+.rounded-xl,
+.rounded-2xl,
+.rounded-3xl {
+  /* Don't override background here — let the bg-* class overrides above handle it */
+}
+
+/* Backdrop blur panels */
+[class*="backdrop-blur"] {
+  background-color: rgba(10, 22, 40, 0.8) !important;
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar        { width: 6px; }
+::-webkit-scrollbar-track  { background: var(--tm-blue-950); }
+::-webkit-scrollbar-thumb  { background: var(--tm-blue-700); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: var(--tm-blue-500); }
+
+/* ── ETHIOPIC FONT ── */
 .font-noto-ethio {
   line-height: 1.6;
   letter-spacing: 0.02em;
 }
 
-/* Custom scrollbar for that modern industrial feel */
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-track {
-  background: #09090b;
-}
-::-webkit-scrollbar-thumb {
-  background: #27272a;
-  border-radius: 10px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #10b981;
-}
-
-/* Animation for the AI Autopilot glow */
-@keyframes pulse-emerald {
+/* ── ANIMATIONS ── */
+@keyframes pulse-blue {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  50%       { opacity: 0.5; }
 }
 .animate-ai-glow {
-  animation: pulse-emerald 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  animation: pulse-blue 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }

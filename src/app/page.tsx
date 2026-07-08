@@ -12,12 +12,12 @@ import {
   Shield
 } from 'lucide-react';
 import { supabase } from "@/lib/supabaseClient";
-import { TMCore } from "@/core/tmCore";
-import { useLanguage } from "@/context/LanguageContext";   // ✅ fixed import
+import { EMLCore } from "@/core/emlCore";
+import { useI18n } from "@/context/LanguageContext"; // NEW UNIFIED PATH
 import PWAInstallPrompt from "@/components/PWAInstallPrompt";
 
 export default function HomePage() {
-  const { t } = useLanguage();   // ✅ fixed hook usage
+  const { t } = useI18n();
   const [pulse, setPulse] = useState<any>({ growthIndex: "0.00", averageTransactionValue: 0 });
   const [loading, setLoading] = useState(true);
 
@@ -33,7 +33,7 @@ export default function HomePage() {
           .eq('status', 'active');
         
         if (!error && deals) {
-          setPulse(TMCore.getPulse(deals));
+          setPulse(EMLCore.getPulse(deals));
         }
       } catch (e) {
         console.error("PULSE_ERROR", e);
@@ -51,8 +51,8 @@ export default function HomePage() {
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-emerald-900/10 blur-[120px] rounded-full -z-10" />
         
         <h1 className="text-4xl md:text-7xl font-black tracking-tighter mb-6 leading-tight uppercase">
-          Trustworthy Machinery (TM) <br/>
-          <span className="text-emerald-500 block mt-2 font-noto-ethio">ታማኝ ማሽነሪ</span>
+          Ethio Machinery Link (EML) <br/>
+          <span className="text-emerald-500 block mt-2 font-noto-ethio">ኢትዮ ማሽነሪ አገናኝ</span>
         </h1>
         
         <p className="text-sm md:text-base text-zinc-500 max-w-2xl mx-auto mb-10 leading-relaxed font-bold uppercase tracking-[0.2em]">
@@ -64,10 +64,10 @@ export default function HomePage() {
             href="/browse" 
             className="bg-emerald-600 hover:bg-emerald-500 text-white px-8 py-4 rounded-xl font-black uppercase text-xs transition-all flex items-center gap-2 group shadow-xl shadow-emerald-900/20"
           >
-            {safeT('browseTitle')} <ArrowRight size={16} />
+            {safeT('browse')} <ArrowRight size={16} />
           </Link>
           <a 
-            href="https://t.me/TrustyworthyMachineryBot" 
+            href="https://t.me/EthioMachineryLinkBot" 
             target="_blank"
             className="bg-zinc-900 border border-white/10 text-white px-8 py-4 rounded-xl font-black uppercase text-xs transition-all flex items-center gap-2"
           >
@@ -104,7 +104,7 @@ export default function HomePage() {
           <div>
             <div className="text-zinc-500 text-[9px] uppercase font-black tracking-[0.2em] mb-2">Kernel</div>
             <div className="text-2xl font-black font-mono">
-              v{TMCore?.version ? TMCore.version.split('-')[0] : '3.0.0'}
+              v{EMLCore?.version ? EMLCore.version.split('-')[0] : '3.0.0'}
             </div>
           </div>
         </div>
