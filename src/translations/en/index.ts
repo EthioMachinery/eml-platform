@@ -16,7 +16,7 @@ const en: Record<string, any> = {
   languages: "Languages",
   heroTitle: "Buy. Rent. Transport. Repair. Operate.",
   heroSubtitle: "Everything Machinery Needs — In One Ecosystem.",
-  heroDescription: "TM connects machinery owners, contractors, transport providers, operators, mechanics, insurers, spare part suppliers and industrial businesses into one trusted multilingual ecosystem.",
+  heroDescription: "EML connects machinery owners, contractors, transport providers, operators, mechanics, insurers, spare part suppliers and industrial businesses into one trusted multilingual ecosystem.",
   findMachinery: "Find Machinery",
   listMachinery: "List Your Machinery",
   openDashboard: "Open Dashboard",
@@ -28,9 +28,9 @@ const en: Record<string, any> = {
   secureTransactions: "Secure Transactions",
   industrialEcosystem: "Industrial Ecosystem",
   bilingualPlatform: "Multilingual Platform",
-  ecosystem: "TM ECOSYSTEM",
+  ecosystem: "EML ECOSYSTEM",
   everythingIndustrialBusinessesNeed: "Everything Industrial Businesses Need",
-  ecosystemDescription: "TM is building Ethiopia's industrial digital infrastructure connecting machinery, transport, operators, mechanics, finance and industrial services.",
+  ecosystemDescription: "EML is building Ethiopia's industrial digital infrastructure connecting machinery, transport, operators, mechanics, finance and industrial services.",
   machineryMarketplace: "Machinery Marketplace",
   machineryMarketplaceDesc: "Buy, sell and rent excavators, loaders, trucks and industrial equipment.",
   transportLogistics: "Transport & Logistics",
@@ -86,5 +86,6 @@ const en: Record<string, any> = {
     title: "Build Your Digital Industrial Identity",
     subtitle: "Join Ethiopia's sovereign industrial ecosystem",
   },
+  home: 'Home',
 };
 export default en;

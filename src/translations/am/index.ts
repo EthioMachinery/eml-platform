@@ -16,7 +16,7 @@ const am: Record<string, any> = {
   languages: "ቋንቋዎች",
   heroTitle: "ይግዙ። ይከራዩ። ያጓጉዙ። ይጠግኑ። ያንቀሳቅሱ።",
   heroSubtitle: "ማሽነሪ የሚፈልገው ሁሉ — በአንድ ስርዓት።",
-  heroDescription: "TM የማሽነሪ ባለቤቶች፣ ኮንትራክተሮች፣ የትራንስፖርት አቅራቢዎች፣ ኦፕሬተሮች፣ ሜካኒኮች፣ ኢንሹሮች፣ የዕቃ አቅራቢዎች እና የኢንዱስትሪ ንግዶችን በአንድ የተሻሻለ ሁለት ቋንቋ ሥርዓት ያገናኛል።",
+  heroDescription: "EML የማሽነሪ ባለቤቶች፣ ኮንትራክተሮች፣ የትራንስፖርት አቅራቢዎች፣ ኦፕሬተሮች፣ ሜካኒኮች፣ ኢንሹሮች፣ የዕቃ አቅራቢዎች እና የኢንዱስትሪ ንግዶችን በአንድ የተሻሻለ ሁለት ቋንቋ ሥርዓት ያገናኛል።",
   findMachinery: "ማሽነሪ ፈልግ",
   listMachinery: "ማሽነሪዎን ይዘርዝሩ",
   openDashboard: "መቆጣጠሪያ ይክፈቱ",
@@ -28,9 +28,9 @@ const am: Record<string, any> = {
   secureTransactions: "ደህንነቱ የተጠበቀ ግብይቶች",
   industrialEcosystem: "የኢንዱስትሪ ስርዓት",
   bilingualPlatform: "ሁለገብ ቋንቋ መድረክ",
-  ecosystem: "TM ስርዓት",
+  ecosystem: "EML ስርዓት",
   everythingIndustrialBusinessesNeed: "የኢንዱስትሪ ንግዶች የሚፈልጉት ሁሉ",
-  ecosystemDescription: "TM የኢትዮጵያ ኢንዱስትሪ ዲጂታል ፕላትፎርም ሲሆን ማሽነሪ፣ ትራንስፖርት፣ ኦፕሬተሮች፣ ሜካኒኮች፣ ፋይናንስ እና የኢንዱስትሪ አገልግሎቶችን ያገናኛል።",
+  ecosystemDescription: "EML የኢትዮጵያ ኢንዱስትሪ ዲጂታል ፕላትፎርም ሲሆን ማሽነሪ፣ ትራንስፖርት፣ ኦፕሬተሮች፣ ሜካኒኮች፣ ፋይናንስ እና የኢንዱስትሪ አገልግሎቶችን ያገናኛል።",
   machineryMarketplace: "የማሽነሪ ገበያ",
   machineryMarketplaceDesc: "ኤክስካቫተሮችን፣ ሎደሮችን፣ ትራኮችን እና የኢንዱስትሪ ማሽነሪዎችን ይግዙ፣ ይሽጡ እና ይከራዩ።",
   transportLogistics: "ትራንስፖርት እና ሎጂስቲክስ",
@@ -86,5 +86,6 @@ const am: Record<string, any> = {
     title: "ዲጂታል የኢንዱስትሪ ማንነትዎን ይገንቡ",
     subtitle: "የኢትዮጵያ ሉዓላዊ የኢንዱስትሪ ስርዓት ይቀላቀሉ",
   },
+  home: 'ዋና ገጽ',
 };
 export default am;

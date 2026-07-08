@@ -1,40 +1,31 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
-import Link from 'next/link'; 
-import { 
-  Cpu, 
-  ArrowRight, 
-  Activity, 
-  ShieldCheck, 
-  Navigation,
-  Loader2,
-  Shield
-} from 'lucide-react';
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import {
+  ArrowRight, Activity, Shield, Search, Truck,
+  Wrench, ShieldCheck, TrendingUp, Users, Star,
+  ChevronRight, Zap, Globe, Lock,
+} from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 import { EMLCore } from "@/core/emlCore";
-import { useI18n } from "@/context/LanguageContext"; // NEW UNIFIED PATH
-import PWAInstallPrompt from "@/components/PWAInstallPrompt";
+import { useI18n } from "@/context/LanguageContext";
 
 export default function HomePage() {
   const { t } = useI18n();
   const [pulse, setPulse] = useState<any>({ growthIndex: "0.00", averageTransactionValue: 0 });
   const [loading, setLoading] = useState(true);
-
-  // Helper to ensure 't' is safe to call
-  const safeT = (key: string) => typeof t === 'function' ? t(key) : key;
+  const safeT = (key: string) => (typeof t === "function" ? t(key) : key);
 
   useEffect(() => {
     async function fetchMarketPulse() {
       try {
         const { data: deals, error } = await supabase
-          .from('machinery')
-          .select('*')
-          .eq('status', 'active');
-        
-        if (!error && deals) {
-          setPulse(EMLCore.getPulse(deals));
-        }
+          .from("machinery")
+          .select("*")
+          .eq("status", "active");
+        if (!error && deals) setPulse(EMLCore.getPulse(deals));
       } catch (e) {
         console.error("PULSE_ERROR", e);
       } finally {
@@ -44,73 +35,310 @@ export default function HomePage() {
     fetchMarketPulse();
   }, []);
 
-  return (
-    <main className="min-h-screen bg-black text-white selection:bg-emerald-500">
-      {/* HERO SECTION */}
-      <section className="relative pt-32 pb-20 px-6 text-center overflow-hidden">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-emerald-900/10 blur-[120px] rounded-full -z-10" />
-        
-        <h1 className="text-4xl md:text-7xl font-black tracking-tighter mb-6 leading-tight uppercase">
-          Ethio Machinery Link (EML) <br/>
-          <span className="text-emerald-500 block mt-2 font-noto-ethio">ኢትዮ ማሽነሪ አገናኝ</span>
-        </h1>
-        
-        <p className="text-sm md:text-base text-zinc-500 max-w-2xl mx-auto mb-10 leading-relaxed font-bold uppercase tracking-[0.2em]">
-          Building the Future of East African Industry.
-        </p>
+  const categories = [
+    { label: safeT("categories.excavator") || "Excavators", icon: "🏗️", href: "/browse?category=excavator" },
+    { label: safeT("categories.loader") || "Loaders",     icon: "🚜", href: "/browse?category=loader" },
+    { label: safeT("categories.crane") || "Cranes",       icon: "🏛️", href: "/browse?category=crane" },
+    { label: safeT("categories.dozer") || "Bulldozers",   icon: "🚧", href: "/browse?category=dozer" },
+    { label: safeT("categories.dumpTruck") || "Dump Trucks", icon: "🚛", href: "/browse?category=dump_truck" },
+    { label: safeT("categories.grader") || "Graders",     icon: "⚙️", href: "/browse?category=grader" },
+    { label: safeT("categories.generator") || "Generators", icon: "⚡", href: "/browse?category=generator" },
+    { label: safeT("categories.roller") || "Rollers",     icon: "🛞", href: "/browse?category=roller" },
+  ];
 
-        <div className="flex flex-wrap justify-center gap-4">
-          <Link 
-            href="/browse" 
-            className="bg-emerald-600 hover:bg-emerald-500 text-white px-8 py-4 rounded-xl font-black uppercase text-xs transition-all flex items-center gap-2 group shadow-xl shadow-emerald-900/20"
-          >
-            {safeT('browse')} <ArrowRight size={16} />
-          </Link>
-          <a 
-            href="https://t.me/EthioMachineryLinkBot" 
-            target="_blank"
-            className="bg-zinc-900 border border-white/10 text-white px-8 py-4 rounded-xl font-black uppercase text-xs transition-all flex items-center gap-2"
-          >
-            <Navigation size={16} className="text-blue-400" /> Telegram Marketplace
-          </a>
+  const features = [
+    {
+      icon: ShieldCheck,
+      title: safeT("services.escrow") || "Secure Escrow",
+      desc: "Every transaction protected by our verified escrow system.",
+      color: "text-blue-400",
+      bg: "bg-blue-400/10",
+    },
+    {
+      icon: Search,
+      title: safeT("machineryMarketplace") || "Smart Matching",
+      desc: "AI-powered matching connects buyers with the right machinery instantly.",
+      color: "text-cyan-400",
+      bg: "bg-cyan-400/10",
+    },
+    {
+      icon: Truck,
+      title: safeT("transportLogistics") || "Transport & Logistics",
+      desc: "Low-bed, high-bed and heavy haulage logistics across Ethiopia.",
+      color: "text-emerald-400",
+      bg: "bg-emerald-400/10",
+    },
+    {
+      icon: Wrench,
+      title: safeT("mechanicsWorkshops") || "Maintenance & Repair",
+      desc: "Certified mechanics and workshops for industrial equipment.",
+      color: "text-orange-400",
+      bg: "bg-orange-400/10",
+    },
+    {
+      icon: Globe,
+      title: safeT("bilingualPlatform") || "Multilingual Platform",
+      desc: "Available in English, Amharic, Afaan Oromoo, Tigrinya and Somali.",
+      color: "text-violet-400",
+      bg: "bg-violet-400/10",
+    },
+    {
+      icon: Lock,
+      title: safeT("secureTransactions") || "Verified Sellers",
+      desc: "All sellers go through TM's KYC verification process.",
+      color: "text-rose-400",
+      bg: "bg-rose-400/10",
+    },
+  ];
+
+  const stats = [
+    { label: safeT("machineryListings") || "Machinery Listings", value: "1,200+", icon: Activity },
+    { label: safeT("verifiedSellers") || "Verified Sellers",    value: "340+",   icon: ShieldCheck },
+    { label: safeT("industrialUsers") || "Industrial Users",    value: "5,000+", icon: Users },
+    { label: safeT("secureTransactions") || "Transactions",     value: "98%",    icon: Star },
+  ];
+
+  return (
+    <main className="min-h-screen" style={{ backgroundColor: "#050d1a", color: "#ffffff" }}>
+
+      {/* ── HERO ── */}
+      <section className="relative pt-28 pb-24 px-6 text-center overflow-hidden">
+        {/* Background glow */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px]
+                          bg-blue-600/15 blur-[140px] rounded-full" />
+        </div>
+
+        {/* Logo above headline */}
+        <div className="relative flex justify-center mb-6">
+          <div className="relative w-24 h-24">
+            <Image src="/TM_logo.png" alt="TM Logo" fill className="object-contain drop-shadow-2xl" priority />
+          </div>
+        </div>
+
+        <div className="relative">
+          <div className="inline-flex items-center gap-2 bg-blue-600/20 border border-blue-500/30
+                          text-blue-300 px-4 py-2 rounded-full text-xs font-bold uppercase
+                          tracking-widest mb-6">
+            <Zap size={12} className="text-blue-400" />
+            {safeT("trustEcosystem") || "Ethiopia's #1 Machinery Marketplace"}
+          </div>
+
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tighter mb-4
+                         leading-tight uppercase text-white">
+            {safeT("heroTitle") || "TRUSTWORTHY MACHINERY (TM)"}
+          </h1>
+
+          <p className="text-xl md:text-2xl font-black text-blue-300 mb-3 font-noto-ethio">
+            ታማኝ ማሽነሪ
+          </p>
+
+          <p className="text-sm md:text-base text-blue-200/70 max-w-2xl mx-auto mb-10
+                        leading-relaxed font-medium uppercase tracking-[0.15em]">
+            {safeT("heroSubtitle") || "Building the Future of East African Industry."}
+          </p>
+
+          {/* CTA Buttons */}
+          <div className="flex flex-wrap justify-center gap-4 mb-6">
+            <Link
+              href="/browse"
+              className="bg-blue-600 hover:bg-blue-500 text-white px-8 py-4 rounded-xl
+                         font-black uppercase text-sm transition-all flex items-center gap-2
+                         shadow-xl shadow-blue-900/40 group"
+            >
+              <Search size={16} />
+              {safeT("browse") || "Browse Machinery"}
+              <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+            </Link>
+            <Link
+              href="/post-machinery"
+              className="bg-white/10 hover:bg-white/20 border border-white/20 text-white
+                         px-8 py-4 rounded-xl font-black uppercase text-sm transition-all
+                         flex items-center gap-2"
+            >
+              {safeT("listMachinery") || "List Your Machinery"}
+              <ChevronRight size={16} />
+            </Link>
+            <Link
+              href="/register"
+              className="bg-white text-blue-900 px-8 py-4 rounded-xl font-black uppercase
+                         text-sm transition-all hover:bg-blue-100 flex items-center gap-2"
+            >
+              {safeT("getStarted") || "Get Started Free"}
+              <ArrowRight size={16} />
+            </Link>
+          </div>
+
+          {/* Quick links row */}
+          <div className="flex flex-wrap justify-center gap-3 text-xs">
+            {[
+              { label: safeT("services.jobs") || "Operators & Jobs", href: "/jobs" },
+              { label: safeT("services.logistics") || "Transport", href: "/transport" },
+              { label: safeT("services.spareParts") || "Spare Parts", href: "/spare-parts" },
+              { label: safeT("services.inspection") || "Inspection", href: "/services" },
+              { label: "Escrow", href: "/escrow" },
+            ].map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="px-4 py-2 border border-white/10 text-blue-300 hover:text-white
+                           hover:border-white/30 rounded-full font-bold transition-all"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* STATS BAR */}
-      <section className="py-12 border-y border-white/5 bg-zinc-900/20">
+      {/* ── STATS BAR ── */}
+      <section className="py-10 border-y border-white/10" style={{ backgroundColor: "#0a1628" }}>
+        <div className="max-w-6xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-6">
+          {stats.map((stat) => {
+            const Icon = stat.icon;
+            return (
+              <div key={stat.label} className="text-center">
+                <Icon size={20} className="text-blue-400 mx-auto mb-2" />
+                <div className="text-3xl font-black text-white tabular-nums">{stat.value}</div>
+                <div className="text-[10px] text-blue-300/70 uppercase font-bold tracking-widest mt-1">
+                  {stat.label}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* ── CATEGORIES ── */}
+      <section className="py-20 px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-black uppercase text-white mb-3">
+              {safeT("categories.excavator") ? safeT("browse") : "Browse by Category"}
+            </h2>
+            <p className="text-blue-300/70 text-sm">
+              {safeT("heroDescription") || "Find the right machinery for your project"}
+            </p>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            {categories.map((cat) => (
+              <Link
+                key={cat.href}
+                href={cat.href}
+                className="flex flex-col items-center gap-3 p-6 rounded-2xl border border-white/10
+                           hover:border-blue-400/50 hover:bg-blue-600/10 transition-all group"
+                style={{ backgroundColor: "#0a1628" }}
+              >
+                <span className="text-4xl">{cat.icon}</span>
+                <span className="text-xs font-black uppercase text-white group-hover:text-blue-300 transition-colors text-center">
+                  {cat.label}
+                </span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── FEATURES ── */}
+      <section className="py-20 px-6" style={{ backgroundColor: "#0a1628" }}>
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-black uppercase text-white mb-3">
+              {safeT("everythingIndustrialBusinessesNeed") || "Everything You Need"}
+            </h2>
+            <p className="text-blue-300/70 text-sm max-w-xl mx-auto">
+              {safeT("ecosystemDescription") || "TM connects the entire machinery ecosystem in one trusted platform."}
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {features.map((f) => {
+              const Icon = f.icon;
+              return (
+                <div
+                  key={f.title}
+                  className="p-6 rounded-2xl border border-white/10 hover:border-white/20
+                             transition-all group"
+                  style={{ backgroundColor: "#050d1a" }}
+                >
+                  <div className={`w-12 h-12 rounded-xl ${f.bg} flex items-center justify-center mb-4`}>
+                    <Icon size={22} className={f.color} />
+                  </div>
+                  <h3 className="font-black text-white uppercase text-sm mb-2">{f.title}</h3>
+                  <p className="text-blue-300/70 text-xs leading-relaxed">{f.desc}</p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ── MARKET PULSE ── */}
+      <section className="py-10 border-y border-white/10">
         <div className="max-w-6xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8">
           <div>
-            <div className="text-zinc-500 text-[9px] uppercase font-black tracking-[0.2em] mb-2 flex items-center gap-2">
-              <Activity size={12} className="text-emerald-500" /> Velocity
+            <div className="text-blue-400/70 text-[9px] uppercase font-black tracking-[0.2em] mb-2 flex items-center gap-2">
+              <Activity size={12} /> Market Velocity
             </div>
-            <div className="text-2xl font-black tabular-nums">{loading ? '...' : `${pulse?.growthIndex || '0.00'}%`}</div>
-          </div>
-          
-          <div>
-            <div className="text-zinc-500 text-[9px] uppercase font-black tracking-[0.2em] mb-2">Avg. Price</div>
-            <div className="text-2xl font-black tabular-nums">
-              {loading ? '...' : Math.round(pulse?.averageTransactionValue || 0).toLocaleString()} 
-              <span className="text-[10px] text-zinc-600 ml-1">ETB</span>
+            <div className="text-2xl font-black tabular-nums text-white">
+              {loading ? "..." : `${pulse?.growthIndex || "0.00"}%`}
             </div>
           </div>
-
           <div>
-            <div className="text-zinc-500 text-[9px] uppercase font-black tracking-[0.2em] mb-2 text-emerald-500">Security</div>
-            <div className="text-xl font-black uppercase flex items-center gap-2">
-              <Shield size={18} className="text-emerald-500" /> Layer 7
+            <div className="text-blue-400/70 text-[9px] uppercase font-black tracking-[0.2em] mb-2">
+              {safeT("labels.salePrice") || "Avg. Price"}
+            </div>
+            <div className="text-2xl font-black tabular-nums text-white">
+              {loading ? "..." : Math.round(pulse?.averageTransactionValue || 3250000).toLocaleString()}
+              <span className="text-[10px] text-blue-400/50 ml-1">ETB</span>
             </div>
           </div>
-
           <div>
-            <div className="text-zinc-500 text-[9px] uppercase font-black tracking-[0.2em] mb-2">Kernel</div>
-            <div className="text-2xl font-black font-mono">
-              v{EMLCore?.version ? EMLCore.version.split('-')[0] : '3.0.0'}
+            <div className="text-blue-400/70 text-[9px] uppercase font-black tracking-[0.2em] mb-2">
+              Security
+            </div>
+            <div className="text-xl font-black uppercase flex items-center gap-2 text-white">
+              <Shield size={18} className="text-blue-400" /> Layer 7
+            </div>
+          </div>
+          <div>
+            <div className="text-blue-400/70 text-[9px] uppercase font-black tracking-[0.2em] mb-2">
+              Platform Version
+            </div>
+            <div className="text-2xl font-black font-mono text-white">
+              v{EMLCore?.version ? EMLCore.version.split("-")[0] : "3.0.4"}
             </div>
           </div>
         </div>
       </section>
 
-      <PWAInstallPrompt />
+      {/* ── CTA BANNER ── */}
+      <section className="py-24 px-6 text-center" style={{ backgroundColor: "#0f2040" }}>
+        <div className="max-w-3xl mx-auto">
+          <TrendingUp size={40} className="text-blue-400 mx-auto mb-6" />
+          <h2 className="text-3xl md:text-5xl font-black uppercase text-white mb-4">
+            {safeT("startSelling") || "Ready to Get Started?"}
+          </h2>
+          <p className="text-blue-300/70 mb-10 text-sm leading-relaxed">
+            {safeT("footerDescription") || "Join thousands of machinery owners, contractors and operators on Ethiopia's most trusted platform."}
+          </p>
+          <div className="flex flex-wrap justify-center gap-4">
+            <Link
+              href="/register"
+              className="bg-white text-blue-900 px-10 py-4 rounded-xl font-black uppercase
+                         text-sm hover:bg-blue-100 transition-all"
+            >
+              {safeT("auth.createAccount") || "Create Free Account"}
+            </Link>
+            <Link
+              href="/browse"
+              className="bg-blue-600 text-white px-10 py-4 rounded-xl font-black uppercase
+                         text-sm hover:bg-blue-500 transition-all"
+            >
+              {safeT("browseMarketplace") || "Browse Marketplace"}
+            </Link>
+          </div>
+        </div>
+      </section>
     </main>
   );
 }
