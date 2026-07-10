@@ -1,55 +1,31 @@
 "use client";
+
+// Generic string alias — satisfies components that import TranslationPath
+export type TranslationPath = string;
 import { useState, useEffect } from 'react';
-import { legacy as translations } from '@/lib/i18n/dictionary';
+import { translate, type Language } from '@/lib/i18n/dictionary';
 
 /**
- * TM GLOBALIZATION HOOK
- * Optimized for Amharic (Ethiopic) and Global Latin scripts.
+ * EML GLOBALIZATION HOOK
+ * Single canonical translation hook. Supports en, am, or, ti.
+ * Falls back to English (then the raw key) for anything not yet
+ * translated in the active language - never fails silently.
  */
-
-type Language = 'en' | 'am' | 'or' | 'ti';
-
-// Exported so components can type translation key paths
-export type TranslationPath = string;
-
-// Legacy translations only cover en/am; or/ti fall back to en
-type LegacyLang = 'en' | 'am';
-const safeTranslations = translations as Record<LegacyLang, Record<string, any>>;
-
 export function useTranslate() {
-  // 1. Initialize language from local storage or default to English
   const [lang, setLang] = useState<Language>('en');
 
   useEffect(() => {
-    const savedLang = localStorage.getItem('tm_lang') as Language;
-    if (savedLang && safeTranslations[savedLang as LegacyLang]) {
+    const savedLang = localStorage.getItem('eml_lang') as Language | null;
+    if (savedLang && ['en', 'am', 'or', 'ti', 'so'].includes(savedLang)) {
       setLang(savedLang);
     }
   }, []);
 
-  /**
-   * Main translation function
-   * @param key The key from the translations object
-   * @returns The translated string or the key itself if missing
-   */
-  const t = (key: string): string => {
-    try {
-      // Access the language object, fallback to English if the current lang is missing
-      const dictionary = safeTranslations[lang as LegacyLang] || safeTranslations['en'];
-      
-      // Handle deep-nested keys (e.g., 'auth.login_success')
-      const value = key.split('.').reduce((obj: any, i) => obj?.[i], dictionary);
-      
-      return value || safeTranslations['en'][key] || key;
-    } catch (e) {
-      return key; // Return the key as a fallback
-    }
-  };
+  const t = (key: string): string => translate(lang, key);
 
   const changeLanguage = (newLang: Language) => {
     setLang(newLang);
-    localStorage.setItem('tm_lang', newLang);
-    // Optional: Refresh or notify the system for AI-context updates
+    localStorage.setItem('eml_lang', newLang);
     window.dispatchEvent(new Event('languageChange'));
   };
 

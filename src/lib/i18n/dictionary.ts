@@ -1,45 +1,64 @@
 /**
- * TM CANONICAL TRANSLATION DICTIONARY
+ * TM CANONICAL TRANSLATION DICTIONARY — 5 languages
+ * en | am | or | ti | so
  *
- * This file consolidates what used to be two separate translation systems
- * (lib/translations.ts and src/translations/{lang}/index.ts) into one
- * physical source of truth, organized as two namespaces:
- *
- *  - `legacy`     -> content originally in lib/translations.ts (en/am only).
- *                    Consumed by useTranslate() (17 pages).
- *  - `enterprise` -> content originally in src/translations/{lang}/index.ts
- *                    (en/am/or/ti). Consumed by translate()/getLang() in
- *                    lib/i18n.ts (10 files) and useEnterpriseTranslation() (1 file).
- *
- * NOTE: 9 keys exist in both namespaces with DIFFERENT wording (loading,
- * submit, cancel, dashboard, browse, notifications, available, rented, sold).
- * They were kept separate on purpose rather than silently picking a winner -
- * that's a brand-voice decision for a human to make, not something to
- * auto-resolve. See the README note at the bottom of this file.
+ * Sources:
+ *  - src/translations/{lang}/index.ts  → flat keys (heroTitle, browse, etc.)
+ *  - src/lib/i18n/translations.ts      → nested keys (categories.excavator, nav.home, etc.)
  */
-import legacyData from "./legacy";
 import enEnterprise from "@/translations/en";
 import amEnterprise from "@/translations/am";
 import orEnterprise from "@/translations/or";
 import tiEnterprise from "@/translations/ti";
+import soEnterprise from "@/translations/so";
+import { translations } from "@/lib/i18n/translations";
 
-export const legacy = legacyData;
+export type Language = 'en' | 'am' | 'or' | 'ti' | 'so';
 
-export const enterprise: Record<string, any> = {
+// Flat translations (from src/translations/)
+const flat: Record<Language, Record<string, any>> = {
   en: enEnterprise,
   am: amEnterprise,
   or: orEnterprise,
   ti: tiEnterprise,
+  so: soEnterprise,
+};
+
+// Nested translations (from src/lib/i18n/translations.ts)
+const nested: Record<Language, Record<string, any>> = translations as any;
+
+export const dictionaries: Record<Language, Record<string, any>> = {
+  en: { ...nested['en'], ...flat['en'] },
+  am: { ...nested['am'], ...flat['am'] },
+  or: { ...nested['or'] ?? {}, ...flat['or'] },
+  ti: { ...nested['ti'] ?? {}, ...flat['ti'] },
+  so: { ...nested['so'] ?? {}, ...flat['so'] },
 };
 
 /**
- * TODO (product decision needed): these 9 keys have different copy in
- * `legacy` vs `enterprise`. Pick one wording per key, then this list (and
- * the duplicate key) can be deleted:
- *   loading, submit, cancel, dashboard, browse, notifications,
- *   available, rented, sold
+ * translate(lang, path)
+ * Supports flat keys ("browse") and dot-path keys ("categories.excavator").
+ * Falls back: requested lang → English → the key itself.
  */
-export const KNOWN_COLLISIONS = [
-  "loading", "submit", "cancel", "dashboard", "browse",
-  "notifications", "available", "rented", "sold",
-];
+export function translate(lang: Language, path: string): string {
+  const dict = dictionaries[lang] ?? dictionaries['en'];
+  const enDict = dictionaries['en'];
+
+  const parts = path.split('.');
+
+  // Try in requested language
+  let val: any = dict;
+  for (const part of parts) { val = val?.[part]; }
+  if (typeof val === 'string') return val;
+
+  // Try English fallback
+  let enVal: any = enDict;
+  for (const part of parts) { enVal = enVal?.[part]; }
+  if (typeof enVal === 'string') return enVal;
+
+  // Last resort: return the key
+  return path;
+}
+
+// Backward-compat alias — several files import { enterprise } from here
+export const enterprise = dictionaries;

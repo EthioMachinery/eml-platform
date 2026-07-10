@@ -2,22 +2,21 @@
 
 import React from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { useI18n } from "@/context/LanguageContext";
+import TMLogo from "@/components/TMLogo";
 import { Mail, Phone, MapPin, Globe } from "lucide-react";
 
 export default function Footer() {
   const { t } = useI18n();
-  const safeT = (key: string) => (typeof t === "function" ? t(key) : key);
-
+  
   const marketplace = [
-    { label: safeT("browse") || "Browse Machinery",     href: "/browse" },
-    { label: safeT("requests") || "Post a Request",     href: "/post-request" },
-    { label: safeT("services.jobs") || "Jobs",          href: "/jobs" },
+    { label: t("browse") || "Browse Machinery",     href: "/browse" },
+    { label: t("requests") || "Post a Request",     href: "/post-request" },
+    { label: t("services.jobs") || "Jobs",          href: "/jobs" },
     { label: "Tenders",                                   href: "/tenders" },
-    { label: safeT("services.logistics") || "Transport", href: "/transport" },
-    { label: safeT("services.spareParts") || "Spare Parts", href: "/spare-parts" },
-    { label: safeT("escrow") || "Escrow",               href: "/escrow" },
+    { label: t("services.logistics") || "Transport", href: "/transport" },
+    { label: t("services.spareParts") || "Spare Parts", href: "/spare-parts" },
+    { label: t("services.escrow") || "Escrow",               href: "/escrow" },
   ];
 
   const company = [
@@ -29,11 +28,11 @@ export default function Footer() {
   ];
 
   const account = [
-    { label: safeT("auth.login") || "Login",              href: "/login" },
-    { label: safeT("auth.register") || "Sign Up",         href: "/register" },
-    { label: safeT("dashboard") || "Dashboard",           href: "/dashboard" },
+    { label: t("auth.login") || "Login",              href: "/login" },
+    { label: t("auth.register") || "Sign Up",         href: "/register" },
+    { label: t("dashboard") || "Dashboard",           href: "/dashboard" },
     { label: "List Machinery",                             href: "/post-machinery" },
-    { label: safeT("seller.verify") || "Seller Verification", href: "/seller/verify" },
+    { label: "Seller Verification", href: "/seller/verify" },
   ];
 
   return (
@@ -47,9 +46,7 @@ export default function Footer() {
           {/* Brand column */}
           <div className="lg:col-span-1">
             <Link href="/" className="flex items-center gap-3 mb-4">
-              <div className="relative w-12 h-12">
-                <Image src="/TM_logo.png" alt="TM Logo" fill className="object-contain" />
-              </div>
+              <TMLogo size={48} />
               <div>
                 <div className="text-white font-black text-sm font-noto-ethio">ታማኝ ማሽነሪ</div>
                 <div className="text-blue-300 text-[9px] font-bold uppercase tracking-widest">
@@ -58,7 +55,7 @@ export default function Footer() {
               </div>
             </Link>
             <p className="text-blue-300/60 text-xs leading-relaxed mb-6">
-              {safeT("footerDescription") || "Ethiopia's trusted heavy machinery marketplace — buy, sell, rent and operate."}
+              {t("footerDescription") || "Ethiopia's trusted heavy machinery marketplace — buy, sell, rent and operate."}
             </p>
             <div className="space-y-2 text-xs text-blue-300/60">
               <div className="flex items-center gap-2">

@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import {
   ArrowRight, Activity, Shield, Search, Truck,
   Wrench, ShieldCheck, TrendingUp, Users, Star,
@@ -11,13 +10,13 @@ import {
 import { supabase } from "@/lib/supabaseClient";
 import { EMLCore } from "@/core/emlCore";
 import { useI18n } from "@/context/LanguageContext";
+import TMLogo from "@/components/TMLogo";
 
 export default function HomePage() {
   const { t } = useI18n();
   const [pulse, setPulse] = useState<any>({ growthIndex: "0.00", averageTransactionValue: 0 });
   const [loading, setLoading] = useState(true);
-  const safeT = (key: string) => (typeof t === "function" ? t(key) : key);
-
+  
   useEffect(() => {
     async function fetchMarketPulse() {
       try {
@@ -36,55 +35,55 @@ export default function HomePage() {
   }, []);
 
   const categories = [
-    { label: safeT("categories.excavator") || "Excavators", icon: "🏗️", href: "/browse?category=excavator" },
-    { label: safeT("categories.loader") || "Loaders",     icon: "🚜", href: "/browse?category=loader" },
-    { label: safeT("categories.crane") || "Cranes",       icon: "🏛️", href: "/browse?category=crane" },
-    { label: safeT("categories.dozer") || "Bulldozers",   icon: "🚧", href: "/browse?category=dozer" },
-    { label: safeT("categories.dumpTruck") || "Dump Trucks", icon: "🚛", href: "/browse?category=dump_truck" },
-    { label: safeT("categories.grader") || "Graders",     icon: "⚙️", href: "/browse?category=grader" },
-    { label: safeT("categories.generator") || "Generators", icon: "⚡", href: "/browse?category=generator" },
-    { label: safeT("categories.roller") || "Rollers",     icon: "🛞", href: "/browse?category=roller" },
+    { label: t("categories.excavator") || "Excavators", icon: "🏗️", href: "/browse?category=excavator" },
+    { label: t("categories.loader") || "Loaders",       icon: "🚜", href: "/browse?category=loader" },
+    { label: t("categories.crane") || "Cranes",         icon: "🏛️", href: "/browse?category=crane" },
+    { label: t("categories.dozer") || "Bulldozers",     icon: "🚧", href: "/browse?category=dozer" },
+    { label: t("categories.dumpTruck") || "Dump Trucks",icon: "🚛", href: "/browse?category=dump_truck" },
+    { label: t("categories.grader") || "Graders",       icon: "⚙️", href: "/browse?category=grader" },
+    { label: t("categories.generator") || "Generators", icon: "⚡", href: "/browse?category=generator" },
+    { label: t("categories.roller") || "Rollers",       icon: "🛞", href: "/browse?category=roller" },
   ];
 
   const features = [
     {
       icon: ShieldCheck,
-      title: safeT("services.escrow") || "Secure Escrow",
+      title: t("services.escrow") || "Secure Escrow",
       desc: "Every transaction protected by our verified escrow system.",
       color: "text-blue-400",
       bg: "bg-blue-400/10",
     },
     {
       icon: Search,
-      title: safeT("machineryMarketplace") || "Smart Matching",
+      title: t("machineryMarketplace") || "Smart Matching",
       desc: "AI-powered matching connects buyers with the right machinery instantly.",
       color: "text-cyan-400",
       bg: "bg-cyan-400/10",
     },
     {
       icon: Truck,
-      title: safeT("transportLogistics") || "Transport & Logistics",
+      title: t("transportLogistics") || "Transport & Logistics",
       desc: "Low-bed, high-bed and heavy haulage logistics across Ethiopia.",
       color: "text-emerald-400",
       bg: "bg-emerald-400/10",
     },
     {
       icon: Wrench,
-      title: safeT("mechanicsWorkshops") || "Maintenance & Repair",
+      title: t("mechanicsWorkshops") || "Maintenance & Repair",
       desc: "Certified mechanics and workshops for industrial equipment.",
       color: "text-orange-400",
       bg: "bg-orange-400/10",
     },
     {
       icon: Globe,
-      title: safeT("bilingualPlatform") || "Multilingual Platform",
+      title: t("bilingualPlatform") || "Multilingual Platform",
       desc: "Available in English, Amharic, Afaan Oromoo, Tigrinya and Somali.",
       color: "text-violet-400",
       bg: "bg-violet-400/10",
     },
     {
       icon: Lock,
-      title: safeT("secureTransactions") || "Verified Sellers",
+      title: t("secureTransactions") || "Verified Sellers",
       desc: "All sellers go through TM's KYC verification process.",
       color: "text-rose-400",
       bg: "bg-rose-400/10",
@@ -92,10 +91,10 @@ export default function HomePage() {
   ];
 
   const stats = [
-    { label: safeT("machineryListings") || "Machinery Listings", value: "1,200+", icon: Activity },
-    { label: safeT("verifiedSellers") || "Verified Sellers",    value: "340+",   icon: ShieldCheck },
-    { label: safeT("industrialUsers") || "Industrial Users",    value: "5,000+", icon: Users },
-    { label: safeT("secureTransactions") || "Transactions",     value: "98%",    icon: Star },
+    { label: t("machineryListings") || "Machinery Listings", value: "1,200+", icon: Activity },
+    { label: t("verifiedSellers") || "Verified Sellers",    value: "340+",   icon: ShieldCheck },
+    { label: t("industrialUsers") || "Industrial Users",    value: "5,000+", icon: Users },
+    { label: t("secureTransactions") || "Transactions",     value: "98%",    icon: Star },
   ];
 
   return (
@@ -110,10 +109,8 @@ export default function HomePage() {
         </div>
 
         {/* Logo above headline */}
-        <div className="relative flex justify-center mb-6">
-          <div className="relative w-24 h-24">
-            <Image src="/TM_logo.png" alt="TM Logo" fill className="object-contain drop-shadow-2xl" priority />
-          </div>
+        <div className="flex justify-center mb-6">
+          <TMLogo size={96} className="drop-shadow-2xl" />
         </div>
 
         <div className="relative">
@@ -121,12 +118,12 @@ export default function HomePage() {
                           text-blue-300 px-4 py-2 rounded-full text-xs font-bold uppercase
                           tracking-widest mb-6">
             <Zap size={12} className="text-blue-400" />
-            {safeT("trustEcosystem") || "Ethiopia's #1 Machinery Marketplace"}
+            {t("trustEcosystem") || "Ethiopia's #1 Machinery Marketplace"}
           </div>
 
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tighter mb-4
                          leading-tight uppercase text-white">
-            {safeT("heroTitle") || "TRUSTWORTHY MACHINERY (TM)"}
+            {t("heroTitle") || "TRUSTWORTHY MACHINERY (TM)"}
           </h1>
 
           <p className="text-xl md:text-2xl font-black text-blue-300 mb-3 font-noto-ethio">
@@ -135,7 +132,7 @@ export default function HomePage() {
 
           <p className="text-sm md:text-base text-blue-200/70 max-w-2xl mx-auto mb-10
                         leading-relaxed font-medium uppercase tracking-[0.15em]">
-            {safeT("heroSubtitle") || "Building the Future of East African Industry."}
+            {t("heroSubtitle") || "Building the Future of East African Industry."}
           </p>
 
           {/* CTA Buttons */}
@@ -147,7 +144,7 @@ export default function HomePage() {
                          shadow-xl shadow-blue-900/40 group"
             >
               <Search size={16} />
-              {safeT("browse") || "Browse Machinery"}
+              {t("browse") || "Browse Machinery"}
               <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link
@@ -156,7 +153,7 @@ export default function HomePage() {
                          px-8 py-4 rounded-xl font-black uppercase text-sm transition-all
                          flex items-center gap-2"
             >
-              {safeT("listMachinery") || "List Your Machinery"}
+              {t("listMachinery") || "List Your Machinery"}
               <ChevronRight size={16} />
             </Link>
             <Link
@@ -164,7 +161,7 @@ export default function HomePage() {
               className="bg-white text-blue-900 px-8 py-4 rounded-xl font-black uppercase
                          text-sm transition-all hover:bg-blue-100 flex items-center gap-2"
             >
-              {safeT("getStarted") || "Get Started Free"}
+              {t("getStarted") || "Get Started Free"}
               <ArrowRight size={16} />
             </Link>
           </div>
@@ -172,10 +169,10 @@ export default function HomePage() {
           {/* Quick links row */}
           <div className="flex flex-wrap justify-center gap-3 text-xs">
             {[
-              { label: safeT("services.jobs") || "Operators & Jobs", href: "/jobs" },
-              { label: safeT("services.logistics") || "Transport", href: "/transport" },
-              { label: safeT("services.spareParts") || "Spare Parts", href: "/spare-parts" },
-              { label: safeT("services.inspection") || "Inspection", href: "/services" },
+              { label: t("services.jobs") || "Operators & Jobs", href: "/jobs" },
+              { label: t("services.logistics") || "Transport", href: "/transport" },
+              { label: t("services.spareParts") || "Spare Parts", href: "/spare-parts" },
+              { label: t("services.inspection") || "Inspection", href: "/services" },
               { label: "Escrow", href: "/escrow" },
             ].map((link) => (
               <Link
@@ -214,10 +211,10 @@ export default function HomePage() {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-black uppercase text-white mb-3">
-              {safeT("categories.excavator") ? safeT("browse") : "Browse by Category"}
+              {t("categories.excavator") ? t("browse") : "Browse by Category"}
             </h2>
             <p className="text-blue-300/70 text-sm">
-              {safeT("heroDescription") || "Find the right machinery for your project"}
+              {t("heroDescription") || "Find the right machinery for your project"}
             </p>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -244,10 +241,10 @@ export default function HomePage() {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-black uppercase text-white mb-3">
-              {safeT("everythingIndustrialBusinessesNeed") || "Everything You Need"}
+              {t("everythingIndustrialBusinessesNeed") || "Everything You Need"}
             </h2>
             <p className="text-blue-300/70 text-sm max-w-xl mx-auto">
-              {safeT("ecosystemDescription") || "TM connects the entire machinery ecosystem in one trusted platform."}
+              {t("ecosystemDescription") || "TM connects the entire machinery ecosystem in one trusted platform."}
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -285,7 +282,7 @@ export default function HomePage() {
           </div>
           <div>
             <div className="text-blue-400/70 text-[9px] uppercase font-black tracking-[0.2em] mb-2">
-              {safeT("labels.salePrice") || "Avg. Price"}
+              {t("labels.salePrice") || "Avg. Price"}
             </div>
             <div className="text-2xl font-black tabular-nums text-white">
               {loading ? "..." : Math.round(pulse?.averageTransactionValue || 3250000).toLocaleString()}
@@ -316,10 +313,10 @@ export default function HomePage() {
         <div className="max-w-3xl mx-auto">
           <TrendingUp size={40} className="text-blue-400 mx-auto mb-6" />
           <h2 className="text-3xl md:text-5xl font-black uppercase text-white mb-4">
-            {safeT("startSelling") || "Ready to Get Started?"}
+            {t("startSelling") || "Ready to Get Started?"}
           </h2>
           <p className="text-blue-300/70 mb-10 text-sm leading-relaxed">
-            {safeT("footerDescription") || "Join thousands of machinery owners, contractors and operators on Ethiopia's most trusted platform."}
+            {t("footerDescription") || "Join thousands of machinery owners, contractors and operators on Ethiopia's most trusted platform."}
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link
@@ -327,14 +324,14 @@ export default function HomePage() {
               className="bg-white text-blue-900 px-10 py-4 rounded-xl font-black uppercase
                          text-sm hover:bg-blue-100 transition-all"
             >
-              {safeT("auth.createAccount") || "Create Free Account"}
+              {t("auth.createAccount") || "Create Free Account"}
             </Link>
             <Link
               href="/browse"
               className="bg-blue-600 text-white px-10 py-4 rounded-xl font-black uppercase
                          text-sm hover:bg-blue-500 transition-all"
             >
-              {safeT("browseMarketplace") || "Browse Marketplace"}
+              {t("browseMarketplace") || "Browse Marketplace"}
             </Link>
           </div>
         </div>
