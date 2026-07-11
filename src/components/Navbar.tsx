@@ -33,14 +33,14 @@ export default function Navbar() {
   const safeT = (key: string) => (typeof t === "function" ? t(key) : key);
 
   const navLinks = [
-    { href: "/",          label: safeT("home") || "Home",         icon: Home },
-    { href: "/browse",    label: safeT("browse") || "Browse",     icon: Search },
-    { href: "/jobs",      label: safeT("jobs") || "Jobs",         icon: Wrench },
-    { href: "/tenders",   label: "Tenders",                        icon: FileText },
-    { href: "/transport", label: safeT("transport") || "Transport",icon: Truck },
-    { href: "/pricing",   label: "Pricing",                        icon: DollarSign },
-    { href: "/about",     label: "About Us",                       icon: Info },
-    { href: "/contact",   label: "Contact",                        icon: Phone },
+    { href: "/",          label: safeT("nav.home") || "Home",         icon: Home },
+    { href: "/browse",    label: safeT("nav.browse") || "Browse",     icon: Search },
+    { href: "/jobs",      label: safeT("nav.jobs") || "Jobs",         icon: Wrench },
+    { href: "/tenders",   label: safeT("nav.tenders") || "Tenders",   icon: FileText },
+    { href: "/transport", label: safeT("nav.transport") || "Transport",icon: Truck },
+    { href: "/pricing",   label: safeT("nav.pricing") || "Pricing",   icon: DollarSign },
+    { href: "/about",     label: safeT("nav.about") || "About Us",    icon: Info },
+    { href: "/contact",   label: safeT("nav.contact") || "Contact",   icon: Phone },
   ];
 
   // Active link: exact match for "/" else starts-with
@@ -124,11 +124,11 @@ export default function Navbar() {
               <div className="flex items-center gap-2 border-l border-white/20 pl-3">
                 <Link href="/login"
                   className="flex items-center gap-1.5 px-3 py-2 text-[11px] font-bold uppercase text-blue-200 hover:text-white hover:bg-white/10 rounded-lg transition-all">
-                  <LogIn size={13} /> {safeT("auth.login") || "Login"}
+                  <LogIn size={13} /> {safeT("nav.login") || "Login"}
                 </Link>
                 <Link href="/register"
                   className="flex items-center gap-1.5 bg-white text-blue-900 text-[11px] font-black uppercase px-4 py-2 rounded-xl hover:bg-blue-100 transition-all">
-                  <UserPlus size={13} /> {safeT("auth.signUp") || "Sign Up"}
+                  <UserPlus size={13} /> {safeT("nav.signup") || "Sign Up"}
                 </Link>
               </div>
             )}
@@ -185,7 +185,7 @@ export default function Navbar() {
             ) : (
               <div className="flex flex-col gap-2 px-2 py-2">
                 <Link href="/login" className="flex items-center justify-center gap-2 py-3 text-sm font-black text-white bg-white/10 rounded-xl hover:bg-white/20">
-                  <LogIn size={16} /> {safeT("auth.login") || "Login"}
+                  <LogIn size={16} /> {safeT("nav.login") || "Login"}
                 </Link>
                 <Link href="/register" className="flex items-center justify-center gap-2 py-3 text-sm font-black text-blue-900 bg-white rounded-xl hover:bg-blue-100">
                   <UserPlus size={16} /> {safeT("auth.signUp") || "Sign Up Free"}

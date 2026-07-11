@@ -13,16 +13,16 @@ export default function Footer() {
     { label: t("browse") || "Browse Machinery",     href: "/browse" },
     { label: t("requests") || "Post a Request",     href: "/post-request" },
     { label: t("services.jobs") || "Jobs",          href: "/jobs" },
-    { label: "Tenders",                                   href: "/tenders" },
+    { label: t("nav.tenders") || "Tenders",                                   href: "/tenders" },
     { label: t("services.logistics") || "Transport", href: "/transport" },
     { label: t("services.spareParts") || "Spare Parts", href: "/spare-parts" },
     { label: t("services.escrow") || "Escrow",               href: "/escrow" },
   ];
 
   const company = [
-    { label: "About TM",     href: "/about" },
-    { label: "Contact Us",   href: "/contact" },
-    { label: "Pricing",      href: "/pricing" },
+    { label: t("nav.about") || "About TM",     href: "/about" },
+    { label: t("nav.contact") || "Contact Us",   href: "/contact" },
+    { label: t("nav.pricing") || "Pricing",      href: "/pricing" },
     { label: "Blog",         href: "/blog" },
     { label: "Careers",      href: "/careers" },
   ];
