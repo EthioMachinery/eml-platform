@@ -35,7 +35,7 @@ export function getNestedValue(obj: any, path: string): string | null {
 }
 
 export function translate(
-  key: string | Record<Language, string>,
+  key: string | Partial<Record<Language, string>> | Record<string, string>,
   language: Language,
   fallback?: string
 ): string {
