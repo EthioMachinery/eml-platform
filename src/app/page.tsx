@@ -49,52 +49,52 @@ export default function HomePage() {
     {
       icon: ShieldCheck,
       title: t("services.escrow") || "Secure Escrow",
-      desc: "Every transaction protected by our verified escrow system.",
+      desc: t("financeInsuranceDesc") || t("feat.escrowDesc") || "Every transaction protected by our verified escrow system.",
       color: "text-blue-400",
       bg: "bg-blue-400/10",
     },
     {
       icon: Search,
       title: t("machineryMarketplace") || "Smart Matching",
-      desc: "AI-powered matching connects buyers with the right machinery instantly.",
+      desc: t("machineryMarketplaceDesc") || t("feat.matchDesc") || "AI-powered matching connects buyers with the right machinery instantly.",
       color: "text-cyan-400",
       bg: "bg-cyan-400/10",
     },
     {
       icon: Truck,
       title: t("transportLogistics") || "Transport & Logistics",
-      desc: "Low-bed, high-bed and heavy haulage logistics across Ethiopia.",
+      desc: t("transportLogisticsDesc") || t("feat.transportDesc") || "Low-bed, high-bed and heavy haulage logistics across Ethiopia.",
       color: "text-emerald-400",
       bg: "bg-emerald-400/10",
     },
     {
       icon: Wrench,
       title: t("mechanicsWorkshops") || "Maintenance & Repair",
-      desc: "Certified mechanics and workshops for industrial equipment.",
+      desc: t("mechanicsWorkshopsDesc") || t("feat.mechanicsDesc") || "Certified mechanics and workshops for industrial equipment.",
       color: "text-orange-400",
       bg: "bg-orange-400/10",
     },
     {
       icon: Globe,
       title: t("bilingualPlatform") || "Multilingual Platform",
-      desc: "Available in English, Amharic, Afaan Oromoo, Tigrinya and Somali.",
+      desc: t("ecosystemDescription") || t("feat.langDesc") || "Available in English, Amharic, Afaan Oromoo, Tigrinya and Somali.",
       color: "text-violet-400",
       bg: "bg-violet-400/10",
     },
     {
       icon: Lock,
-      title: t("secureTransactions") || "Verified Sellers",
-      desc: "All sellers go through TM's KYC verification process.",
+      title: t("verifiedSellers") || "Verified Sellers",
+      desc: t("sparePartsDesc") || "All sellers go through TM KYC verification before listing.",
       color: "text-rose-400",
       bg: "bg-rose-400/10",
     },
   ];
 
   const stats = [
-    { label: t("machineryListings") || "Machinery Listings", value: "1,200+", icon: Activity },
-    { label: t("verifiedSellers") || "Verified Sellers",    value: "340+",   icon: ShieldCheck },
-    { label: t("industrialUsers") || "Industrial Users",    value: "5,000+", icon: Users },
-    { label: t("secureTransactions") || "Transactions",     value: "98%",    icon: Star },
+    { label: t("machineryListings") || "Machinery Listings", value: "Launching",  icon: Activity },
+    { label: t("verifiedSellers") || "Verified Sellers",     value: "KYC ✓",      icon: ShieldCheck },
+    { label: t("industrialUsers") || "Coverage",             value: "Ethiopia",   icon: Users },
+    { label: t("secureTransactions") || "Secure Escrow",     value: "Protected",  icon: Star },
   ];
 
   return (

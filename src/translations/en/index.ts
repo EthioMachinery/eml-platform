@@ -49,7 +49,6 @@ const en: Record<string, any> = {
   startSelling: "Start Selling",
   browseMarketplace: "Browse Marketplace",
   loading: "Loading...",
-  submit: "Submit",
   cancel: "Cancel",
   available: "Available",
   rented: "Rented",
@@ -75,7 +74,6 @@ const en: Record<string, any> = {
     createAccount: "Create Enterprise Identity",
     alreadyHaveAccount: "Already have an account?",
     login: "Login",
-    register: "Register",
   },
   register: {
     step1: "Personal Info",
@@ -87,5 +85,14 @@ const en: Record<string, any> = {
     subtitle: "Join Ethiopia's sovereign industrial ecosystem",
   },
   home: 'Home',
+  'feat.escrowDesc': 'Every transaction protected by our verified escrow system.',
+  'feat.matchDesc': 'AI-powered matching connects buyers with the right machinery instantly.',
+  'feat.transportDesc': 'Low-bed, high-bed and heavy haulage logistics across Ethiopia.',
+  'feat.mechanicsDesc': 'Certified mechanics and workshops for industrial equipment.',
+  'feat.langDesc': 'Available in English, Amharic, Afaan Oromoo, Tigrinya and Somali.',
+  'feat.kycDesc': 'All sellers go through TM KYC verification process.',
+  'stats.growing': 'Launching',
+  'stats.ethiopia': 'Ethiopia',
+  'stats.protected': 'Protected',
 };
 export default en;

@@ -49,7 +49,6 @@ const am: Record<string, any> = {
   startSelling: "መሸጥ ይጀምሩ",
   browseMarketplace: "ገበያ ይዘዋወሩ",
   loading: "እየጫነ ነው...",
-  submit: "ያስገቡ",
   cancel: "ሰርዝ",
   available: "ይገኛል",
   rented: "ተከራይቷል",
@@ -75,7 +74,6 @@ const am: Record<string, any> = {
     createAccount: "ኢንተርፕራይዝ ማንነት ፍጠር",
     alreadyHaveAccount: "አስቀድሞ መለያ አለዎት?",
     login: "ግባ",
-    register: "ተመዝገብ",
   },
   register: {
     step1: "የግል መረጃ",
@@ -87,5 +85,14 @@ const am: Record<string, any> = {
     subtitle: "የኢትዮጵያ ሉዓላዊ የኢንዱስትሪ ስርዓት ይቀላቀሉ",
   },
   home: 'ዋና ገጽ',
+  'feat.escrowDesc': 'እያንዳንዱ ግብይት በተረጋገጠ የዋስትና ስርዓታችን ይጠበቃል።',
+  'feat.matchDesc': 'AI-ተኮር ማዛመድ ገዢዎችን ከትክክለኛ ማሽነሪ ጋር ወዲያውኑ ያገናኛል።',
+  'feat.transportDesc': 'በኢትዮጵያ ዝቅተኛ ዓልጋ፣ ከፍተኛ ዓልጋ እና ከባድ ጭነት ሎጂስቲክስ።',
+  'feat.mechanicsDesc': 'ለኢንዱስትሪ መሣሪያዎች የተረጋገጡ ቴክኒሺያኖች እና ወርክሾፖች።',
+  'feat.langDesc': 'በእንግሊዝኛ፣ አማርኛ፣ አፋን ኦሮሞ፣ ትግርኛ እና ሶማሊኛ ይገኛል።',
+  'feat.kycDesc': 'ሁሉም ሻጮች የTM KYC የማረጋገጫ ሂደት ያልፋሉ።',
+  'stats.growing': 'እያደገ ነው',
+  'stats.ethiopia': 'ኢትዮጵያ',
+  'stats.protected': 'ተጠብቋል',
 };
 export default am;
