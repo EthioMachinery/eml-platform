@@ -29,7 +29,7 @@ export default function Footer() {
 
   const account = [
     { label: t("auth.login") || "Login",              href: "/login" },
-    { label: t("auth.register") || "Sign Up",         href: "/register" },
+    { label: t("footer.register") || "Sign Up",       href: "/register" },
     { label: t("dashboard") || "Dashboard",           href: "/dashboard" },
     { label: "List Machinery",                             href: "/post-machinery" },
     { label: "Seller Verification", href: "/seller/verify" },

@@ -68,7 +68,7 @@ export default function LanguageSwitcher() {
             return (
               <button
                 key={opt.code}
-                onClick={() => { setLanguage(opt.code as any); setIsOpen(false); }}
+                onClick={() => { setLanguage(opt.code); setIsOpen(false); }}
                 type="button"
                 className={`w-full text-left px-4 py-2.5 text-xs font-semibold
                             flex items-center justify-between transition-colors

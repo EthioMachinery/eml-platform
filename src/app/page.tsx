@@ -91,10 +91,10 @@ export default function HomePage() {
   ];
 
   const stats = [
-    { label: t("machineryListings") || "Machinery Listings", value: "Launching",  icon: Activity },
-    { label: t("verifiedSellers") || "Verified Sellers",     value: "KYC ✓",      icon: ShieldCheck },
-    { label: t("industrialUsers") || "Coverage",             value: "Ethiopia",   icon: Users },
-    { label: t("secureTransactions") || "Secure Escrow",     value: "Protected",  icon: Star },
+    { label: t("machineryListings") || "Machinery Listings", value: t("stats.growing") || "Launching",    icon: Activity },
+    { label: t("verifiedSellers") || "Verified Sellers",     value: "KYC ✓",                              icon: ShieldCheck },
+    { label: t("industrialUsers") || "Coverage",             value: t("stats.ethiopia") || "Ethiopia",    icon: Users },
+    { label: t("secureTransactions") || "Secure Escrow",     value: t("stats.protected") || "Protected",  icon: Star },
   ];
 
   return (
