@@ -1,10 +1,6 @@
 /**
  * TM CANONICAL TRANSLATION DICTIONARY — 5 languages
  * en | am | or | ti | so
- *
- * Sources:
- *  - src/translations/{lang}/index.ts  → flat keys (heroTitle, browse, etc.)
- *  - src/lib/i18n/translations.ts      → nested keys (categories.excavator, nav.home, etc.)
  */
 import enEnterprise from "@/translations/en";
 import amEnterprise from "@/translations/am";
@@ -15,7 +11,7 @@ import { translations } from "@/lib/i18n/translations";
 
 export type Language = 'en' | 'am' | 'or' | 'ti' | 'so';
 
-// Flat translations (from src/translations/)
+// Flat keys from src/translations/{lang}/index.ts
 const flat: Record<Language, Record<string, any>> = {
   en: enEnterprise,
   am: amEnterprise,
@@ -24,41 +20,51 @@ const flat: Record<Language, Record<string, any>> = {
   so: soEnterprise,
 };
 
-// Nested translations (from src/lib/i18n/translations.ts)
-const nested: Record<Language, Record<string, any>> = translations as any;
+// Nested keys from src/lib/i18n/translations.ts
+const nested: Record<string, Record<string, any>> = translations as any;
 
 export const dictionaries: Record<Language, Record<string, any>> = {
-  en: { ...nested['en'], ...flat['en'] },
-  am: { ...nested['am'], ...flat['am'] },
-  or: { ...nested['or'] ?? {}, ...flat['or'] },
-  ti: { ...nested['ti'] ?? {}, ...flat['ti'] },
-  so: { ...nested['so'] ?? {}, ...flat['so'] },
+  en: { ...(nested['en'] ?? {}), ...flat['en'] },
+  am: { ...(nested['am'] ?? {}), ...flat['am'] },
+  or: { ...(nested['or'] ?? {}), ...flat['or'] },
+  ti: { ...(nested['ti'] ?? {}), ...flat['ti'] },
+  so: { ...(nested['so'] ?? {}), ...flat['so'] },
 };
+
+// Backward-compat alias used by LanguageContext, useEnterpriseTranslation, lib/i18n.ts
+export const enterprise = dictionaries;
 
 /**
  * translate(lang, path)
- * Supports flat keys ("browse") and dot-path keys ("categories.excavator").
- * Falls back: requested lang → English → the key itself.
+ *
+ * Resolution order (first match wins):
+ *  1. Literal flat key in target lang   e.g. dict["nav.tenders"]
+ *  2. Dot-path traversal in target lang e.g. dict.categories.excavator
+ *  3. Literal flat key in English
+ *  4. Dot-path traversal in English
+ *  5. The raw key (never blank)
  */
 export function translate(lang: Language, path: string): string {
   const dict = dictionaries[lang] ?? dictionaries['en'];
   const enDict = dictionaries['en'];
-
   const parts = path.split('.');
 
-  // Try in requested language
+  // 1. Literal flat key in target lang
+  if (typeof dict[path] === 'string') return dict[path] as string;
+
+  // 2. Dot-path traversal in target lang
   let val: any = dict;
   for (const part of parts) { val = val?.[part]; }
   if (typeof val === 'string') return val;
 
-  // Try English fallback
+  // 3. Literal flat key in English
+  if (typeof enDict[path] === 'string') return enDict[path] as string;
+
+  // 4. Dot-path traversal in English
   let enVal: any = enDict;
   for (const part of parts) { enVal = enVal?.[part]; }
   if (typeof enVal === 'string') return enVal;
 
-  // Last resort: return the key
+  // 5. Return the key itself
   return path;
 }
-
-// Backward-compat alias — several files import { enterprise } from here
-export const enterprise = dictionaries;
