@@ -1,58 +1,37 @@
-import { enterprise } from "@/lib/i18n/dictionary";
+import en from "@/translations/en";
+import am from "@/translations/am";
+import or from "@/translations/or";
+import ti from "@/translations/ti";
+import so from "@/translations/so";
 
-export type Language = "en" | "am" | "or" | "ti";
+export type Language = "en" | "am" | "or" | "ti" | "so";
 export type Lang = Language;
 
-export const translations: Record<string, any> = enterprise;
+export const translations: Record<string, any> = { en, am, or, ti, so };
 
 export function getLang(): Lang {
-  if (typeof window === "undefined") {
-    return "en";
+  if (typeof window === "undefined") return "en";
+  const stored = window.localStorage.getItem("eml_lang") ||
+                 window.localStorage.getItem("eml_locale") ||
+                 window.localStorage.getItem("lang");
+  if (stored === "en" || stored === "am" || stored === "or" || stored === "ti" || stored === "so") {
+    return stored as Lang;
   }
-
-  const storedLang = window.localStorage.getItem("tm_locale") || window.localStorage.getItem("lang");
-
-  if (
-    storedLang === "en" ||
-    storedLang === "am" ||
-    storedLang === "or" ||
-    storedLang === "ti"
-  ) {
-    return storedLang as Lang;
-  }
-
   if (typeof navigator !== "undefined") {
-    if (navigator.language?.startsWith("am")) {
-      return "am";
-    }
-
-    if (navigator.language?.startsWith("om") || navigator.language?.startsWith("or")) {
-      return "or";
-    }
-
-    if (navigator.language?.startsWith("ti")) {
-      return "ti";
-    }
-
-    return "en";
+    if (navigator.language?.startsWith("am")) return "am";
+    if (navigator.language?.startsWith("om") || navigator.language?.startsWith("or")) return "or";
+    if (navigator.language?.startsWith("ti")) return "ti";
+    if (navigator.language?.startsWith("so")) return "so";
   }
-
   return "en";
 }
 
-export function getNestedValue(
-  obj: any,
-  path: string
-): string | null {
-  return path
-    .split(".")
-    .reduce(
-      (acc, part) =>
-        acc && acc[part] !== undefined
-          ? acc[part]
-          : null,
-      obj
-    );
+export function getNestedValue(obj: any, path: string): string | null {
+  // Try literal flat key first (e.g. "nav.tenders")
+  if (obj && typeof obj[path] === "string") return obj[path];
+  // Then try dot-path traversal
+  return path.split(".").reduce((acc, part) =>
+    acc && acc[part] !== undefined ? acc[part] : null, obj);
 }
 
 export function translate(
@@ -61,57 +40,15 @@ export function translate(
   fallback?: string
 ): string {
   try {
-    if (
-      typeof key === "object" &&
-      key !== null
-    ) {
-      return (
-        key[language] ||
-        fallback ||
-        key.en ||
-        key.am ||
-        key.or ||
-        key.ti ||
-        ""
-      );
+    if (typeof key === "object" && key !== null) {
+      return key[language] || fallback || key.en || key.am || key.or || key.ti || key.so || "";
     }
-
-    const langPack = translations[language];
-
-    const value = getNestedValue(langPack, key as string);
-
-    if (value !== null && value !== undefined) {
-      return value;
-    }
-
-    const englishFallback = getNestedValue(translations.en, key as string);
-
-    if (englishFallback !== null && englishFallback !== undefined) {
-      return englishFallback;
-    }
-
-    const keyFallback = key as string | Record<Language, string>;
-    return (
-      fallback ||
-      (typeof keyFallback === "string"
-        ? keyFallback
-        : keyFallback.en ||
-          keyFallback.am ||
-          keyFallback.or ||
-          keyFallback.ti ||
-          "")
-    );
+    const value = getNestedValue(translations[language], key as string);
+    if (value !== null && value !== undefined) return value;
+    const enFallback = getNestedValue(translations.en, key as string);
+    if (enFallback !== null && enFallback !== undefined) return enFallback;
+    return fallback || (typeof key === "string" ? key : "");
   } catch {
-    const safeKey = key as string | Record<Language, string>;
-    return (
-      fallback ||
-      (typeof safeKey === "string"
-        ? safeKey
-        : safeKey.en ||
-          safeKey.am ||
-          safeKey.or ||
-          safeKey.ti ||
-          "")
-    );
+    return fallback || (typeof key === "string" ? key : "");
   }
 }
