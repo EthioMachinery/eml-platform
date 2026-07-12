@@ -94,6 +94,7 @@ const en: Record<string, any> = {
   'stats.growing': 'Launching',
   'stats.ethiopia': 'Ethiopia',
   'stats.protected': 'Protected',
+  'stats.verified': 'KYC Verified',
   'nav.tenders': 'Tenders',
   'nav.pricing': 'Pricing',
   'nav.about': 'About Us',

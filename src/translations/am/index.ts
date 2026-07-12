@@ -94,6 +94,7 @@ const am: Record<string, any> = {
   'stats.growing': 'እያደገ ነው',
   'stats.ethiopia': 'ኢትዮጵያ',
   'stats.protected': 'ተጠብቋል',
+  'stats.verified': 'በKYC የተረጋገጠ',
   'nav.tenders': 'ጨረታዎች',
   'nav.pricing': 'ዋጋ',
   'nav.about': 'ስለ እኛ',

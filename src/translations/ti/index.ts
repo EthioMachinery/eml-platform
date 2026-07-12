@@ -93,6 +93,7 @@ const ti: Record<string, any> = {
   'stats.growing': 'ይዓቢ',
   'stats.ethiopia': 'ኢትዮጵያ',
   'stats.protected': 'ተሓልዩ',
+  'stats.verified': 'KYC ዝተረጋገጸ',
   'nav.tenders': 'ጨረታታት',
   'nav.pricing': 'ዋጋ',
   'nav.about': 'ብዛዕባና',

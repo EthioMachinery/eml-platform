@@ -93,6 +93,7 @@ const or: Record<string, any> = {
   'stats.growing': 'Guddachaa',
   'stats.ethiopia': 'Itoophiyaa',
   'stats.protected': 'Eegamaa',
+  'stats.verified': 'KYC Mirkanaa\'e',
   'nav.tenders': 'Dalacaadota',
   'nav.pricing': 'Gatii',
   'nav.about': 'Waa\'ee Keenya',

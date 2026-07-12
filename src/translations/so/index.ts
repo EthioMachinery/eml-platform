@@ -106,6 +106,7 @@ const so: Record<string, any> = {
   'stats.growing': 'Koraya',
   'stats.ethiopia': 'Itoobiya',
   'stats.protected': 'La Ilaalinayaa',
+  'stats.verified': 'KYC La Xaqiijiyay',
   'nav.tenders': 'Dalacaadyada',
   'nav.pricing': 'Qiimaha',
   'nav.about': 'Nagu Saabsan',
