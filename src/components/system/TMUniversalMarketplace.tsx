@@ -100,7 +100,12 @@ export default function TMUniversalMarketplace() {
             <h2 className="text-xl font-bold">🔥 Special Offer</h2>
             <p className="text-sm">List your machinery for free until end of month!</p>
           </div>
-          <button className="bg-white text-amber-800 px-4 py-2 rounded-lg font-bold text-sm">Learn More</button>
+          
+            href="/post-machinery"
+            className="bg-white text-amber-800 px-4 py-2 rounded-lg font-bold text-sm hover:bg-amber-50 transition-colors"
+          >
+            Learn More
+          </a>
         </div>
       </div>
 
