@@ -11,6 +11,10 @@ import { supabase } from "@/lib/supabaseClient";
 import { EMLCore } from "@/core/emlCore";
 import { useI18n } from "@/context/LanguageContext";
 import TMLogo from "@/components/TMLogo";
+import {
+  ExcavatorIcon, LoaderIcon, DozerIcon, CraneIcon,
+  GraderIcon, RollerIcon, DumpTruckIcon, GeneratorIcon,
+} from "@/components/MachineryIcons";
 
 export default function HomePage() {
   const { t } = useI18n();
@@ -35,14 +39,14 @@ export default function HomePage() {
   }, []);
 
   const categories = [
-    { label: t("categories.excavator") || "Excavators", icon: "🚜", href: "/browse?category=excavator" },
-    { label: t("categories.loader") || "Loaders",       icon: "🚚", href: "/browse?category=loader" },
-    { label: t("categories.crane") || "Cranes",         icon: "🏗️", href: "/browse?category=crane" },
-    { label: t("categories.dozer") || "Bulldozers",     icon: "🚧", href: "/browse?category=dozer" },
-    { label: t("categories.dumpTruck") || "Dump Trucks",icon: "🚛", href: "/browse?category=dump_truck" },
-    { label: t("categories.grader") || "Graders",       icon: "🛣️", href: "/browse?category=grader" },
-    { label: t("categories.generator") || "Generators", icon: "⚡", href: "/browse?category=generator" },
-    { label: t("categories.roller") || "Rollers",       icon: "🛞", href: "/browse?category=roller" },
+    { label: t("categories.excavator") || "Excavators", icon: ExcavatorIcon, href: "/browse?category=excavator" },
+    { label: t("categories.loader") || "Loaders",       icon: LoaderIcon,    href: "/browse?category=loader" },
+    { label: t("categories.crane") || "Cranes",         icon: CraneIcon,     href: "/browse?category=crane" },
+    { label: t("categories.dozer") || "Bulldozers",     icon: DozerIcon,     href: "/browse?category=dozer" },
+    { label: t("categories.dumpTruck") || "Dump Trucks",icon: DumpTruckIcon, href: "/browse?category=dump_truck" },
+    { label: t("categories.grader") || "Graders",       icon: GraderIcon,    href: "/browse?category=grader" },
+    { label: t("categories.generator") || "Generators", icon: GeneratorIcon, href: "/browse?category=generator" },
+    { label: t("categories.roller") || "Rollers",       icon: RollerIcon,    href: "/browse?category=roller" },
   ];
 
   const features = [
@@ -218,20 +222,23 @@ export default function HomePage() {
             </p>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            {categories.map((cat) => (
-              <Link
-                key={cat.href}
-                href={cat.href}
-                className="flex flex-col items-center gap-3 p-6 rounded-2xl border border-white/10
-                           hover:border-blue-400/50 hover:bg-blue-600/10 transition-all group"
-                style={{ backgroundColor: "#0a1628" }}
-              >
-                <span className="text-4xl">{cat.icon}</span>
-                <span className="text-xs font-black uppercase text-white group-hover:text-blue-300 transition-colors text-center">
-                  {cat.label}
-                </span>
-              </Link>
-            ))}
+            {categories.map((cat) => {
+              const Icon = cat.icon;
+              return (
+                <Link
+                  key={cat.href}
+                  href={cat.href}
+                  className="flex flex-col items-center gap-3 p-6 rounded-2xl border border-white/10
+                             hover:border-blue-400/50 hover:bg-blue-600/10 transition-all group"
+                  style={{ backgroundColor: "#0a1628" }}
+                >
+                  <Icon size={40} className="text-blue-300 group-hover:text-blue-200 transition-colors" />
+                  <span className="text-xs font-black uppercase text-white group-hover:text-blue-300 transition-colors text-center">
+                    {cat.label}
+                  </span>
+                </Link>
+              );
+            })}
           </div>
         </div>
       </section>
