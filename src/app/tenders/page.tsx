@@ -130,10 +130,10 @@ export default function TendersPage() {
               🏛️ {t("services.tenders")}
             </span>
             <h1 className="text-3xl font-black text-white uppercase tracking-tight">
-              Ecosystem Bids & Tenders
+              {t("tenders.title")}
             </h1>
             <p className="text-sm text-zinc-400">
-              Find, view, and bid on premium public and private sector heavy machinery contracts throughout Ethiopia.
+              {t("tenders.subtitle")}
             </p>
           </div>
 
@@ -150,7 +150,7 @@ export default function TendersPage() {
                     : "text-zinc-400 hover:text-white"
                 }`}
               >
-                {cat === "all" ? "All Tenders" : cat === "civil" ? "Civil Works" : cat === "agro" ? "Agriculture" : "Mining"}
+                {cat === "all" ? t("tenders.allTenders") : cat === "civil" ? t("tenders.civilWorks") : cat === "agro" ? t("tenders.agriculture") : t("tenders.mining")}
               </button>
             ))}
           </div>
@@ -162,19 +162,19 @@ export default function TendersPage() {
           {/* Sidebar Filters */}
           <aside className="bg-zinc-950 border border-zinc-900 rounded-xl p-5 space-y-5 h-fit">
             <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-400 border-b border-zinc-900 pb-3">
-              Filter Tenders
+              {t("tenders.filterTenders")}
             </h3>
 
             {/* Keyword Search */}
             <div className="space-y-1.5">
               <label className="block text-xs font-bold text-zinc-400 uppercase tracking-wider">
-                Keyword Search
+                {t("tenders.keywordSearch")}
               </label>
               <input
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Search agency, project..."
+                placeholder={t("tenders.searchPlaceholder")}
                 className="w-full px-4 py-2.5 rounded-lg border bg-zinc-950 text-white border-zinc-800 focus:outline-none focus:ring-2 focus:ring-amber-500 transition-colors text-xs"
               />
             </div>
@@ -204,7 +204,7 @@ export default function TendersPage() {
             {filteredTenders.length === 0 ? (
               <div className="flex flex-col items-center justify-center p-12 border-2 border-dashed border-zinc-900 rounded-xl bg-zinc-950/20">
                 <p className="text-zinc-400 text-sm font-semibold">
-                  No active tenders found matching your selected criteria.
+                  {t("tenders.noResults")}
                 </p>
               </div>
             ) : (
@@ -228,7 +228,7 @@ export default function TendersPage() {
                           
                           {item.verified && (
                             <span className="bg-green-500/10 text-green-400 border border-green-500/20 text-[9px] font-black uppercase px-2 py-0.5 rounded tracking-wider">
-                              Verified Agency
+                              {t("tenders.verifiedAgency")}
                             </span>
                           )}
                         </div>
@@ -236,7 +236,7 @@ export default function TendersPage() {
                           {localizedTitle}
                         </h3>
                         <span className="block text-xs font-bold text-zinc-500">
-                          Issued by: {item.projectAgency}
+                          {t("tenders.issuedBy")} {item.projectAgency}
                         </span>
                       </div>
 
@@ -247,11 +247,11 @@ export default function TendersPage() {
                       {/* Details Strip */}
                       <div className="flex flex-wrap gap-4 text-xs text-zinc-500 pt-2">
                         <div>
-                          <span className="text-[9px] font-bold text-zinc-600 uppercase block">Deployment Site</span>
+                          <span className="text-[9px] font-bold text-zinc-600 uppercase block">{t("tenders.deploymentSite")}</span>
                           <span className="font-semibold text-zinc-300">{localizedCity}</span>
                         </div>
                         <div>
-                          <span className="text-[9px] font-bold text-zinc-600 uppercase block">Submission Deadline</span>
+                          <span className="text-[9px] font-bold text-zinc-600 uppercase block">{t("tenders.submissionDeadline")}</span>
                           <span className="font-semibold text-zinc-300">{item.deadlineDate}</span>
                         </div>
                       </div>
@@ -261,7 +261,7 @@ export default function TendersPage() {
                     <div className="flex flex-col justify-between items-start md:items-end min-w-[200px] border-t md:border-t-0 md:border-l border-zinc-900 pt-6 md:pt-0 md:pl-6">
                       <div className="mb-4 md:text-right">
                         <span className="text-[9px] text-zinc-500 block uppercase font-bold">
-                          Estimated Project Budget
+                          {t("tenders.estimatedBudget")}
                         </span>
                         <span className="text-xl font-black text-white tracking-tight">
                           {currencyFormatter.format(item.estimatedBudget)} <span className="text-xs font-bold text-zinc-400">ETB</span>
@@ -273,7 +273,7 @@ export default function TendersPage() {
                         className="w-full md:w-auto px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-xs font-bold uppercase tracking-wider transition-all shadow-sm"
                         onClick={() => alert(`TM Tender Registration. Processing administrative bidding document entry fee of 500 ETB.`)}
                       >
-                        Register to Bid
+                        {t("tenders.registerToBid")}
                       </button>
                     </div>
 

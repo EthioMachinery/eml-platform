@@ -33,6 +33,13 @@ h1, h2, h3, h4, h5, h6 {
   color: #ffffff !important;
 }
 
+/* Scoped override: some pages (e.g. Pricing) use white/light card backgrounds
+   and need dark headings there. Class selector specificity beats the plain
+   element selector above regardless of source order. */
+.heading-on-light {
+  color: #0f172a !important;
+}
+
 /* Body text near-white */
 p, span, li, td, th, label, div {
   color: inherit;

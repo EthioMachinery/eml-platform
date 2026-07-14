@@ -14,8 +14,8 @@ export default function PricingPage() {
   const plans = [
     {
       name: t("Free", "ነፃ"),
-      price: "$0",
-      monthly: t("Forever", "ለዘላለም"),
+      price: t("0", "0"),
+      monthly: t("ETB · Forever", "ብር · ለዘላለም"),
       badge: "",
       button: t("Start Free", "በነፃ ጀምር"),
       href: "/signup",
@@ -28,8 +28,8 @@ export default function PricingPage() {
     },
     {
       name: t("Pro Seller", "ፕሮ ሻጭ"),
-      price: "$19",
-      monthly: t("/month", "/ወር"),
+      price: t("3,000", "3,000"),
+      monthly: t("ETB/month", "ብር/ወር"),
       badge: t("MOST POPULAR", "በጣም ተወዳጅ"),
       button: t("Upgrade Now", "አሁን ያሻሽሉ"),
       href: "/premium",
@@ -44,8 +44,8 @@ export default function PricingPage() {
     },
     {
       name: t("Enterprise", "ኢንተርፕራይዝ"),
-      price: "$99",
-      monthly: t("/month", "/ወር"),
+      price: t("15,900", "15,900"),
+      monthly: t("ETB/month", "ብር/ወር"),
       badge: t("BEST VALUE", "ምርጥ ዋጋ"),
       button: t("Contact Sales", "ሽያጭ ያነጋግሩ"),
       href: "/contact",
@@ -99,7 +99,7 @@ export default function PricingPage() {
                 </div>
               )}
 
-              <h2 className="text-3xl font-black">{plan.name}</h2>
+              <h2 className="text-3xl font-black heading-on-light">{plan.name}</h2>
 
               <div className="mt-4 flex items-end gap-2">
                 <span className="text-5xl font-black">{plan.price}</span>
@@ -142,7 +142,7 @@ export default function PricingPage() {
 
       {/* FAQ */}
       <section className="max-w-5xl mx-auto px-4 py-24">
-        <h3 className="text-4xl font-black text-center mb-14">
+        <h3 className="text-4xl font-black text-center mb-14 heading-on-light">
           {t("Frequently Asked Questions", "ብዙ ጊዜ የሚጠየቁ ጥያቄዎች")}
         </h3>
 
@@ -212,7 +212,7 @@ function Faq({
 }) {
   return (
     <div className="rounded-2xl border p-6">
-      <h4 className="font-bold text-xl text-zinc-900">{q}</h4>
+      <h4 className="font-bold text-xl heading-on-light">{q}</h4>
       <p className="mt-3 text-gray-600 text-sm leading-relaxed">{a}</p>
     </div>
   );

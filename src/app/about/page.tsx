@@ -14,14 +14,14 @@ const localAboutTranslations: Record<string, Record<string, string>> = {
   },
   "hero_subtitle": {
     en: "Connecting owners, contractors, mining firms, mechanized farmers, certified operators, and mechanics under one trusted digital platform.",
-    am: "የማሽን ባለቤቶችን፣ ተቋራጮችን፣ የማዕድን ማውጫዎችን፣ ዘመናዊ ገበሬዎችን፣ ባለሀብቶችን፣ ኦፕሬተሮችን እና መካኒኮችን በአንድ የታመነ የዲጂታል ኔትወርክ ስር ማስተሳሰር [1]።",
+    am: "የማሽን ባለቤቶችን፣ ተቋራጮችን፣ የማዕድን ማውጫዎችን፣ ዘመናዊ ገበሬዎችን፣ ባለሀብቶችን፣ ኦፕሬተሮችን እና መካኒኮችን በአንድ የታመነ የዲጂታል ኔትወርክ ስር ማስተሳሰር።",
     or: "Abbootii maashinarii, ijaartoota, qonnaanoota ammayyaafi mekaanyikoota sarara tokkotti walitti hidhuu.",
     ti: "ዋናታት ማሽነሪ፣ ተቋረጽቲ፣ ዘመናዊያን ሓረስቶትን መካኒካትን ኣብ ሓደ እሙን ዲጂታል መርበብ ምትእስሳር።"
   },
   "our_mission": { en: "Our Mission", am: "ራዕያችን", or: "Ergama Keenya", ti: "ራእይና" },
   "our_mission_desc": {
     en: "TM was founded to eliminate trust deficits and heavy broker transaction fees in Ethiopia's construction, agricultural, and logistics sectors. We establish a global-standard platform that ensures complete security, transacting transparency, and verified equipment quality.",
-    am: "TM የተመሰረተው በኢትዮጵያ ግንባታ፣ ግብርና እና ሎጂስቲክስ ዘርፎች ላይ ያለውን የእምነት ጉድለት እና ከፍተኛ የአላፊ-ደላላ የኮሚሽን ዋጋዎችን ለማስወገድ ነው። እኛ ሙሉ ደህንነትን፣ የግብይት ግልፅነትን እና የተረጋገጠ የማሽነሪ ጥራትን የሚያረጋግጥ አለም አቀፍ ደረጃውን የጠበቀ መድረክ እንዘረጋለን [1]።",
+    am: "TM የተመሰረተው በኢትዮጵያ ግንባታ፣ ግብርና እና ሎጂስቲክስ ዘርፎች ላይ ያለውን የእምነት ጉድለት እና ከፍተኛ የአላፊ-ደላላ የኮሚሽን ዋጋዎችን ለማስወገድ ነው። እኛ ሙሉ ደህንነትን፣ የግብይት ግልፅነትን እና የተረጋገጠ የማሽነሪ ጥራትን የሚያረጋግጥ አለም አቀፍ ደረጃውን የጠበቀ መድረክ እንዘረጋለን።",
     or: "TM hanqina amanamummaa fi kaffaltii dallaloota dhabamsiisuuf ijaarame. Gabaa qulqulluu fi nagaa ta'e uumna.",
     ti: "TM ዝተመስረተሉ ምኽንያት ኣብ ህንጸት፣ ሕርሻን ሎጂስቲክስን ዘሎ ናይ እምነት ጉድለትን ናይ ደላሎ ዋጋታትን ንምውጋድ እዩ። ንሕና ምሉእ ድሕንነትን ሓቀኛ ግብይትን ዘረጋግጽ መድረኽ ንሰርሕ።"
   },
@@ -43,9 +43,9 @@ const localAboutTranslations: Record<string, Record<string, string>> = {
   "pillar_3_title": { en: "Mobile-First PWA Shell", am: "ለሞባይል የተመቻቸ PWA", or: "Mijaa'ina Moobaayilaa", ti: "ንሞባይል ዝተመጣጠነ PWA" },
   "pillar_3_desc": {
     en: "TM runs offline, letting site engineers and operators browse, list, and verify machinery directly from remote project zones.",
-    am: "TM ያለ በይነመረብ (offline) ይሰራል፣ ይህም መሐንዲሶች እና ኦፕሬተሮች ከማንኛውም ሩቅ የስራ ቦታ ሆነው ማሽነሪዎችን እንዲፈልጉ ያስችላቸዋል [1]።",
-    or: "TM offline hojjeta, iddoo kamittuu bilbila keessaniin dhimma keessan raawwadhaa [1].",
-    ti: "TM ብዘይ ኢንተርኔት (offline) ይሰርሕ፣ እዚ ድማ መሃንድሳትን ኦፕሬተራትን ካብ ኩሉ ቦታታት ኮይኖም ክጥቀሙ የኽእሎም [1]።"
+    am: "TM ያለ በይነመረብ (offline) ይሰራል፣ ይህም መሐንዲሶች እና ኦፕሬተሮች ከማንኛውም ሩቅ የስራ ቦታ ሆነው ማሽነሪዎችን እንዲፈልጉ ያስችላቸዋል።",
+    or: "TM offline hojjeta, iddoo kamittuu bilbila keessaniin dhimma keessan raawwadhaa.",
+    ti: "TM ብዘይ ኢንተርኔት (offline) ይሰርሕ፣ እዚ ድማ መሃንድሳትን ኦፕሬተራትን ካብ ኩሉ ቦታታት ኮይኖም ክጥቀሙ የኽእሎም።"
   }
 };
 

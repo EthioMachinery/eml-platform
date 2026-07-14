@@ -35,12 +35,12 @@ export default function HomePage() {
   }, []);
 
   const categories = [
-    { label: t("categories.excavator") || "Excavators", icon: "🏗️", href: "/browse?category=excavator" },
-    { label: t("categories.loader") || "Loaders",       icon: "🚜", href: "/browse?category=loader" },
-    { label: t("categories.crane") || "Cranes",         icon: "🏛️", href: "/browse?category=crane" },
+    { label: t("categories.excavator") || "Excavators", icon: "🚜", href: "/browse?category=excavator" },
+    { label: t("categories.loader") || "Loaders",       icon: "🚚", href: "/browse?category=loader" },
+    { label: t("categories.crane") || "Cranes",         icon: "🏗️", href: "/browse?category=crane" },
     { label: t("categories.dozer") || "Bulldozers",     icon: "🚧", href: "/browse?category=dozer" },
     { label: t("categories.dumpTruck") || "Dump Trucks",icon: "🚛", href: "/browse?category=dump_truck" },
-    { label: t("categories.grader") || "Graders",       icon: "⚙️", href: "/browse?category=grader" },
+    { label: t("categories.grader") || "Graders",       icon: "🛣️", href: "/browse?category=grader" },
     { label: t("categories.generator") || "Generators", icon: "⚡", href: "/browse?category=generator" },
     { label: t("categories.roller") || "Rollers",       icon: "🛞", href: "/browse?category=roller" },
   ];
