@@ -152,6 +152,24 @@ export interface TranslationSchema {
     lowbed: string;
     hauler: string;
   };
+  tenders: {
+    title: string;
+    subtitle: string;
+    allTenders: string;
+    civilWorks: string;
+    agriculture: string;
+    mining: string;
+    filterTenders: string;
+    keywordSearch: string;
+    searchPlaceholder: string;
+    verifiedAgency: string;
+    issuedBy: string;
+    deploymentSite: string;
+    submissionDeadline: string;
+    estimatedBudget: string;
+    registerToBid: string;
+    noResults: string;
+  };
 }
 
 export type SupportedLanguage = 'en' | 'am' | 'or' | 'ti' | 'so';
