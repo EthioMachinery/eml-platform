@@ -81,11 +81,8 @@ export default function TMUniversalMarketplace() {
 
   // Simulate payment (replace with actual Telebirr/CBE/Chapa integration)
   const processPayment = (method: string) => {
-    // In real implementation, call payment API
     setTimeout(() => {
-      // Simulate success
       setPaymentSuccess(true);
-      // Mock seller contact info (in real app, fetch from backend after payment)
       setSellerContact(`Phone: +251-9XX-XXX-XXX | Email: seller@example.com`);
     }, 1000);
   };
@@ -93,7 +90,7 @@ export default function TMUniversalMarketplace() {
   return (
     <section className="max-w-7xl mx-auto px-4 py-8" id="eml-marketplace-app">
       
-      {/* BANNER SECTION (add carousel later) */}
+      {/* BANNER SECTION */}
       <div className="mb-6 bg-gradient-to-r from-amber-600 to-amber-800 rounded-xl p-4 text-white shadow-lg">
         <div className="flex justify-between items-center">
           <div>
@@ -101,6 +98,7 @@ export default function TMUniversalMarketplace() {
             <p className="text-sm">List your machinery for free until end of month!</p>
           </div>
           
+          <a
             href="/post-machinery"
             className="bg-white text-amber-800 px-4 py-2 rounded-lg font-bold text-sm hover:bg-amber-50 transition-colors"
           >
@@ -153,7 +151,7 @@ export default function TMUniversalMarketplace() {
       </div>
 
       {/* MARKETPLACE STATS */}
-      <div className="grid grid-cols-3 gap-4 mb-8 bg-zinc-900/30 rounded-xl p-4 border border-zinc-800">
+      <div className="grid grid-cols-3 gap-4 mb-8 bg-zinc-900/30 rounded-xl p-4 border border-zinc-900">
         <div className="text-center">
           <p className="text-2xl font-black text-white">{totalListings}</p>
           <p className="text-xs text-zinc-400">Total Listings</p>
@@ -174,7 +172,6 @@ export default function TMUniversalMarketplace() {
             {t("actions.search")}
           </h3>
 
-          {/* Search Term input */}
           <div>
             <TranslatedInput
               type="text"
@@ -185,7 +182,6 @@ export default function TMUniversalMarketplace() {
             />
           </div>
 
-          {/* Category Dropdown */}
           <div>
             <TranslatedSelect
               value={selectedCategory}
@@ -210,7 +206,6 @@ export default function TMUniversalMarketplace() {
             />
           </div>
 
-          {/* Location Dropdown */}
           <div>
             <TranslatedSelect
               value={selectedLocation}
@@ -291,17 +286,13 @@ export default function TMUniversalMarketplace() {
                     key={item.id}
                     className="flex flex-col bg-zinc-950 border border-zinc-900 rounded-xl overflow-hidden shadow-sm hover:shadow-md hover:border-zinc-800 transition-all duration-200"
                   >
-                    {/* Visual Imagery Mock Container - Dynamically loads user image if present */}
                     <div className="relative h-48 bg-zinc-900 flex items-center justify-center border-b border-zinc-900 overflow-hidden">
                       {item.imageUrl ? (
                         <img
                           src={item.imageUrl}
                           alt={item.brand}
                           className="w-full h-full object-cover"
-                          onError={(e) => {
-                            // Fallback to text template if image load fails
-                            e.currentTarget.style.display = "none";
-                          }}
+                          onError={(e) => { e.currentTarget.style.display = "none"; }}
                         />
                       ) : (
                         <div className="text-center">
@@ -313,54 +304,36 @@ export default function TMUniversalMarketplace() {
                           </span>
                         </div>
                       )}
-
-                      {/* Trust Verification Badge */}
                       {item.verified && (
                         <span className="absolute top-3 left-3 bg-green-500 text-white text-[9px] font-black uppercase px-2 py-1 rounded shadow-sm tracking-widest z-10">
                           {t("status.verified")}
                         </span>
                       )}
-
-                      {/* Transaction Intent Badge */}
                       <span className="absolute top-3 right-3 bg-black text-white text-[9px] font-black uppercase px-2 py-1 rounded shadow-sm tracking-wider border border-zinc-800 z-10">
                         {item.isRentalOnly ? t("actions.rent") : t("actions.buy")}
                       </span>
                     </div>
 
-                    {/* Content Details */}
                     <div className="p-5 flex-grow flex flex-col justify-between">
                       <div>
                         <div className="flex justify-between items-start">
-                          <h4 className="text-base font-bold text-white">
-                            {item.title}
-                          </h4>
+                          <h4 className="text-base font-bold text-white">{item.title}</h4>
                           <span className="text-xs font-black text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded">
                             {item.modelYear}
                           </span>
                         </div>
-
-                        {/* Localized Metadata Fields */}
                         <div className="grid grid-cols-2 gap-2 mt-4 text-[11px] text-zinc-400 border-t border-b border-zinc-900 py-3 my-3">
                           <div>
-                            <span className="block font-bold text-zinc-500 uppercase text-[9px]">
-                              {t("labels.location")}
-                            </span>
-                            <span className="font-semibold text-zinc-200">
-                              {localizedCity}
-                            </span>
+                            <span className="block font-bold text-zinc-500 uppercase text-[9px]">{t("labels.location")}</span>
+                            <span className="font-semibold text-zinc-200">{localizedCity}</span>
                           </div>
                           <div>
-                            <span className="block font-bold text-zinc-500 uppercase text-[9px]">
-                              {t("labels.workingHours")}
-                            </span>
-                            <span className="font-semibold text-zinc-200">
-                              {item.engineHours || "N/A"} Hrs
-                            </span>
+                            <span className="block font-bold text-zinc-500 uppercase text-[9px]">{t("labels.workingHours")}</span>
+                            <span className="font-semibold text-zinc-200">{item.engineHours || "N/A"} Hrs</span>
                           </div>
                         </div>
                       </div>
 
-                      {/* Pricing and Contact Unlock Button */}
                       <div className="mt-2">
                         <div className="mb-3">
                           <span className="text-xs text-zinc-500 block uppercase font-bold">
@@ -370,7 +343,6 @@ export default function TMUniversalMarketplace() {
                             {displayPrice ? currencyFormatter.format(displayPrice) : "0"} <span className="text-sm font-bold text-zinc-400">ETB</span>
                           </span>
                         </div>
-                        
                         <button
                           type="button"
                           onClick={() => handleUnlockContact(item)}
@@ -388,7 +360,7 @@ export default function TMUniversalMarketplace() {
         </main>
       </div>
 
-      {/* PAYMENT MODAL FOR CONTACT UNLOCK */}
+      {/* PAYMENT MODAL */}
       {showPaymentModal && selectedListingForContact && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
           <div className="bg-zinc-950 border border-zinc-800 rounded-xl max-w-md w-full p-6 shadow-2xl">
@@ -399,47 +371,20 @@ export default function TMUniversalMarketplace() {
                   Pay <strong className="text-amber-400">ETB 500</strong> to get phone & email of the seller for "{selectedListingForContact.title}".
                 </p>
                 <div className="space-y-3">
-                  <button
-                    onClick={() => processPayment("telebirr")}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition"
-                  >
-                    Pay with Telebirr
-                  </button>
-                  <button
-                    onClick={() => processPayment("cbe")}
-                    className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg transition"
-                  >
-                    Pay with CBE Birr
-                  </button>
-                  <button
-                    onClick={() => processPayment("chapa")}
-                    className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-lg transition"
-                  >
-                    Pay with Chapa
-                  </button>
+                  <button onClick={() => processPayment("telebirr")} className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition">Pay with Telebirr</button>
+                  <button onClick={() => processPayment("cbe")} className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg transition">Pay with CBE Birr</button>
+                  <button onClick={() => processPayment("chapa")} className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-lg transition">Pay with Chapa</button>
                 </div>
-                <button
-                  onClick={() => setShowPaymentModal(false)}
-                  className="w-full mt-4 text-zinc-400 text-sm hover:text-white transition"
-                >
-                  Cancel
-                </button>
+                <button onClick={() => setShowPaymentModal(false)} className="w-full mt-4 text-zinc-400 text-sm hover:text-white transition">Cancel</button>
               </>
             ) : (
               <>
                 <h3 className="text-xl font-bold text-green-400 mb-2">✓ Payment Successful!</h3>
-                <p className="text-zinc-300 text-sm mb-4">
-                  Seller contact information for "{selectedListingForContact.title}":
-                </p>
+                <p className="text-zinc-300 text-sm mb-4">Seller contact information for "{selectedListingForContact.title}":</p>
                 <div className="bg-zinc-900 p-4 rounded-lg mb-4">
                   <p className="text-white font-mono text-sm">{sellerContact}</p>
                 </div>
-                <button
-                  onClick={() => setShowPaymentModal(false)}
-                  className="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 rounded-lg transition"
-                >
-                  Close
-                </button>
+                <button onClick={() => setShowPaymentModal(false)} className="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 rounded-lg transition">Close</button>
               </>
             )}
           </div>
