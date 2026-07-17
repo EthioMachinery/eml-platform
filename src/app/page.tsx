@@ -11,10 +11,6 @@ import { supabase } from "@/lib/supabaseClient";
 import { EMLCore } from "@/core/emlCore";
 import { useI18n } from "@/context/LanguageContext";
 import TMLogo from "@/components/TMLogo";
-import {
-  ExcavatorIcon, LoaderIcon, DozerIcon, CraneIcon,
-  GraderIcon, RollerIcon, DumpTruckIcon, GeneratorIcon,
-} from "@/components/MachineryIcons";
 
 export default function HomePage() {
   const { t } = useI18n();
@@ -39,14 +35,14 @@ export default function HomePage() {
   }, []);
 
   const categories = [
-    { label: t("categories.excavator") || "Excavators", icon: ExcavatorIcon, href: "/browse?category=excavator" },
-    { label: t("categories.loader") || "Loaders",       icon: LoaderIcon,    href: "/browse?category=loader" },
-    { label: t("categories.crane") || "Cranes",         icon: CraneIcon,     href: "/browse?category=crane" },
-    { label: t("categories.dozer") || "Bulldozers",     icon: DozerIcon,     href: "/browse?category=dozer" },
-    { label: t("categories.dumpTruck") || "Dump Trucks",icon: DumpTruckIcon, href: "/browse?category=dump_truck" },
-    { label: t("categories.grader") || "Graders",       icon: GraderIcon,    href: "/browse?category=grader" },
-    { label: t("categories.generator") || "Generators", icon: GeneratorIcon, href: "/browse?category=generator" },
-    { label: t("categories.roller") || "Rollers",       icon: RollerIcon,    href: "/browse?category=roller" },
+    { label: t("categories.excavator") || "Excavators", image: "/images/categories/excavator.jpg", href: "/browse?category=excavator" },
+    { label: t("categories.loader") || "Loaders",       image: "/images/categories/loader.jpg",    href: "/browse?category=loader" },
+    { label: t("categories.crane") || "Cranes",         image: "/images/categories/crane.jpg",     href: "/browse?category=crane" },
+    { label: t("categories.dozer") || "Bulldozers",     image: "/images/categories/dozer.jpg",     href: "/browse?category=dozer" },
+    { label: t("categories.dumpTruck") || "Dump Trucks",image: "/images/categories/dumptruck.jpg", href: "/browse?category=dump_truck" },
+    { label: t("categories.grader") || "Graders",       image: "/images/categories/grader.jpg",    href: "/browse?category=grader" },
+    { label: t("categories.generator") || "Generators", image: "/images/categories/generator.jpg", href: "/browse?category=generator" },
+    { label: t("categories.roller") || "Rollers",       image: "/images/categories/roller.jpg",    href: "/browse?category=roller" },
   ];
 
   const features = [
@@ -222,23 +218,27 @@ export default function HomePage() {
             </p>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            {categories.map((cat) => {
-              const Icon = cat.icon;
-              return (
-                <Link
-                  key={cat.href}
-                  href={cat.href}
-                  className="flex flex-col items-center gap-3 p-6 rounded-2xl border border-white/10
-                             hover:border-blue-400/50 hover:bg-blue-600/10 transition-all group"
-                  style={{ backgroundColor: "#0a1628" }}
-                >
-                  <Icon size={40} className="text-blue-300 group-hover:text-blue-200 transition-colors" />
-                  <span className="text-xs font-black uppercase text-white group-hover:text-blue-300 transition-colors text-center">
-                    {cat.label}
-                  </span>
-                </Link>
-              );
-            })}
+            {categories.map((cat) => (
+              <Link
+                key={cat.href}
+                href={cat.href}
+                className="group flex flex-col overflow-hidden rounded-2xl border border-white/10
+                           hover:border-blue-400/50 transition-all"
+                style={{ backgroundColor: "#0a1628" }}
+              >
+                <div className="relative w-full h-28 sm:h-32 overflow-hidden">
+                  <img
+                    src={cat.image}
+                    alt={cat.label}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0a1628] via-transparent to-transparent opacity-60" />
+                </div>
+                <span className="text-xs font-black uppercase text-white group-hover:text-blue-300 transition-colors text-center py-3 px-2">
+                  {cat.label}
+                </span>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
