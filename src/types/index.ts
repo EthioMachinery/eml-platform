@@ -1,4 +1,4 @@
-export type { SupportedLanguage } from "@/translations/keys";
+﻿export type { SupportedLanguage } from "@/translations/keys";
 
 export interface LocalizedListing {
   id: string;
@@ -17,6 +17,7 @@ export interface LocalizedListing {
   locationToken: string;
   verified: boolean;
   imageUrl: string | null;
+  ownerId: string | null;
   ownerName: string;
   ownerPhone: string;
 }

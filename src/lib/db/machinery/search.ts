@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabaseClient";
+﻿import { supabase } from "@/lib/supabaseClient";
 import { SupportedLanguage, LocalizedListing } from "@/types";
 
 export async function fetchLocalizedListings(
@@ -15,6 +15,7 @@ export async function fetchLocalizedListings(
       .from('listings')
       .select(`
         id,
+        owner_id,
         brand,
         model,
         category_token,
@@ -86,6 +87,7 @@ export async function fetchLocalizedListings(
         locationToken: item.location || "addis_ababa",
         verified: true,
         imageUrl: item.image_url || null,
+        ownerId: item.owner_id || null,
         ownerName: "TM Verified Supplier",
         ownerPhone: "Contact via TM"
       };

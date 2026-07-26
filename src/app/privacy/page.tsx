@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 
@@ -16,12 +16,12 @@ export default function PrivacyPolicyPage() {
     <div className="bg-black min-h-screen text-white">
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <span className="text-xs font-bold text-amber-500 bg-amber-500/10 px-3 py-1 rounded-full uppercase tracking-widest border border-amber-500/20">
-          ታማኝ ማሽነሪ — TM
+          á‰³áˆ›áŠ áˆ›áˆ½áŠáˆª â€” TM
         </span>
         <h1 className="text-3xl sm:text-4xl font-black text-white uppercase tracking-tight mt-4 mb-2">
           Privacy Policy
         </h1>
-        <p className="text-xs text-zinc-500 mb-6">Last updated: July 2026 · Effective for users in Ethiopia and abroad</p>
+        <p className="text-xs text-zinc-500 mb-6">Last updated: July 2026 Â· Effective for users in Ethiopia and abroad</p>
 
         <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 mb-6 text-xs text-amber-200 leading-relaxed">
           <strong className="text-amber-300">Draft notice:</strong> This policy is a working draft prepared to reflect Ethiopia&apos;s
@@ -53,7 +53,7 @@ export default function PrivacyPolicyPage() {
           <p>
             We process personal data on the basis of your consent, the necessity of processing to perform our contract with you
             (matching, listings, escrow, communication), compliance with legal obligations (including KYC/anti-fraud checks), and our
-            legitimate interest in operating and securing the platform — consistent with the lawful-processing principles set out in
+            legitimate interest in operating and securing the platform â€” consistent with the lawful-processing principles set out in
             the Proclamation.
           </p>
         </Section>
@@ -84,10 +84,12 @@ export default function PrivacyPolicyPage() {
 
         <Section title="6. Data Sharing">
           <p>
-            We share personal data with other users only as necessary to facilitate a listing, rental, sale, or service booking (for
-            example, sharing contact details after a &quot;unlock contact&quot; payment). We may also share data with payment and
-            escrow processors, verification providers, and law enforcement or regulatory authorities where legally required. We do
-            not sell personal data to third parties for their own marketing purposes.
+            We share personal data with other users only as necessary to facilitate a listing, rental, sale, or service booking. For
+            &quot;Unlock Opportunity&quot; requests, payment does not itself release a seller&apos;s contact details: TM first
+            verifies the payment, then personally facilitates an introduction between buyer and seller, and only then releases
+            direct contact information as a distinct step. We may also share data with payment and escrow processors, verification
+            providers, and law enforcement or regulatory authorities where legally required. We do not sell personal data to third
+            parties for their own marketing purposes.
           </p>
         </Section>
 

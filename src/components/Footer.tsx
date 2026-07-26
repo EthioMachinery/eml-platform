@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 import Link from "next/link";
@@ -23,8 +23,6 @@ export default function Footer() {
     { label: t("nav.about") || "About TM",     href: "/about" },
     { label: t("nav.contact") || "Contact Us",   href: "/contact" },
     { label: t("nav.pricing") || "Pricing",      href: "/pricing" },
-    { label: "Blog",         href: "/blog" },
-    { label: "Careers",      href: "/careers" },
   ];
 
   const account = [
@@ -48,14 +46,14 @@ export default function Footer() {
             <Link href="/" className="flex items-center gap-3 mb-4">
               <TMLogo size={48} />
               <div>
-                <div className="text-white font-black text-sm font-noto-ethio">ታማኝ ማሽነሪ</div>
+                <div className="text-white font-black text-sm font-noto-ethio">á‰³áˆ›áŠ áˆ›áˆ½áŠáˆª</div>
                 <div className="text-blue-300 text-[9px] font-bold uppercase tracking-widest">
                   Trustworthy Machinery
                 </div>
               </div>
             </Link>
             <p className="text-blue-300/60 text-xs leading-relaxed mb-6">
-              {t("footerDescription") || "Ethiopia's trusted heavy machinery marketplace — buy, sell, rent and operate."}
+              {t("footerDescription") || "Ethiopia's trusted heavy machinery marketplace â€” buy, sell, rent and operate."}
             </p>
             <div className="space-y-2 text-xs text-blue-300/60">
               <div className="flex items-center gap-2">
@@ -129,15 +127,15 @@ export default function Footer() {
         <div className="flex flex-wrap gap-2 mb-8">
           {[
             { code: "EN", label: "English" },
-            { code: "አማ", label: "አማርኛ" },
+            { code: "áŠ áˆ›", label: "áŠ áˆ›áˆ­áŠ›" },
             { code: "OM", label: "Afaan Oromoo" },
-            { code: "TI", label: "ትግርኛ" },
+            { code: "TI", label: "á‰µáŒáˆ­áŠ›" },
             { code: "SO", label: "Soomaali" },
           ].map((lang) => (
             <span key={lang.code}
               className="px-3 py-1 rounded-full text-[9px] font-black uppercase
                          border border-white/10 text-blue-300/60">
-              {lang.code} · {lang.label}
+              {lang.code} Â· {lang.label}
             </span>
           ))}
         </div>
@@ -145,7 +143,7 @@ export default function Footer() {
         {/* Bottom bar */}
         <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between
                         items-center gap-4 text-[9px] text-blue-300/40 uppercase tracking-widest">
-          <span>© 2026 Trustworthy Machinery (TM) · ታማኝ ማሽነሪ</span>
+          <span>Â© 2026 Trustworthy Machinery (TM) Â· á‰³áˆ›áŠ áˆ›áˆ½áŠáˆª</span>
           <div className="flex gap-6">
             <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
             <Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link>

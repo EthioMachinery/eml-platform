@@ -1,25 +1,48 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useEffect, useTransition } from "react";
 import { useTranslate } from "@/hooks/useTranslate";
+import { useAuth } from "@/context/AuthContext";
+import { supabase } from "@/lib/supabaseClient";
 import { fetchLocalizedListings } from "@/lib/db/machinery/search";
 import type { LocalizedListing } from "@/types";
 import TranslatedInput from "@/components/ui/TranslatedInput";
 import TranslatedSelect from "@/components/ui/TranslatedSelect";
+import {
+  requestOpportunityUnlock,
+  getBuyerUnlocksForListing,
+  type OpportunityUnlock,
+  type OpportunityStatus,
+} from "@/lib/opportunityEngine";
 
 const localizedLocations: Record<string, Record<string, string>> = {
-  "addis_ababa": { en: "Addis Ababa", am: "አዲስ አበባ", om: "Finfinnee", ti: "ኣዲስ ኣበባ" },
-  "hawassa": { en: "Hawassa", am: "ሀዋሳ", om: "Hawaas", ti: "ሃዋሳ" },
-  "adama": { en: "Adama", am: "አዳማ", om: "Adaamaa", ti: "ኣማራ" },
-  "mekelle": { en: "Mekelle", am: "መቀሌ", om: "Maqalee", ti: "መቐለ" },
-  "bahir_dar": { en: "Bahir Dar", am: "ባህር ዳር", om: "Baahir Daar", ti: "ባህር ዳር" },
-  "dire_dawa": { en: "Dire Dawa", am: "ድሬዳዋ", om: "Dirree Dhawaa", ti: "ድሬዳዋ" }
+  "addis_ababa": { en: "Addis Ababa", am: "áŠ á‹²áˆµ áŠ á‰ á‰£", om: "Finfinnee", ti: "áŠ£á‹²áˆµ áŠ£á‰ á‰£" },
+  "hawassa": { en: "Hawassa", am: "áˆ€á‹‹áˆ³", om: "Hawaas", ti: "áˆƒá‹‹áˆ³" },
+  "adama": { en: "Adama", am: "áŠ á‹³áˆ›", om: "Adaamaa", ti: "áŠ£áˆ›áˆ«" },
+  "mekelle": { en: "Mekelle", am: "áˆ˜á‰€áˆŒ", om: "Maqalee", ti: "áˆ˜á‰áˆˆ" },
+  "bahir_dar": { en: "Bahir Dar", am: "á‰£áˆ…áˆ­ á‹³áˆ­", om: "Baahir Daar", ti: "á‰£áˆ…áˆ­ á‹³áˆ­" },
+  "dire_dawa": { en: "Dire Dawa", am: "á‹µáˆ¬á‹³á‹‹", om: "Dirree Dhawaa", ti: "á‹µáˆ¬á‹³á‹‹" }
 };
+
+// Local modal view states, derived from the buyer's most recent
+// opportunity_unlocks row for the selected listing (see opportunityEngine.ts
+// for the authoritative status machine).
+type ModalView =
+  | "loading"
+  | "needs_login"
+  | "form"
+  | "submitting"
+  | "submitted"
+  | "pending_review"
+  | "awaiting_facilitation"
+  | "rejected"
+  | "released";
 
 export default function TMUniversalMarketplace() {
   const { t, currentLanguage } = useTranslate();
+  const { user } = useAuth();
   const [isPending, startTransition] = useTransition();
-  
+
   const [listings, setListings] = useState<LocalizedListing[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -32,16 +55,23 @@ export default function TMUniversalMarketplace() {
   const [maxPrice, setMaxPrice] = useState("");
   const [rentFilter, setRentFilter] = useState<"all" | "rent" | "sale">("all");
 
-  // Contact unlock modal state
-  const [showPaymentModal, setShowPaymentModal] = useState(false);
-  const [selectedListingForContact, setSelectedListingForContact] = useState<LocalizedListing | null>(null);
-  const [paymentSuccess, setPaymentSuccess] = useState(false);
-  const [sellerContact, setSellerContact] = useState("");
+  // Opportunity unlock modal state
+  const [showUnlockModal, setShowUnlockModal] = useState(false);
+  const [selectedListingForUnlock, setSelectedListingForUnlock] = useState<LocalizedListing | null>(null);
+  const [modalView, setModalView] = useState<ModalView>("form");
+  const [existingUnlock, setExistingUnlock] = useState<OpportunityUnlock | null>(null);
+  const [releasedContact, setReleasedContact] = useState<{ name: string | null; phone: string | null } | null>(null);
+
+  // Payment submission form fields
+  const [paymentMethod, setPaymentMethod] = useState("telebirr");
+  const [paymentReference, setPaymentReference] = useState("");
+  const [receiptFile, setReceiptFile] = useState<File | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   useEffect(() => {
     async function loadData() {
       setIsLoading(true);
-      
+
       const targetCategory = selectedCategory === "other" ? otherCategorySpecification : selectedCategory;
       const targetLocation = selectedLocation === "other" ? otherLocationSpecification : selectedLocation;
 
@@ -54,7 +84,7 @@ export default function TMUniversalMarketplace() {
       setListings(data);
       setIsLoading(false);
     }
-    
+
     startTransition(() => {
       loadData();
     });
@@ -67,37 +97,105 @@ export default function TMUniversalMarketplace() {
   // Compute stats
   const totalListings = displayedListings.length;
   const verifiedCount = displayedListings.filter(l => l.verified).length;
-  const avgPrice = totalListings > 0 
+  const avgPrice = totalListings > 0
     ? Math.floor(displayedListings.reduce((sum, l) => sum + (l.isRentalOnly ? (l.priceRentalDaily || 0) : (l.priceSale || 0)), 0) / totalListings)
     : 0;
 
-  // Handle contact unlock click
-  const handleUnlockContact = (listing: LocalizedListing) => {
-    setSelectedListingForContact(listing);
-    setPaymentSuccess(false);
-    setSellerContact("");
-    setShowPaymentModal(true);
+  function statusToView(status: OpportunityStatus): ModalView {
+    if (status === "pending_review") return "pending_review";
+    if (status === "payment_approved" || status === "facilitating") return "awaiting_facilitation";
+    if (status === "payment_rejected") return "rejected";
+    if (status === "contact_released") return "released";
+    return "form";
+  }
+
+  // Handle opening the unlock modal â€” check for an existing request first
+  const handleUnlockContact = async (listing: LocalizedListing) => {
+    setSelectedListingForUnlock(listing);
+    setSubmitError(null);
+    setPaymentReference("");
+    setReceiptFile(null);
+    setExistingUnlock(null);
+    setReleasedContact(null);
+    setShowUnlockModal(true);
+
+    if (!user) {
+      setModalView("needs_login");
+      return;
+    }
+
+    setModalView("loading");
+
+    const unlocks = await getBuyerUnlocksForListing(user.id, listing.id);
+    const latest = unlocks[0] || null;
+    setExistingUnlock(latest);
+
+    if (!latest) {
+      setModalView("form");
+      return;
+    }
+
+    const view = statusToView(latest.status);
+    setModalView(view);
+
+    if (view === "released" && listing.ownerId) {
+      const { data: seller } = await supabase
+        .from("profiles")
+        .select("full_name, phone")
+        .eq("id", listing.ownerId)
+        .maybeSingle();
+      setReleasedContact({ name: seller?.full_name ?? null, phone: seller?.phone ?? null });
+    }
   };
 
-  // Simulate payment (replace with actual Telebirr/CBE/Chapa integration)
-  const processPayment = (method: string) => {
-    // In real implementation, call payment API
-    setTimeout(() => {
-      // Simulate success
-      setPaymentSuccess(true);
-      // Mock seller contact info (in real app, fetch from backend after payment)
-      setSellerContact(`Phone: +251-9XX-XXX-XXX | Email: seller@example.com`);
-    }, 1000);
-  };
+  async function handleSubmitPayment() {
+    if (!user || !selectedListingForUnlock) return;
+
+    if (!paymentReference.trim()) {
+      setSubmitError("Please enter your payment reference / transaction ID.");
+      return;
+    }
+
+    setSubmitError(null);
+    setModalView("submitting");
+
+    let receiptPath: string | null = null;
+    if (receiptFile) {
+      const path = `${user.id}/${Date.now()}-${receiptFile.name}`;
+      const { error: uploadError } = await supabase.storage
+        .from("payment-receipts")
+        .upload(path, receiptFile);
+      if (!uploadError) {
+        receiptPath = path;
+      }
+    }
+
+    const { error } = await requestOpportunityUnlock({
+      listingId: selectedListingForUnlock.id,
+      buyerId: user.id,
+      sellerId: selectedListingForUnlock.ownerId,
+      paymentMethod,
+      paymentReference: paymentReference.trim(),
+      paymentReceiptPath: receiptPath,
+    });
+
+    if (error) {
+      setSubmitError(error);
+      setModalView("form");
+      return;
+    }
+
+    setModalView("submitted");
+  }
 
   return (
     <section className="max-w-7xl mx-auto px-4 py-8" id="eml-marketplace-app">
-      
+
       {/* BANNER SECTION (add carousel later) */}
       <div className="mb-6 bg-gradient-to-r from-amber-600 to-amber-800 rounded-xl p-4 text-white shadow-lg">
         <div className="flex justify-between items-center">
           <div>
-            <h2 className="text-xl font-bold">🔥 Special Offer</h2>
+            <h2 className="text-xl font-bold">ðŸ”¥ Special Offer</h2>
             <p className="text-sm">List your machinery for free until end of month!</p>
           </div>
           <a href="/post-machinery" className="bg-white text-amber-800 px-4 py-2 rounded-lg font-bold text-sm hover:bg-amber-50 transition-colors">Learn More</a>
@@ -118,28 +216,28 @@ export default function TMUniversalMarketplace() {
       {/* TRUST INDICATORS BAR */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 mb-8 bg-zinc-950 border border-zinc-900 rounded-xl p-4">
         <div className="flex items-center gap-3">
-          <span className="text-green-500 text-xl">✓</span>
+          <span className="text-green-500 text-xl">âœ“</span>
           <div>
             <p className="text-xs text-zinc-400">Verified Sellers</p>
             <p className="text-sm font-bold text-white">100% ID Check</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <span className="text-blue-500 text-xl">🛡️</span>
+          <span className="text-blue-500 text-xl">ðŸ›¡ï¸</span>
           <div>
             <p className="text-xs text-zinc-400">Secure Escrow</p>
             <p className="text-sm font-bold text-white">Payment Protected</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <span className="text-amber-500 text-xl">📞</span>
+          <span className="text-amber-500 text-xl">ðŸ“ž</span>
           <div>
             <p className="text-xs text-zinc-400">24/7 Support</p>
             <p className="text-sm font-bold text-white">Dedicated Team</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <span className="text-purple-500 text-xl">📊</span>
+          <span className="text-purple-500 text-xl">ðŸ“Š</span>
           <div>
             <p className="text-xs text-zinc-400">Market Insights</p>
             <p className="text-sm font-bold text-white">Real-time Pricing</p>
@@ -280,7 +378,7 @@ export default function TMUniversalMarketplace() {
                 const localizedCity = item.locationToken ? (localizedLocations[item.locationToken]?.[currentLanguage] || localizedLocations[item.locationToken]?.["en"]) : "N/A";
                 const currencyFormatter = new Intl.NumberFormat("en-US", { style: "decimal" });
                 const displayPrice = item.isRentalOnly ? item.priceRentalDaily : item.priceSale;
-                
+
                 return (
                   <article
                     key={item.id}
@@ -365,13 +463,13 @@ export default function TMUniversalMarketplace() {
                             {displayPrice ? currencyFormatter.format(displayPrice) : "0"} <span className="text-sm font-bold text-zinc-400">ETB</span>
                           </span>
                         </div>
-                        
+
                         <button
                           type="button"
                           onClick={() => handleUnlockContact(item)}
                           className="w-full py-2.5 rounded-lg text-xs font-bold uppercase transition-all shadow-sm flex items-center justify-center gap-1.5 bg-amber-500 hover:bg-amber-600 text-white"
                         >
-                          🔓 Unlock Contact (ETB 500)
+                          ðŸ”“ Unlock Opportunity (ETB 500)
                         </button>
                       </div>
                     </div>
@@ -383,54 +481,177 @@ export default function TMUniversalMarketplace() {
         </main>
       </div>
 
-      {/* PAYMENT MODAL FOR CONTACT UNLOCK */}
-      {showPaymentModal && selectedListingForContact && (
+      {/* OPPORTUNITY UNLOCK MODAL */}
+      {showUnlockModal && selectedListingForUnlock && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
           <div className="bg-zinc-950 border border-zinc-800 rounded-xl max-w-md w-full p-6 shadow-2xl">
-            {!paymentSuccess ? (
+
+            {modalView === "loading" && (
+              <div className="flex justify-center items-center py-10">
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-amber-500" />
+              </div>
+            )}
+
+            {modalView === "needs_login" && (
               <>
-                <h3 className="text-xl font-bold text-white mb-2">Unlock Seller Contact</h3>
+                <h3 className="text-xl font-bold text-white mb-2">Sign in to unlock this opportunity</h3>
                 <p className="text-zinc-400 text-sm mb-4">
-                  Pay <strong className="text-amber-400">ETB 500</strong> to get phone & email of the seller for "{selectedListingForContact.title}".
+                  Create a free TM account or log in to submit your ETB 500 payment for &quot;{selectedListingForUnlock.title}&quot;.
                 </p>
-                <div className="space-y-3">
-                  <button
-                    onClick={() => processPayment("telebirr")}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition"
-                  >
-                    Pay with Telebirr
-                  </button>
-                  <button
-                    onClick={() => processPayment("cbe")}
-                    className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg transition"
-                  >
-                    Pay with CBE Birr
-                  </button>
-                  <button
-                    onClick={() => processPayment("chapa")}
-                    className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-lg transition"
-                  >
-                    Pay with Chapa
-                  </button>
-                </div>
+                <a
+                  href="/login"
+                  className="block w-full text-center bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 rounded-lg transition"
+                >
+                  Log In / Sign Up
+                </a>
                 <button
-                  onClick={() => setShowPaymentModal(false)}
+                  onClick={() => setShowUnlockModal(false)}
                   className="w-full mt-4 text-zinc-400 text-sm hover:text-white transition"
                 >
                   Cancel
                 </button>
               </>
-            ) : (
+            )}
+
+            {(modalView === "form" || modalView === "submitting" || modalView === "rejected") && (
               <>
-                <h3 className="text-xl font-bold text-green-400 mb-2">✓ Payment Successful!</h3>
+                <h3 className="text-xl font-bold text-white mb-2">Unlock This Opportunity</h3>
+                <p className="text-zinc-400 text-sm mb-4">
+                  Pay <strong className="text-amber-400">ETB 500</strong> to unlock &quot;{selectedListingForUnlock.title}&quot;.
+                  This confirms your serious interest â€” TM will then personally facilitate the introduction
+                  and release the seller&apos;s direct contact once verification and communication are complete.
+                  It is not an instant contact reveal.
+                </p>
+
+                {modalView === "rejected" && (
+                  <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-3 mb-4 text-xs text-red-300">
+                    Your previous payment submission was rejected{existingUnlock?.admin_notes ? `: ${existingUnlock.admin_notes}` : "."} Please submit valid payment details below.
+                  </div>
+                )}
+
+                {submitError && (
+                  <p className="text-red-400 text-xs mb-3">{submitError}</p>
+                )}
+
+                <div className="space-y-3 mb-4">
+                  <div>
+                    <label className="block text-xs font-bold text-zinc-400 uppercase mb-1">Payment Method</label>
+                    <select
+                      value={paymentMethod}
+                      onChange={(e) => setPaymentMethod(e.target.value)}
+                      className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-white"
+                    >
+                      <option value="telebirr">Telebirr</option>
+                      <option value="cbe">CBE Birr</option>
+                      <option value="chapa">Chapa</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-zinc-400 uppercase mb-1">
+                      Payment Reference / Transaction ID
+                    </label>
+                    <input
+                      type="text"
+                      value={paymentReference}
+                      onChange={(e) => setPaymentReference(e.target.value)}
+                      placeholder="e.g. TB123456789"
+                      className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-zinc-400 uppercase mb-1">
+                      Receipt Screenshot (optional)
+                    </label>
+                    <input
+                      type="file"
+                      accept="image/*,.pdf"
+                      onChange={(e) => setReceiptFile(e.target.files?.[0] || null)}
+                      className="w-full text-xs text-zinc-400"
+                    />
+                  </div>
+                </div>
+
+                <button
+                  onClick={handleSubmitPayment}
+                  disabled={modalView === "submitting"}
+                  className="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 rounded-lg transition disabled:opacity-50"
+                >
+                  {modalView === "submitting" ? "Submitting..." : "Submit Payment for Review"}
+                </button>
+                <button
+                  onClick={() => setShowUnlockModal(false)}
+                  className="w-full mt-3 text-zinc-400 text-sm hover:text-white transition"
+                >
+                  Cancel
+                </button>
+              </>
+            )}
+
+            {modalView === "submitted" && (
+              <>
+                <h3 className="text-xl font-bold text-amber-400 mb-2">Payment Submitted</h3>
                 <p className="text-zinc-300 text-sm mb-4">
-                  Seller contact information for "{selectedListingForContact.title}":
+                  Thank you. Your ETB 500 payment for &quot;{selectedListingForUnlock.title}&quot; is now under review by
+                  the TM team. Once confirmed, TM will personally facilitate an introduction between you and the
+                  seller and release direct contact details.
+                </p>
+                <button
+                  onClick={() => setShowUnlockModal(false)}
+                  className="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 rounded-lg transition"
+                >
+                  Close
+                </button>
+              </>
+            )}
+
+            {modalView === "pending_review" && (
+              <>
+                <h3 className="text-xl font-bold text-amber-400 mb-2">Payment Under Review</h3>
+                <p className="text-zinc-300 text-sm mb-4">
+                  Your ETB 500 payment for &quot;{selectedListingForUnlock.title}&quot; is being reviewed by the TM
+                  team. You&apos;ll be notified once it&apos;s confirmed and TM begins facilitating the introduction.
+                </p>
+                <button
+                  onClick={() => setShowUnlockModal(false)}
+                  className="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 rounded-lg transition"
+                >
+                  Close
+                </button>
+              </>
+            )}
+
+            {modalView === "awaiting_facilitation" && (
+              <>
+                <h3 className="text-xl font-bold text-blue-400 mb-2">TM Is Facilitating Your Introduction</h3>
+                <p className="text-zinc-300 text-sm mb-4">
+                  Your payment for &quot;{selectedListingForUnlock.title}&quot; is confirmed. The TM team is now
+                  personally verifying and facilitating the introduction with the seller. Direct contact details
+                  will be released here once that process is complete.
+                </p>
+                <button
+                  onClick={() => setShowUnlockModal(false)}
+                  className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 rounded-lg transition"
+                >
+                  Close
+                </button>
+              </>
+            )}
+
+            {modalView === "released" && (
+              <>
+                <h3 className="text-xl font-bold text-green-400 mb-2">âœ“ Contact Released</h3>
+                <p className="text-zinc-300 text-sm mb-4">
+                  TM has completed facilitation for &quot;{selectedListingForUnlock.title}&quot;. Seller contact
+                  information:
                 </p>
                 <div className="bg-zinc-900 p-4 rounded-lg mb-4">
-                  <p className="text-white font-mono text-sm">{sellerContact}</p>
+                  <p className="text-white font-semibold text-sm">{releasedContact?.name || "TM Verified Seller"}</p>
+                  <p className="text-zinc-300 font-mono text-sm mt-1">{releasedContact?.phone || "Contact via TM"}</p>
                 </div>
                 <button
-                  onClick={() => setShowPaymentModal(false)}
+                  onClick={() => setShowUnlockModal(false)}
                   className="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 rounded-lg transition"
                 >
                   Close
