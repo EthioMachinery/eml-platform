@@ -1,3 +1,25 @@
+﻿# ============================================================================
+# TM Auth Fix — deployment script (Option B: proper @supabase/ssr migration)
+# Run from C:\tm-next in PowerShell with:
+#   powershell -ExecutionPolicy Bypass -File deploy_auth_fix.ps1
+# Writes middleware.ts and src/lib/supabaseClient.ts as UTF-8 WITHOUT a BOM.
+# Safe to re-run.
+# ============================================================================
+
+$ErrorActionPreference = "Stop"
+$Utf8NoBom = New-Object System.Text.UTF8Encoding $false
+
+function Write-TmFile($RelativePath, $Content) {
+    $full = Join-Path (Get-Location) $RelativePath
+    $dir = Split-Path $full -Parent
+    if (!(Test-Path $dir)) {
+        New-Item -ItemType Directory -Path $dir -Force | Out-Null
+    }
+    [System.IO.File]::WriteAllText($full, $Content, $Utf8NoBom)
+    Write-Host "Wrote $RelativePath"
+}
+
+$f1 = @'
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
@@ -123,3 +145,46 @@ export const config = {
     "/((?!_next/static|_next/image|favicon.ico|public|icons|manifest.json).*)",
   ],
 };
+
+'@
+Write-TmFile "middleware.ts" $f1
+
+$f2 = @'
+import { createBrowserClient } from "@supabase/ssr";
+import { createClient } from "@supabase/supabase-js";
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error(
+    "Missing Supabase environment variables: NEXT_PUBLIC_SUPABASE_URL and/or NEXT_PUBLIC_SUPABASE_ANON_KEY. " +
+    "The app cannot connect to the database without these. Check your .env.local or deployment environment settings."
+  );
+}
+
+/**
+ * This file is imported both by browser ("use client") components and by
+ * server-side API route handlers (src/app/api/**), so it must work in both
+ * environments:
+ *
+ * - In the browser: createBrowserClient from @supabase/ssr stores the
+ *   session in cookies (readable by middleware.ts on every subsequent
+ *   request) instead of localStorage, which is invisible to the server.
+ *   This is what makes /dashboard, /admin, and /founder-admin correctly
+ *   recognize a logged-in user instead of bouncing back to /login.
+ * - On the server (API routes): createBrowserClient depends on
+ *   `document`/`window`, which don't exist there, so we fall back to the
+ *   plain @supabase/supabase-js client exactly as before. API routes in
+ *   this project don't rely on supabase.auth session state from this
+ *   client, so this fallback preserves their existing behavior unchanged.
+ */
+export const supabase =
+  typeof window !== "undefined"
+    ? createBrowserClient(supabaseUrl, supabaseAnonKey)
+    : createClient(supabaseUrl, supabaseAnonKey);
+'@
+Write-TmFile "src/lib/supabaseClient.ts" $f2
+
+Write-Host ""
+Write-Host "Auth fix files written (UTF-8, no BOM). Run: git status" -ForegroundColor Green
