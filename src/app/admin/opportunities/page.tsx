@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
@@ -245,8 +245,8 @@ export default function AdminOpportunitiesPage() {
           Opportunity Unlocks
         </h1>
         <p className="text-zinc-400 mb-8">
-          Stage 1: review buyer payment proof. Stage 2: TM facilitates the introduction, then â€” and only
-          then â€” release direct contact. Approving payment never releases contact automatically.
+          Stage 1: review buyer payment proof. Stage 2: TM facilitates the introduction, then — and only
+          then — release direct contact. Approving payment never releases contact automatically.
         </p>
 
         <div className="flex gap-3 mb-8">
@@ -283,7 +283,7 @@ export default function AdminOpportunitiesPage() {
                     <div>
                       <p className="text-lg font-bold">{u.listing_title || "Untitled listing"}</p>
                       <p className="text-zinc-400 text-sm">
-                        Buyer: {u.buyer_name || "Unknown"} {u.buyer_phone ? `â€” ${u.buyer_phone}` : ""}
+                        Buyer: {u.buyer_name || "Unknown"} {u.buyer_phone ? `— ${u.buyer_phone}` : ""}
                       </p>
                     </div>
                     <span className="px-3 py-1 rounded-full text-xs font-bold h-fit bg-yellow-500 text-black">
@@ -293,8 +293,8 @@ export default function AdminOpportunitiesPage() {
 
                   <div className="grid sm:grid-cols-2 gap-2 text-sm text-zinc-300 mb-4">
                     <p>Fee: {u.unlock_fee} {u.currency}</p>
-                    <p>Method: {u.payment_method || "â€”"}</p>
-                    <p>Reference: {u.payment_reference || "â€”"}</p>
+                    <p>Method: {u.payment_method || "—"}</p>
+                    <p>Reference: {u.payment_reference || "—"}</p>
                     <p>Submitted: {new Date(u.created_at).toLocaleString()}</p>
                   </div>
 
@@ -350,10 +350,10 @@ export default function AdminOpportunitiesPage() {
                     <div>
                       <p className="text-lg font-bold">{u.listing_title || "Untitled listing"}</p>
                       <p className="text-zinc-400 text-sm">
-                        Buyer: {u.buyer_name || "Unknown"} {u.buyer_phone ? `â€” ${u.buyer_phone}` : ""}
+                        Buyer: {u.buyer_name || "Unknown"} {u.buyer_phone ? `— ${u.buyer_phone}` : ""}
                       </p>
                       <p className="text-zinc-400 text-sm">
-                        Seller: {u.seller_name || "Unknown"} {u.seller_phone ? `â€” ${u.seller_phone}` : ""}
+                        Seller: {u.seller_name || "Unknown"} {u.seller_phone ? `— ${u.seller_phone}` : ""}
                       </p>
                     </div>
                     <span
@@ -367,7 +367,7 @@ export default function AdminOpportunitiesPage() {
                   </div>
 
                   <p className="text-xs text-zinc-500 mb-4">
-                    Payment approved {u.reviewed_at ? new Date(u.reviewed_at).toLocaleString() : "â€”"}
+                    Payment approved {u.reviewed_at ? new Date(u.reviewed_at).toLocaleString() : "—"}
                   </p>
 
                   <div className="flex gap-3">

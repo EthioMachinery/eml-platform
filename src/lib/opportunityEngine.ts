@@ -1,9 +1,9 @@
-﻿import { supabase } from "@/lib/supabaseClient";
+import { supabase } from "@/lib/supabaseClient";
 
 /**
  * OPPORTUNITY UNLOCK ENGINE
  * =========================
- * This is the real replacement for the old fake "pay ETB 500 â†’ instantly see
+ * This is the real replacement for the old fake "pay ETB 500 → instantly see
  * seller phone number" flow.
  *
  * CRITICAL BUSINESS RULE (do not change without explicit instruction):
@@ -12,23 +12,23 @@
  * Buyer and seller are not connected immediately after payment. TM
  * facilitates the initial communication itself; direct contact between
  * buyer and seller is only released after TM completes its own
- * verification and communication process â€” always a separate, deliberate
+ * verification and communication process — always a separate, deliberate
  * admin action, never automatic on payment approval.
  *
- * STAGE 1 â€” Payment review
+ * STAGE 1 — Payment review
  *   Buyer submits payment proof (method + reference, optional receipt) for
  *   a specific listing. Row is created with status = 'pending_review'.
  *   Admin reviews it in /admin/opportunities and either:
  *     - approves  -> status = 'payment_approved'  (moves to Stage 2 queue)
  *     - rejects   -> status = 'payment_rejected'   (terminal)
  *
- * STAGE 2 â€” TM facilitation & contact release
+ * STAGE 2 — TM facilitation & contact release
  *   Admin manually facilitates the introduction (phone call / message
  *   between TM and both parties) OUTSIDE this app, then, only when TM has
  *   actually completed that process, clicks "Release Contact" in
  *   /admin/opportunities. That is the ONLY action that sets
  *   status = 'contact_released' and reveals the seller's contact details
- *   to the buyer. This is always a distinct, deliberate click â€” approving
+ *   to the buyer. This is always a distinct, deliberate click — approving
  *   payment never does this automatically.
  *
  * Revenue model:
@@ -41,10 +41,10 @@
  *     for, not the moment payment is merely submitted).
  *
  * Tables used (see supabase/migrations/002_opportunity_unlocks.sql):
- *   - opportunity_unlocks   (new â€” this engine's own table)
- *   - commission_settings   (existing â€” category, commission_percent)
- *   - deals                 (existing â€” completed sale/rental records)
- *   - revenue_records       (existing â€” deal_id, amount, type, metadata)
+ *   - opportunity_unlocks   (new — this engine's own table)
+ *   - commission_settings   (existing — category, commission_percent)
+ *   - deals                 (existing — completed sale/rental records)
+ *   - revenue_records       (existing — deal_id, amount, type, metadata)
  */
 
 export type OpportunityStatus =
@@ -151,7 +151,7 @@ export async function getBuyerUnlocksForListing(
 }
 
 // ---------------------------------------------------------------------------
-// ADMIN: Stage 1 â€” review the payment proof
+// ADMIN: Stage 1 — review the payment proof
 // ---------------------------------------------------------------------------
 
 export async function reviewOpportunityPayment(params: {
@@ -179,7 +179,7 @@ export async function reviewOpportunityPayment(params: {
 }
 
 // ---------------------------------------------------------------------------
-// ADMIN: Stage 2 â€” mark facilitation in progress (optional intermediate step)
+// ADMIN: Stage 2 — mark facilitation in progress (optional intermediate step)
 // ---------------------------------------------------------------------------
 
 export async function markFacilitationStarted(params: {
@@ -204,7 +204,7 @@ export async function markFacilitationStarted(params: {
 }
 
 // ---------------------------------------------------------------------------
-// ADMIN: Stage 2 â€” final, deliberate contact release
+// ADMIN: Stage 2 — final, deliberate contact release
 // This is the ONLY function that reveals contact info and books unlock-fee
 // revenue. It must never be called automatically from payment approval.
 // ---------------------------------------------------------------------------
@@ -354,7 +354,7 @@ export async function updateCommissionRate(
 }
 
 // ---------------------------------------------------------------------------
-// RECORD A COMPLETED SALE / RENTAL â€” primary revenue
+// RECORD A COMPLETED SALE / RENTAL — primary revenue
 // ---------------------------------------------------------------------------
 
 export interface RecordDealInput {

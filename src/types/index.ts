@@ -1,4 +1,4 @@
-﻿export type { SupportedLanguage } from "@/translations/keys";
+export type { SupportedLanguage } from "@/translations/keys";
 
 export interface LocalizedListing {
   id: string;

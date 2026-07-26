@@ -1,5 +1,5 @@
-﻿-- ============================================================================
--- TM: OPPORTUNITY UNLOCK ENGINE â€” migration 002
+-- ============================================================================
+-- TM: OPPORTUNITY UNLOCK ENGINE — migration 002
 -- Run in Supabase SQL Editor (Project > SQL Editor > New query)
 --
 -- Purpose: create the ONE new table the two-stage opportunity-unlock system
@@ -11,7 +11,7 @@
 -- NOTE on the previous failure ("column source does not exist"): that error
 -- came from code trying to write a `source` column into `revenue_records`.
 -- The real `revenue_records` table (see SUPABASE_MASTER_BACKBONE.sql line
--- ~515) only has: id, deal_id, amount, type, metadata, created_at â€” no
+-- ~515) only has: id, deal_id, amount, type, metadata, created_at — no
 -- `source` column. This migration, and opportunityEngine.ts, use `type`
 -- + `metadata` instead of `source`, so that bug class cannot recur here.
 --

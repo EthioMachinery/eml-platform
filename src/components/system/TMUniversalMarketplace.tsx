@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useEffect, useTransition } from "react";
 import { useTranslate } from "@/hooks/useTranslate";
@@ -16,12 +16,12 @@ import {
 } from "@/lib/opportunityEngine";
 
 const localizedLocations: Record<string, Record<string, string>> = {
-  "addis_ababa": { en: "Addis Ababa", am: "áŠ á‹²áˆµ áŠ á‰ á‰£", om: "Finfinnee", ti: "áŠ£á‹²áˆµ áŠ£á‰ á‰£" },
-  "hawassa": { en: "Hawassa", am: "áˆ€á‹‹áˆ³", om: "Hawaas", ti: "áˆƒá‹‹áˆ³" },
-  "adama": { en: "Adama", am: "áŠ á‹³áˆ›", om: "Adaamaa", ti: "áŠ£áˆ›áˆ«" },
-  "mekelle": { en: "Mekelle", am: "áˆ˜á‰€áˆŒ", om: "Maqalee", ti: "áˆ˜á‰áˆˆ" },
-  "bahir_dar": { en: "Bahir Dar", am: "á‰£áˆ…áˆ­ á‹³áˆ­", om: "Baahir Daar", ti: "á‰£áˆ…áˆ­ á‹³áˆ­" },
-  "dire_dawa": { en: "Dire Dawa", am: "á‹µáˆ¬á‹³á‹‹", om: "Dirree Dhawaa", ti: "á‹µáˆ¬á‹³á‹‹" }
+  "addis_ababa": { en: "Addis Ababa", am: "አዲስ አበባ", om: "Finfinnee", ti: "ኣዲስ ኣበባ" },
+  "hawassa": { en: "Hawassa", am: "ሀዋሳ", om: "Hawaas", ti: "ሃዋሳ" },
+  "adama": { en: "Adama", am: "አዳማ", om: "Adaamaa", ti: "ኣማራ" },
+  "mekelle": { en: "Mekelle", am: "መቀሌ", om: "Maqalee", ti: "መቐለ" },
+  "bahir_dar": { en: "Bahir Dar", am: "ባህር ዳር", om: "Baahir Daar", ti: "ባህር ዳር" },
+  "dire_dawa": { en: "Dire Dawa", am: "ድሬዳዋ", om: "Dirree Dhawaa", ti: "ድሬዳዋ" }
 };
 
 // Local modal view states, derived from the buyer's most recent
@@ -109,7 +109,7 @@ export default function TMUniversalMarketplace() {
     return "form";
   }
 
-  // Handle opening the unlock modal â€” check for an existing request first
+  // Handle opening the unlock modal — check for an existing request first
   const handleUnlockContact = async (listing: LocalizedListing) => {
     setSelectedListingForUnlock(listing);
     setSubmitError(null);
@@ -195,7 +195,7 @@ export default function TMUniversalMarketplace() {
       <div className="mb-6 bg-gradient-to-r from-amber-600 to-amber-800 rounded-xl p-4 text-white shadow-lg">
         <div className="flex justify-between items-center">
           <div>
-            <h2 className="text-xl font-bold">ðŸ”¥ Special Offer</h2>
+            <h2 className="text-xl font-bold">🔥 Special Offer</h2>
             <p className="text-sm">List your machinery for free until end of month!</p>
           </div>
           <a href="/post-machinery" className="bg-white text-amber-800 px-4 py-2 rounded-lg font-bold text-sm hover:bg-amber-50 transition-colors">Learn More</a>
@@ -216,28 +216,28 @@ export default function TMUniversalMarketplace() {
       {/* TRUST INDICATORS BAR */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 mb-8 bg-zinc-950 border border-zinc-900 rounded-xl p-4">
         <div className="flex items-center gap-3">
-          <span className="text-green-500 text-xl">âœ“</span>
+          <span className="text-green-500 text-xl">✓</span>
           <div>
             <p className="text-xs text-zinc-400">Verified Sellers</p>
             <p className="text-sm font-bold text-white">100% ID Check</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <span className="text-blue-500 text-xl">ðŸ›¡ï¸</span>
+          <span className="text-blue-500 text-xl">🛡️</span>
           <div>
             <p className="text-xs text-zinc-400">Secure Escrow</p>
             <p className="text-sm font-bold text-white">Payment Protected</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <span className="text-amber-500 text-xl">ðŸ“ž</span>
+          <span className="text-amber-500 text-xl">📞</span>
           <div>
             <p className="text-xs text-zinc-400">24/7 Support</p>
             <p className="text-sm font-bold text-white">Dedicated Team</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <span className="text-purple-500 text-xl">ðŸ“Š</span>
+          <span className="text-purple-500 text-xl">📊</span>
           <div>
             <p className="text-xs text-zinc-400">Market Insights</p>
             <p className="text-sm font-bold text-white">Real-time Pricing</p>
@@ -469,7 +469,7 @@ export default function TMUniversalMarketplace() {
                           onClick={() => handleUnlockContact(item)}
                           className="w-full py-2.5 rounded-lg text-xs font-bold uppercase transition-all shadow-sm flex items-center justify-center gap-1.5 bg-amber-500 hover:bg-amber-600 text-white"
                         >
-                          ðŸ”“ Unlock Opportunity (ETB 500)
+                          🔓 Unlock Opportunity (ETB 500)
                         </button>
                       </div>
                     </div>
@@ -518,7 +518,7 @@ export default function TMUniversalMarketplace() {
                 <h3 className="text-xl font-bold text-white mb-2">Unlock This Opportunity</h3>
                 <p className="text-zinc-400 text-sm mb-4">
                   Pay <strong className="text-amber-400">ETB 500</strong> to unlock &quot;{selectedListingForUnlock.title}&quot;.
-                  This confirms your serious interest â€” TM will then personally facilitate the introduction
+                  This confirms your serious interest — TM will then personally facilitate the introduction
                   and release the seller&apos;s direct contact once verification and communication are complete.
                   It is not an instant contact reveal.
                 </p>
@@ -641,7 +641,7 @@ export default function TMUniversalMarketplace() {
 
             {modalView === "released" && (
               <>
-                <h3 className="text-xl font-bold text-green-400 mb-2">âœ“ Contact Released</h3>
+                <h3 className="text-xl font-bold text-green-400 mb-2">✓ Contact Released</h3>
                 <p className="text-zinc-300 text-sm mb-4">
                   TM has completed facilitation for &quot;{selectedListingForUnlock.title}&quot;. Seller contact
                   information:

@@ -1,4 +1,4 @@
-﻿import { supabase } from "@/lib/supabaseClient";
+import { supabase } from "@/lib/supabaseClient";
 import { SupportedLanguage, LocalizedListing } from "@/types";
 
 export async function fetchLocalizedListings(

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
@@ -155,7 +155,7 @@ export default function AdminDealRevenuePage() {
     }
 
     setFormSuccess(
-      `Deal recorded${dealId ? ` (${dealId})` : ""}. Commission booked: ${commissionAmount ?? "â€”"} ETB.${
+      `Deal recorded${dealId ? ` (${dealId})` : ""}. Commission booked: ${commissionAmount ?? "—"} ETB.${
         error ? ` Note: ${error}` : ""
       }`
     );
