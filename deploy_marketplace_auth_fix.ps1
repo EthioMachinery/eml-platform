@@ -1,3 +1,24 @@
+﻿# ============================================================================
+# TM Marketplace Auth Import Fix
+# Run from C:\tm-next in PowerShell with:
+#   powershell -ExecutionPolicy Bypass -File deploy_marketplace_auth_fix.ps1
+# Writes 1 file as UTF-8 without BOM. Safe to re-run.
+# ============================================================================
+
+$ErrorActionPreference = "Stop"
+$Utf8NoBom = New-Object System.Text.UTF8Encoding $false
+
+function Write-TmFile($RelativePath, $Content) {
+    $full = Join-Path (Get-Location) $RelativePath
+    $dir = Split-Path $full -Parent
+    if (!(Test-Path $dir)) {
+        New-Item -ItemType Directory -Path $dir -Force | Out-Null
+    }
+    [System.IO.File]::WriteAllText($full, $Content, $Utf8NoBom)
+    Write-Host "Wrote $RelativePath"
+}
+
+$f1 = @'
 "use client";
 
 import React, { useState, useEffect, useTransition } from "react";
@@ -664,3 +685,9 @@ export default function TMUniversalMarketplace() {
     </section>
   );
 }
+
+'@
+Write-TmFile "src/components/system/TMUniversalMarketplace.tsx" $f1
+
+Write-Host ""
+Write-Host "Marketplace auth fix written. Run: git status" -ForegroundColor Green
