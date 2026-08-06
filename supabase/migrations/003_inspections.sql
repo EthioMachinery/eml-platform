@@ -7,6 +7,15 @@
 -- proven in 002 (RLS checking role in ('ADMIN','admin') — not just 'ADMIN',
 -- which was the exact bug fixed on commission_settings/deals earlier).
 --
+-- NOTE ON TABLE NAME: your database already has a table literally called
+-- "inspections" from an earlier, unrelated attempt at this feature — it
+-- stores finished/certified results (overall_grade, hydraulic_pressure_psi,
+-- etc.) with several NOT NULL columns that don't fit a request/payment/
+-- schedule workflow. Rather than fight that shape, this migration creates
+-- a new table, inspection_requests, and leaves the old inspections table
+-- untouched — the same approach already taken with the other pre-existing,
+-- differently-shaped legacy tables in this project.
+--
 -- IMPORTANT — VISIBLE SITE CHANGE AFTER THIS MIGRATION + its matching code:
 -- search.ts currently hardcodes every listing as verified: true (fake). This
 -- migration adds a REAL inspection_status column, and the matching code
@@ -22,7 +31,7 @@
 -- ============================================================================
 
 -- 1. THE INSPECTIONS TABLE ---------------------------------------------------
-create table if not exists public.inspections (
+create table if not exists public.inspection_requests (
   id uuid primary key default gen_random_uuid(),
   listing_id uuid references public.listings(id) on delete cascade,
   requested_by uuid references public.profiles(id) on delete set null,
@@ -58,46 +67,46 @@ create table if not exists public.inspections (
 do $$
 begin
   if not exists (
-    select 1 from pg_constraint where conname = 'inspections_status_check'
+    select 1 from pg_constraint where conname = 'inspection_requests_status_check'
   ) then
-    alter table public.inspections
-      add constraint inspections_status_check
+    alter table public.inspection_requests
+      add constraint inspection_requests_status_check
       check (status in ('pending_review','payment_rejected','payment_approved','scheduled','completed','published'));
   end if;
   if not exists (
-    select 1 from pg_constraint where conname = 'inspections_tier_check'
+    select 1 from pg_constraint where conname = 'inspection_requests_tier_check'
   ) then
-    alter table public.inspections
-      add constraint inspections_tier_check
+    alter table public.inspection_requests
+      add constraint inspection_requests_tier_check
       check (tier in ('basic','standard','premium'));
   end if;
 end $$;
 
-create index if not exists idx_inspections_status on public.inspections(status, created_at desc);
-create index if not exists idx_inspections_listing on public.inspections(listing_id);
-create index if not exists idx_inspections_requester on public.inspections(requested_by);
+create index if not exists idx_inspection_requests_status on public.inspection_requests(status, created_at desc);
+create index if not exists idx_inspection_requests_listing on public.inspection_requests(listing_id);
+create index if not exists idx_inspection_requests_requester on public.inspection_requests(requested_by);
 
 -- 2. ROW LEVEL SECURITY -------------------------------------------------------
-alter table public.inspections enable row level security;
+alter table public.inspection_requests enable row level security;
 
-drop policy if exists "requester reads own inspections" on public.inspections;
-create policy "requester reads own inspections" on public.inspections
+drop policy if exists "requester reads own inspections" on public.inspection_requests;
+create policy "requester reads own inspections" on public.inspection_requests
   for select using (auth.uid() = requested_by);
 
-drop policy if exists "requester creates own inspection request" on public.inspections;
-create policy "requester creates own inspection request" on public.inspections
+drop policy if exists "requester creates own inspection request" on public.inspection_requests;
+create policy "requester creates own inspection request" on public.inspection_requests
   for insert with check (auth.uid() = requested_by);
 
-drop policy if exists "admin full access on inspections" on public.inspections;
-create policy "admin full access on inspections" on public.inspections
+drop policy if exists "admin full access on inspections" on public.inspection_requests;
+create policy "admin full access on inspections" on public.inspection_requests
   for all using (
     auth.uid() in (select id from public.profiles where role in ('ADMIN','admin'))
   );
 
 -- Public can read published, passing reports (for displaying the badge/report
 -- link on a listing to any visitor, not just the person who paid for it).
-drop policy if exists "public reads published inspections" on public.inspections;
-create policy "public reads published inspections" on public.inspections
+drop policy if exists "public reads published inspections" on public.inspection_requests;
+create policy "public reads published inspections" on public.inspection_requests
   for select using (status = 'published');
 
 -- 3. REAL VERIFICATION STATUS ON LISTINGS (replaces the hardcoded fake flag) -

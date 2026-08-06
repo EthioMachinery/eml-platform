@@ -97,7 +97,7 @@ export async function requestInspection(params: {
   }
 
   const { data, error } = await supabase
-    .from("inspections")
+    .from("inspection_requests")
     .insert({
       listing_id: listingId,
       requested_by: requestedBy,
@@ -121,7 +121,7 @@ export async function getRequesterInspectionsForListing(
   listingId: string
 ): Promise<Inspection[]> {
   const { data, error } = await supabase
-    .from("inspections")
+    .from("inspection_requests")
     .select("*")
     .eq("requested_by", requestedBy)
     .eq("listing_id", listingId)
@@ -144,7 +144,7 @@ export async function reviewInspectionPayment(params: {
   const { inspectionId, adminId, approve, notes } = params;
 
   const { error } = await supabase
-    .from("inspections")
+    .from("inspection_requests")
     .update({
       status: approve ? "payment_approved" : "payment_rejected",
       reviewed_by: adminId,
@@ -171,7 +171,7 @@ export async function scheduleInspection(params: {
   const { inspectionId, inspectorId, scheduledAt } = params;
 
   const { error } = await supabase
-    .from("inspections")
+    .from("inspection_requests")
     .update({
       status: "scheduled",
       inspector_id: inspectorId,
@@ -198,7 +198,7 @@ export async function completeInspection(params: {
   const { inspectionId, result, reportUrl, notes } = params;
 
   const { error } = await supabase
-    .from("inspections")
+    .from("inspection_requests")
     .update({
       status: "completed",
       result,
@@ -224,7 +224,7 @@ export async function publishInspection(params: {
   const { inspectionId } = params;
 
   const { data: inspection, error: fetchError } = await supabase
-    .from("inspections")
+    .from("inspection_requests")
     .select("*")
     .eq("id", inspectionId)
     .single();
@@ -238,7 +238,7 @@ export async function publishInspection(params: {
   }
 
   const { error: updateError } = await supabase
-    .from("inspections")
+    .from("inspection_requests")
     .update({
       status: "published",
       published_at: nowIso(),
@@ -289,7 +289,7 @@ export async function publishInspection(params: {
 
 export async function listPendingInspectionPaymentReview(): Promise<Inspection[]> {
   const { data, error } = await supabase
-    .from("inspections")
+    .from("inspection_requests")
     .select("*")
     .eq("status", "pending_review")
     .order("created_at", { ascending: true });
@@ -300,7 +300,7 @@ export async function listPendingInspectionPaymentReview(): Promise<Inspection[]
 
 export async function listInspectionsToSchedule(): Promise<Inspection[]> {
   const { data, error } = await supabase
-    .from("inspections")
+    .from("inspection_requests")
     .select("*")
     .eq("status", "payment_approved")
     .order("reviewed_at", { ascending: true });
@@ -311,7 +311,7 @@ export async function listInspectionsToSchedule(): Promise<Inspection[]> {
 
 export async function listScheduledInspections(): Promise<Inspection[]> {
   const { data, error } = await supabase
-    .from("inspections")
+    .from("inspection_requests")
     .select("*")
     .eq("status", "scheduled")
     .order("scheduled_at", { ascending: true });
@@ -322,7 +322,7 @@ export async function listScheduledInspections(): Promise<Inspection[]> {
 
 export async function listCompletedAwaitingPublish(): Promise<Inspection[]> {
   const { data, error } = await supabase
-    .from("inspections")
+    .from("inspection_requests")
     .select("*")
     .eq("status", "completed")
     .order("completed_at", { ascending: true });
