@@ -33,7 +33,8 @@ export async function fetchLocalizedListings(
         is_rental_only,
         status,
         image_url,
-        location
+        location,
+        inspection_status
       `)
       .eq('status', 'verified_available');
 
@@ -85,7 +86,12 @@ export async function fetchLocalizedListings(
         status: item.status,
         engineHours: 1200,
         locationToken: item.location || "addis_ababa",
-        verified: true,
+        // FIXED: this used to be hardcoded `true` for every single listing,
+        // regardless of whether anyone had actually verified anything. It
+        // now reflects the real Verified Inspection result (see
+        // inspectionEngine.ts / admin/inspections) — a listing is only
+        // "Verified" once it has actually passed a paid inspection.
+        verified: !!item.inspection_status && item.inspection_status !== "none",
         imageUrl: item.image_url || null,
         ownerId: item.owner_id || null,
         ownerName: "TM Verified Supplier",
