@@ -1,3 +1,33 @@
+﻿# ============================================================================
+# TM Registration Fix (Priority #1 of 4)
+# Run from C:\tm-next in PowerShell with:
+#   powershell -ExecutionPolicy Bypass -File deploy_registration_fix.ps1
+# Writes 1 file as UTF-8 without BOM. Safe to re-run.
+#
+# WHAT THIS FIXES: registration was completely broken for every user. Two
+# real bugs: (1) it tried to insert into a "users" table that doesn't exist
+# in this database, and (2) it then tried to insert a SECOND profiles row
+# with the same id that the handle_new_user() trigger had already created,
+# which always violated the primary key. Both are removed; the form now
+# correctly UPDATEs the trigger-created row with the wizard's details,
+# using role/primary_role values confirmed against your actual database
+# constraints.
+# ============================================================================
+
+$ErrorActionPreference = "Stop"
+$Utf8NoBom = New-Object System.Text.UTF8Encoding $false
+
+function Write-TmFile($RelativePath, $Content) {
+    $full = Join-Path (Get-Location) $RelativePath
+    $dir = Split-Path $full -Parent
+    if (!(Test-Path $dir)) {
+        New-Item -ItemType Directory -Path $dir -Force | Out-Null
+    }
+    [System.IO.File]::WriteAllText($full, $Content, $Utf8NoBom)
+    Write-Host "Wrote $RelativePath"
+}
+
+$f1 = @'
 "use client";
 
 import { useState } from "react";
@@ -346,3 +376,8 @@ export default function RegisterPage() {
     </main>
   );
 }
+'@
+Write-TmFile "src/app/register/page.tsx" $f1
+
+Write-Host ""
+Write-Host "Registration fix written. Run: git status" -ForegroundColor Green
