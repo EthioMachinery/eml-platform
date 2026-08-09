@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useTranslate } from "@/hooks/useTranslate";
 import { supabase } from "@/lib/supabaseClient";
+import { requestInspection, DEFAULT_TIER_FEES } from "@/lib/inspectionEngine";
 
 type UserProfile = {
   full_name: string;
@@ -46,6 +47,15 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"listings" | "requests" | "profile">("listings");
 
+  // Seller-side "Request Verification" modal (Basic tier — document check,
+  // seller-paid, gets the real "Verified" badge onto the listing)
+  const [verifyModalListing, setVerifyModalListing] = useState<Listing | null>(null);
+  const [verifyPaymentMethod, setVerifyPaymentMethod] = useState("telebirr");
+  const [verifyPaymentReference, setVerifyPaymentReference] = useState("");
+  const [verifySubmitting, setVerifySubmitting] = useState(false);
+  const [verifyError, setVerifyError] = useState<string | null>(null);
+  const [verifySuccess, setVerifySuccess] = useState(false);
+
   useEffect(() => {
     async function loadDashboard() {
       const { data: { user } } = await supabase.auth.getUser();
@@ -82,6 +92,42 @@ export default function DashboardPage() {
     await supabase.auth.signOut();
     router.push("/");
   };
+
+  function openVerifyModal(listing: Listing) {
+    setVerifyModalListing(listing);
+    setVerifyPaymentReference("");
+    setVerifyError(null);
+    setVerifySuccess(false);
+  }
+
+  async function handleSubmitVerification() {
+    if (!user || !verifyModalListing) return;
+
+    if (!verifyPaymentReference.trim()) {
+      setVerifyError("Please enter your payment reference / transaction ID.");
+      return;
+    }
+
+    setVerifySubmitting(true);
+    setVerifyError(null);
+
+    const { error } = await requestInspection({
+      listingId: verifyModalListing.id,
+      requestedBy: user.id,
+      tier: "basic",
+      paymentMethod: verifyPaymentMethod,
+      paymentReference: verifyPaymentReference.trim(),
+    });
+
+    if (error) {
+      setVerifyError(error);
+      setVerifySubmitting(false);
+      return;
+    }
+
+    setVerifySuccess(true);
+    setVerifySubmitting(false);
+  }
 
   function StatusBadge({ status }: { status: string }) {
     const colors: Record<string, string> = {
@@ -214,12 +260,20 @@ export default function DashboardPage() {
                     {" • "}{new Date(l.created_at).toLocaleDateString()}
                   </p>
                 </div>
-                <Link
-                  href={`/edit/${l.id}`}
-                  className="px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-white text-xs font-bold rounded-lg transition-all"
-                >
-                  Edit
-                </Link>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => openVerifyModal(l)}
+                    className="px-3 py-1.5 bg-blue-500/10 border border-blue-500/40 hover:bg-blue-500/20 text-blue-400 text-xs font-bold rounded-lg transition-all"
+                  >
+                    🔍 Get Verified
+                  </button>
+                  <Link
+                    href={`/edit/${l.id}`}
+                    className="px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-white text-xs font-bold rounded-lg transition-all"
+                  >
+                    Edit
+                  </Link>
+                </div>
               </div>
             ))}
           </div>
@@ -272,6 +326,79 @@ export default function DashboardPage() {
         )}
 
       </div>
+
+      {/* GET VERIFIED (Basic Inspection) MODAL */}
+      {verifyModalListing && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+          <div className="bg-zinc-950 border border-zinc-800 rounded-xl max-w-md w-full p-6 shadow-2xl">
+            {!verifySuccess ? (
+              <>
+                <h3 className="text-xl font-bold text-white mb-2">Get Verified</h3>
+                <p className="text-zinc-400 text-sm mb-4">
+                  Pay <strong className="text-blue-400">{DEFAULT_TIER_FEES.basic} ETB</strong> for Basic Verification of{" "}
+                  &quot;{verifyModalListing.brand} {verifyModalListing.model}&quot;. TM checks your ownership documents and
+                  confirms your listing photos are accurate, then applies the real &quot;Verified&quot; badge — buyers trust
+                  verified listings more.
+                </p>
+                {verifyError && <p className="text-red-400 text-xs mb-3">{verifyError}</p>}
+                <div className="space-y-3 mb-4">
+                  <div>
+                    <label className="block text-xs font-bold text-zinc-400 uppercase mb-1">Payment Method</label>
+                    <select
+                      value={verifyPaymentMethod}
+                      onChange={(e) => setVerifyPaymentMethod(e.target.value)}
+                      className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-white"
+                    >
+                      <option value="telebirr">Telebirr</option>
+                      <option value="cbe">CBE Birr</option>
+                      <option value="chapa">Chapa</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-zinc-400 uppercase mb-1">
+                      Payment Reference / Transaction ID
+                    </label>
+                    <input
+                      type="text"
+                      value={verifyPaymentReference}
+                      onChange={(e) => setVerifyPaymentReference(e.target.value)}
+                      placeholder="e.g. TB123456789"
+                      className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-white"
+                    />
+                  </div>
+                </div>
+                <button
+                  onClick={handleSubmitVerification}
+                  disabled={verifySubmitting}
+                  className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 rounded-lg transition disabled:opacity-50"
+                >
+                  {verifySubmitting ? "Submitting..." : "Submit Payment for Review"}
+                </button>
+                <button
+                  onClick={() => setVerifyModalListing(null)}
+                  className="w-full mt-3 text-zinc-400 text-sm hover:text-white transition"
+                >
+                  Cancel
+                </button>
+              </>
+            ) : (
+              <>
+                <h3 className="text-xl font-bold text-blue-400 mb-2">Payment Submitted</h3>
+                <p className="text-zinc-300 text-sm mb-4">
+                  Thanks — your verification payment is under review. Once confirmed, TM will check your documents and
+                  publish the result.
+                </p>
+                <button
+                  onClick={() => setVerifyModalListing(null)}
+                  className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 rounded-lg transition"
+                >
+                  Close
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
