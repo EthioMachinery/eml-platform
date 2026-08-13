@@ -139,7 +139,7 @@ export default function AdminDealRevenuePage() {
 
     setSubmitting(true);
 
-    const { dealId, commissionAmount, error } = await recordCompletedDeal({
+    const { dealId, commissionAmount, unlockFeeCredited, error } = await recordCompletedDeal({
       category,
       buyerId: buyerId.trim() || null,
       sellerId: sellerId.trim() || null,
@@ -155,9 +155,9 @@ export default function AdminDealRevenuePage() {
     }
 
     setFormSuccess(
-      `Deal recorded${dealId ? ` (${dealId})` : ""}. Commission booked: ${commissionAmount ?? "—"} ETB.${
-        error ? ` Note: ${error}` : ""
-      }`
+      `Deal recorded${dealId ? ` (${dealId})` : ""}. Commission booked: ${commissionAmount ?? "—"} ETB.` +
+        (unlockFeeCredited ? ` (${unlockFeeCredited} ETB unlock fee credited toward this commission.)` : "") +
+        (error ? ` Note: ${error}` : "")
     );
     setBuyerId("");
     setSellerId("");
@@ -298,6 +298,10 @@ export default function AdminDealRevenuePage() {
                 placeholder="uuid (optional)"
                 className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-white"
               />
+              <p className="text-[11px] text-blue-400/80 mt-1">
+                Fill in Buyer + Listing ID and, if this buyer already paid the ETB 500 unlock fee for this exact
+                listing, that amount is automatically credited toward the commission below.
+              </p>
             </div>
 
             <div>

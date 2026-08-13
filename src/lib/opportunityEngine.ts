@@ -369,15 +369,42 @@ export interface RecordDealInput {
 
 export async function recordCompletedDeal(
   input: RecordDealInput
-): Promise<{ dealId: string | null; commissionAmount: number | null; error: string | null }> {
+): Promise<{ dealId: string | null; commissionAmount: number | null; unlockFeeCredited: number; error: string | null }> {
   const { category, buyerId, sellerId, machineryId, grossAmount, currency, notes } = input;
 
   if (!grossAmount || grossAmount <= 0) {
-    return { dealId: null, commissionAmount: null, error: "Gross amount must be greater than zero." };
+    return { dealId: null, commissionAmount: null, unlockFeeCredited: 0, error: "Gross amount must be greater than zero." };
   }
 
   const commissionPercent = await getCommissionRate(category);
-  const commissionAmount = Math.round((grossAmount * commissionPercent) / 100 * 100) / 100;
+  let commissionAmount = Math.round((grossAmount * commissionPercent) / 100 * 100) / 100;
+
+  // COMMISSION CREDIT: if this exact buyer already paid the ETB 500 unlock
+  // fee for this exact listing and TM released contact, credit that amount
+  // toward the commission owed on the completed deal. The unlock fee was
+  // already booked as its own revenue (type = 'unlock_fee') at the moment
+  // contact was released, so crediting it here doesn't cost TM anything —
+  // it just avoids charging the buyer/seller twice for the same
+  // relationship, which is exactly the "double-paying TM" resentment that
+  // pushes people to close deals off-platform instead.
+  let unlockFeeCredited = 0;
+  if (buyerId && machineryId) {
+    const { data: unlock } = await supabase
+      .from("opportunity_unlocks")
+      .select("id, unlock_fee")
+      .eq("buyer_id", buyerId)
+      .eq("listing_id", machineryId)
+      .eq("status", "contact_released")
+      .order("contact_released_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (unlock) {
+      unlockFeeCredited = Math.min(Number(unlock.unlock_fee), commissionAmount);
+      commissionAmount = Math.round((commissionAmount - unlockFeeCredited) * 100) / 100;
+    }
+  }
+
   const sellerReceives = Math.round((grossAmount - commissionAmount) * 100) / 100;
 
   const dealTypeMap: Record<DealCategory, string> = {
@@ -402,13 +429,16 @@ export async function recordCompletedDeal(
       gross_amount: grossAmount,
       currency: currency ?? "ETB",
       is_completed: true,
-      metadata: notes ? { notes } : {},
+      metadata: {
+        ...(notes ? { notes } : {}),
+        ...(unlockFeeCredited > 0 ? { unlock_fee_credited: unlockFeeCredited } : {}),
+      },
     })
     .select("id")
     .single();
 
   if (dealError || !deal) {
-    return { dealId: null, commissionAmount: null, error: dealError?.message || "Failed to record deal." };
+    return { dealId: null, commissionAmount: null, unlockFeeCredited: 0, error: dealError?.message || "Failed to record deal." };
   }
 
   const { error: revenueError } = await supabase.from("revenue_records").insert({
@@ -419,6 +449,7 @@ export async function recordCompletedDeal(
       category,
       gross_amount: grossAmount,
       commission_percent: commissionPercent,
+      unlock_fee_credited: unlockFeeCredited,
       buyer_id: buyerId,
       seller_id: sellerId,
     },
@@ -428,11 +459,12 @@ export async function recordCompletedDeal(
     return {
       dealId: deal.id,
       commissionAmount,
+      unlockFeeCredited,
       error: `Deal recorded, but revenue logging failed: ${revenueError.message}`,
     };
   }
 
-  return { dealId: deal.id, commissionAmount, error: null };
+  return { dealId: deal.id, commissionAmount, unlockFeeCredited, error: null };
 }
 
 /** Total commission + unlock-fee revenue recorded so far, for a quick dashboard number. */

@@ -107,6 +107,25 @@ export default function TermsOfServicePage() {
             <li>Use the platform for any unlawful purpose under Ethiopian law; or</li>
             <li>Attempt to interfere with the security or normal operation of the platform.</li>
           </ul>
+
+          <p className="mt-4 font-semibold">9.1 Circumvention of TM&apos;s Commission</p>
+          <p>
+            When TM introduces a buyer and seller through the Opportunity Unlock or Verified Inspection process, TM has earned a
+            commission on any resulting sale, rental, or transport booking between those parties, regardless of whether the deal is
+            ultimately completed through TM&apos;s platform or arranged independently after the introduction. Deliberately completing
+            a transaction outside the platform with a party you were introduced to through TM, specifically to avoid TM&apos;s
+            commission, is a breach of these Terms.
+          </p>
+          <p className="mt-2">This obligation applies for twelve (12) months from the date of introduction. TM may:</p>
+          <ul className="list-disc list-inside space-y-1 ml-2">
+            <li>Suspend or terminate the accounts of any parties found to have circumvented TM in this way;</li>
+            <li>Invoice the commission that would have been owed had the deal been completed through TM, calculated at the standard rate for that category; and</li>
+            <li>Decline to provide future facilitation, escrow, or verified inspection services to parties who have done so.</li>
+          </ul>
+          <p className="mt-2">
+            To make honoring this straightforward, the ETB 500 Opportunity Unlock fee is credited in full toward the commission owed
+            on any deal you complete through TM within the same introduction — you are not charged twice for the same relationship.
+          </p>
         </Section>
 
         <Section title="10. Intellectual Property">
